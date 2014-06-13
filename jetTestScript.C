@@ -70,14 +70,14 @@ int jetTestScript(std::string fList = "", sampleType sType = kHIDATA, const char
     }
 
     for(Int_t vectIter = 0; vectIter < (Int_t)trkLVect_p->size(); vectIter++){
-      trkPVect_p->push_back( PseudoJet(trkLVect_p->at(vectIter)) );
+      trkPVect_p->push_back( fastjet::PseudoJet(trkLVect_p->at(vectIter)) );
     }
 
     Double_t R = 0.7;
-    fastjet::JetDefinition jetDef(antikt_algorithm, R);
+    fastjet::JetDefinition jetDef(fastjet::antikt_algorithm, R);
     fastjet::ClusterSequence cs(*trkPVect_p, jetDef);
 
-    std::vector<PseudoJet> jetVect = sorted_by_pt(cs.inclusive_jets());
+    std::vector<fastjet::PseudoJet> jetVect = sorted_by_pt(cs.inclusive_jets());
 
     std::cout << "Clustering with " << jetDef.description() << std::endl;
 
