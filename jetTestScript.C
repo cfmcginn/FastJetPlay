@@ -73,7 +73,7 @@ int jetTestScript(std::string fList = "", sampleType sType = kHIDATA, const char
       trkPVect_p->push_back( fastjet::PseudoJet(trkLVect_p->at(vectIter)) );
     }
 
-    Double_t R = 0.7;
+    Double_t R = 0.3;
     fastjet::JetDefinition jetDef(fastjet::antikt_algorithm, R);
     fastjet::ClusterSequence cs(*trkPVect_p, jetDef);
 
@@ -82,7 +82,15 @@ int jetTestScript(std::string fList = "", sampleType sType = kHIDATA, const char
     std::cout << "Clustering with " << jetDef.description() << std::endl;
 
     for(Int_t jetIter = 0; jetIter < (Int_t)jetVect.size(); jetIter++){
-      std::cout << "Jet " << jetIter << ": " << jetVect[jetIter].perp() << ", " << jetVect[jetIter].rap() << ", " << jetVect[jetIter].phi() << std::endl;
+      std::cout << "Jet " << jetIter << ": " << jetVect[jetIter].perp() << ", " << jetVect[jetIter].rap() << ", " << jetVect[jetIter].phi_std() << std::endl;
+
+      if(jetVect[jetIter].perp() > 30){
+	std::vector<fastjet::PseudoJet> constituents = jetVect[jetIter].constituents();
+	
+	for(Int_t constIter = 0; constIter < (Int_t)constituents.size(); constIter++){
+	  std::cout << "     Consituent" << constIter << ": " << constituents[constIter].perp() << ", " << constituents[constIter].rap() << ", " << constituents[constIter].phi_std() << std::endl;
+	}
+      }
     }
 
 

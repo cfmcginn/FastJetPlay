@@ -1,4 +1,4 @@
 FastJetPlay
 ===========
 
-Learning FastJet with some playground scrips
+Learning FastJet with some playground scripts
