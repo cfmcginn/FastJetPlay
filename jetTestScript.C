@@ -1,10 +1,18 @@
+#include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequence.hh"
+#include "fastjet/ClusterSequenceArea.hh"
 #include "cfmDiJetIniSkim.h"
 #include <iostream>
 #include <fstream>
 #include "TLorentzVector.h"
 #include <vector>
 #include <string>
+
+#include "../fjcontrib-install/include/fastjet/contrib/Nsubjettiness.hh"
+#include "../fjcontrib-install/include/fastjet/contrib/Njettiness.hh"
+#include "../fjcontrib-install/include/fastjet/contrib/NjettinessPlugin.hh"
+
+
 #ifdef __MAKECINT__
 #pragma link C++ class vector<TLorentzVector>;
 #endif
@@ -74,6 +82,7 @@ int jetTestScript(std::string fList = "", sampleType sType = kHIDATA, const char
     }
 
     Double_t R = 0.3;
+    Double_t beta = 1.0;
     fastjet::JetDefinition jetDef(fastjet::antikt_algorithm, R);
     fastjet::ClusterSequence cs(*trkPVect_p, jetDef);
 
@@ -90,8 +99,22 @@ int jetTestScript(std::string fList = "", sampleType sType = kHIDATA, const char
 	for(Int_t constIter = 0; constIter < (Int_t)constituents.size(); constIter++){
 	  std::cout << "     Consituent" << constIter << ": " << constituents[constIter].perp() << ", " << constituents[constIter].rap() << ", " << constituents[constIter].phi_std() << std::endl;
 	}
+
+	fastjet::contrib::Nsubjettiness nSub1KT(1, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
+	Double_t tau1 = nSub1KT(jetVect[jetIter]);
+
+	fastjet::contrib::Nsubjettiness nSub2KT(2, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
+	Double_t tau2 = nSub2KT(jetVect[jetIter]);
+
+	fastjet::contrib::Nsubjettiness nSub3KT(3, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
+	Double_t tau3 = nSub3KT(jetVect[jetIter]);
+
+	std::cout << "Tau 1, 2, 3: " << tau1 << ", " << tau2 << ", " << tau3 << std::endl;
+	std::cout << "Ratio's 2/1, 3/2: " << tau2/tau1 << ", " << tau3/tau2 << std::endl;
       }
     }
+
+
 
 
     trkLVect_p->clear();
