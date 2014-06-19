@@ -1,7 +1,7 @@
 //=============================================
 // Author: Chris McGinn
 // 
-// FastJet Skim Class (MC)
+// FastJet IniSkim Class (MC)
 //
 // !!NOTE: Written for jets sorted by pt, tracks unsorted!!
 //
@@ -10,7 +10,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "/net/hisrv0001/home/cfmcginn/emDiJet/CMSSW_5_3_12_patch3/tempHIFA/HiForestAnalysis/hiForest.h"
-#include "cfmFastJetSkim.h"
+#include "cfmFastJetIniSkim.h"
 #include "stdlib.h"
 #include <iostream>
 #include <fstream>
@@ -79,7 +79,7 @@ Bool_t passesDijet(Jets jtCollection, Int_t &leadJtIndex, Int_t &subLeadJtIndex,
 }
 
 
-int makeFastJetSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_CFMSKIM.root", Int_t num = 0)
+int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_CFMSKIM.root", Int_t num = 0)
 {
   //Define MC or Data
   Bool_t montecarlo = false;
@@ -117,7 +117,7 @@ int makeFastJetSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 
   TFile *outFile = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
 
-  InitFastJetSkim(montecarlo, sType);
+  InitFastJetIniSkim(montecarlo, sType);
 
   HiForest *c = new HiForest(listOfFiles[0].data(), "Forest", cType, montecarlo);
 
@@ -172,7 +172,7 @@ int makeFastJetSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 
   std::cout << "Cuts, Jet pt, eta: " << lJtPtCut << ", " << jtEtaCut << std::endl; 
 
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+  for(Long64_t jentry = 0; jentry < 10000; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
@@ -302,9 +302,13 @@ int makeFastJetSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 	  AlgJtPhi_[algIter][jtIter] = AlgJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
 	  AlgJtEta_[algIter][jtIter] = AlgJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
 
-	  AlgRefPt_[algIter][jtIter] = AlgJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
-	  AlgRefPhi_[algIter][jtIter] = AlgJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
-	  AlgRefEta_[algIter][jtIter] = AlgJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
+	  AlgJtRawPt_[algIter][jtIter] = AlgJtCollection[algIter].rawpt[jtIndex[algIter][jtIter]];
+
+	  if(montecarlo){
+	    AlgRefPt_[algIter][jtIter] = AlgJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
+	    AlgRefPhi_[algIter][jtIter] = AlgJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
+	    AlgRefEta_[algIter][jtIter] = AlgJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
+	  }
 	}
       }
     }
@@ -335,9 +339,9 @@ int makeFastJetSkim(string fList = "", sampleType sType = kHIDATA, const char *o
       }
     }
 
-    rechitTree_p->Fill();
-    pfcandTree_p->Fill();
-    jetTree_p->Fill();
+    rechitTreeIni_p->Fill();
+    pfcandTreeIni_p->Fill();
+    jetTreeIni_p->Fill();
   }
 
   std::cout << "totEv: " << totEv << std::endl;
@@ -356,14 +360,14 @@ int makeFastJetSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 
   outFile->cd();
 
-  rechitTree_p->Write("", TObject::kOverwrite);
-  pfcandTree_p->Write("", TObject::kOverwrite);
-  jetTree_p->Write("", TObject::kOverwrite);
+  rechitTreeIni_p->Write("", TObject::kOverwrite);
+  pfcandTreeIni_p->Write("", TObject::kOverwrite);
+  jetTreeIni_p->Write("", TObject::kOverwrite);
 
   outFile->Close();
 
   delete c;
-  CleanupFastJetSkim();
+  CleanupFastJetIniSkim();
   delete outFile;
 
   printf("Done.\n");
@@ -393,13 +397,13 @@ int main(int argc, char *argv[])
 {
   if(argc != 5)
     {
-      std::cout << "Usage: makeFastJetSkim <inputFile> <MCBool> <outputFile> <#>" << std::endl;
+      std::cout << "Usage: makeFastJetIniSkim <inputFile> <MCBool> <outputFile> <#>" << std::endl;
       return 1;
     }
 
   int rStatus = -1;
 
-  rStatus = makeFastJetSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]));
+  rStatus = makeFastJetIniSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]));
 
   return rStatus;
 }
