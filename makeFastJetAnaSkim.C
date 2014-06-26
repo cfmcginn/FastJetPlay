@@ -1,4 +1,5 @@
 #include "/net/hisrv0001/home/cfmcginn/FastJet/CMSSW_5_3_12_patch3/src/FastJetIniSkim/cfmFastJetIniSkim.h"
+#include "cfmFastJetAnaSkim.h"
 #include <fstream>
 #include "TLorentzVector.h"
 #include <vector>
@@ -49,6 +50,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   std::cout << "FastJet Skim Loaded" << std::endl;
 
+  TFile *outFile_p = new TFile(Form("%s.root", outName), "RECREATE");
+  InitFastJetAnaSkim(montecarlo, sType);
+
   Long64_t nentries = rechitTreeIni_p->GetEntries();
 
   std::cout << nentries << std::endl;
@@ -58,6 +62,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   std::vector<fastjet::PseudoJet>* trkPVect_p = new std::vector<fastjet::PseudoJet>;
 
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
+    if(jentry%10000 == 0)
+      std::cout << jentry << std::endl;
+
     rechitTreeIni_p->GetEntry(jentry);
     pfcandTreeIni_p->GetEntry(jentry);
     trkTreeIni_p->GetEntry(jentry);
@@ -65,13 +72,14 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
     InitJtVar();
 
-    if(jentry%10000)
-      std::cout << jentry << std::endl;
-
     TLorentzVector tempTLVect;
     Double_t R = 0.3;
-    //    Double_t beta = 1.0;
+    Double_t beta = 1.0;
     fastjet::JetDefinition jetDef(fastjet::antikt_algorithm, R);
+
+    fastjet::contrib::Nsubjettiness nSub1KT(1, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
+    fastjet::contrib::Nsubjettiness nSub2KT(2, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
+    fastjet::contrib::Nsubjettiness nSub3KT(3, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
 
     for(Int_t rIter = 0; rIter < nRechits_; rIter++){
       tempTLVect.SetPtEtaPhiM(rechitPt_[rIter], rechitEta_[rIter], rechitPhi_[rIter], 0);
@@ -85,6 +93,10 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
       rechitJtRawPt_[rIter] = rechitJt[rIter].perp();
       rechitJtRawPhi_[rIter] = rechitJt[rIter].phi_std();
       rechitJtRawEta_[rIter] = rechitJt[rIter].eta();
+
+      rechitTauOne_[rIter] = nSub1KT(rechitJt[rIter]);
+      rechitTauTwo_[rIter] = nSub2KT(rechitJt[rIter]);
+      rechitTauThree_[rIter] = nSub3KT(rechitJt[rIter]);
 
       if(rIter == 4) break;
     }
@@ -101,16 +113,19 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     std::vector<fastjet::PseudoJet> pfJt = sorted_by_pt(pfCS.inclusive_jets());
 
     for(Int_t pfIter = 0; pfIter < (Int_t)pfJt.size(); pfIter++){
-      pfJtRawPt_[rIter] = pfJt[rIter].perp();
-      pfJtRawPhi_[rIter] = pfJt[rIter].phi_std();
-      pfJtRawEta_[rIter] = pfJt[rIter].eta();
+      pfJtRawPt_[pfIter] = pfJt[pfIter].perp();
+      pfJtRawPhi_[pfIter] = pfJt[pfIter].phi_std();
+      pfJtRawEta_[pfIter] = pfJt[pfIter].eta();
+
+      pfTauOne_[pfIter] = nSub1KT(pfJt[pfIter]);
+      pfTauTwo_[pfIter] = nSub2KT(pfJt[pfIter]);
+      pfTauThree_[pfIter] = nSub3KT(pfJt[pfIter]);
 
       if(pfIter == 4) break;
     }
     
     pfPVect_p->clear();
     pfJt.clear();
-
 
     for(Int_t trkIter = 0; trkIter < nTrk_; trkIter++){
       tempTLVect.SetPtEtaPhiM(trkPt_[trkIter], trkEta_[trkIter], trkPhi_[trkIter], 0);
@@ -125,22 +140,15 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
       trkJtRawPhi_[trkIter] = trkJt[trkIter].phi_std();
       trkJtRawEta_[trkIter] = trkJt[trkIter].eta();
 
+      trkTauOne_[trkIter] = nSub1KT(trkJt[trkIter]);
+      trkTauTwo_[trkIter] = nSub2KT(trkJt[trkIter]);
+      trkTauThree_[trkIter] = nSub3KT(trkJt[trkIter]);
+
       if(trkIter == 4) break;
     }
     
     trkPVect_p->clear();
     trkJt.clear();
-
-
-    Int_t run_;
-    Int_t evt_;
-    Int_t lumi_;
-    Int_t hiBin_;
-
-    Float_t pthat_;
-
-    Float_t hiEvtPlane_;
-    Float_t psin_;
 
     run_ = runIni_;
     evt_ = evtIni_;
@@ -177,7 +185,6 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     jetTreeAna_p->Fill();
   }
 
-  TFile* outFile_p = new TFile(outName, "UPDATE");
   rechitTreeAna_p->Write("", TObject::kOverwrite);
   pfcandTreeAna_p->Write("", TObject::kOverwrite);
   trkTreeAna_p->Write("", TObject::kOverwrite);
