@@ -129,11 +129,13 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   c->hasEvtTree = true;
   c->hasTowerTree = true;
   c->hasPFTree = true;
+  c->hasTrackTree = true;
 
   if(sType == kHIDATA || sType == kHIMC){
     c->hasAkPu3JetTree = true;
     c->hasAkPu3CaloJetTree = true;
     c->hasAkVs3CaloJetTree = true;
+    c->hasAkVs3PFJetTree = true;
   }
   else if(sType == kPPDATA || sType == kPPMC){
     c->hasAk3CaloJetTree = true;
@@ -167,12 +169,12 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   Int_t selectCut = 0;
   Int_t vzCut = 0;
 
-  Int_t AlgLeadJtPtCut[3] = {0, 0, 0};
-  Int_t AlgSubLeadJtPtCut[3] = {0, 0, 0};
+  Int_t AlgIniLeadJtPtCut[5] = {0, 0, 0, 0, 0};
+  Int_t AlgIniSubLeadJtPtCut[5] = {0, 0, 0, 0, 0};
 
   std::cout << "Cuts, Jet pt, eta: " << lJtPtCut << ", " << jtEtaCut << std::endl; 
 
-  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
@@ -192,40 +194,44 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
     //particle flow
 
-    Jets AlgJtCollection[2];
+    Jets AlgIniJtCollection[5];
 
     if(sType == kHIDATA || sType == kHIMC){
-      AlgJtCollection[0] = c->akPu3Calo;
-      AlgJtCollection[1] = c->akVs3Calo;
+      AlgIniJtCollection[0] = c->akPu3Calo;
+      AlgIniJtCollection[1] = c->akVs3Calo;
+
+      AlgIniJtCollection[3] = c->akPu3PF;
+      AlgIniJtCollection[4] = c->akVs3PF;
     }
     else if(sType == kPPDATA || sType == kPPMC){
-      AlgJtCollection[0] = c->akPu3Calo;
-      AlgJtCollection[1] = c->ak3Calo;
+      AlgIniJtCollection[0] = c->akPu3Calo;
+      AlgIniJtCollection[1] = c->ak3Calo;
     }
 
-    Bool_t algPasses[3] = {false, false, false};
+    Bool_t algPasses[5] = {false, false, false, false, false};
 
-    Int_t jtIndex[3][2];
+    Int_t jtIndex[5][2];
     
-    for(Int_t algIter = 0; algIter < 3; algIter++){
+    for(Int_t algIter = 0; algIter < 5; algIter++){
       for(Int_t jtIter = 0; jtIter < 2; jtIter++){
 	jtIndex[algIter][jtIter] = -1;
       }
     }
 
-    for(Int_t algIter = 0; algIter < 2; algIter++){
-      algPasses[algIter] = passesDijet(AlgJtCollection[algIter], jtIndex[algIter][0], jtIndex[algIter][1], AlgLeadJtPtCut[algIter], AlgSubLeadJtPtCut[algIter]);
+    for(Int_t algIter = 0; algIter < 5; algIter++){
+      if(algIter != 2)
+	algPasses[algIter] = passesDijet(AlgIniJtCollection[algIter], jtIndex[algIter][0], jtIndex[algIter][1], AlgIniLeadJtPtCut[algIter], AlgIniSubLeadJtPtCut[algIter]);
     }
 
     //truth, doesn't work w/ getLeadJt because truth doesnt get its own tree
 
     if(montecarlo){
       if(c->akPu3PF.ngen == 0){
-	AlgLeadJtPtCut[2]++;
+	AlgIniLeadJtPtCut[2]++;
 	algPasses[2] = false;
       }
       else if(c->akPu3PF.ngen == 1){
-	AlgSubLeadJtPtCut[2]++;
+	AlgIniSubLeadJtPtCut[2]++;
 	algPasses[2] = false;
       }
       else{
@@ -264,50 +270,52 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	  algPasses[2] = false;
       }
       else{
-	AlgLeadJtPtCut[2]++;
+	AlgIniLeadJtPtCut[2]++;
 	algPasses[2] = false;
       }
     }
     
-    if(algPasses[0] == false && algPasses[1] == false && algPasses[2] == false)
+    if(algPasses[0] == false && algPasses[1] == false && algPasses[2] == false && algPasses[3] == false && algPasses[4] == false)
       continue;
 
-    if(kHIMC) pthat_ = c->akPu3PF.pthat;
-    else if(kPPMC) pthat_ = c->ak3Calo.pthat;
+    if(kHIMC) pthatIni_ = c->akPu3PF.pthat;
+    else if(kPPMC) pthatIni_ = c->ak3Calo.pthat;
 
     if(sType == kHIDATA || sType == kHIMC){
-      hiEvtPlane_ = c->evt.hiEvtPlanes[21];                                                  
+      hiEvtPlaneIni_ = c->evt.hiEvtPlanes[21];                                                  
       TComplex cn1((c->pf.sumpt[0])*(c->pf.vn[2][0]), c->pf.psin[2][0], true);                    
       TComplex cn2((c->pf.sumpt[14])*(c->pf.vn[2][14]), c->pf.psin[2][14], true);                
       TComplex cn = cn1+cn2;                                                                    
-      psin_ = cn.Theta();      
+      psinIni_ = cn.Theta();      
     }      
 
-    run_ = c->evt.run;
-    evt_ = c->evt.evt;
-    lumi_ = c->evt.lumi;
+    runIni_ = c->evt.run;
+    evtIni_ = c->evt.evt;
+    lumiIni_ = c->evt.lumi;
 
     if(sType == kHIDATA || sType == kHIMC)
-      hiBin_ = c->evt.hiBin;
+      hiBinIni_ = c->evt.hiBin;
 
     //Iterate over jets
 
-    Int_t algMax = 2;
-    if(montecarlo) algMax = 3;
+    Int_t algMax = 5;
 
     for(Int_t algIter = 0; algIter < algMax; algIter++){
+      if(algIter == 2 && !montecarlo)
+	continue;
+
       for(Int_t jtIter = 0; jtIter < 2; jtIter++){
 	if(jtIndex[algIter][jtIter] >= 0){
-	  AlgJtPt_[algIter][jtIter] = AlgJtCollection[algIter].jtpt[jtIndex[algIter][jtIter]];
-	  AlgJtPhi_[algIter][jtIter] = AlgJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
-	  AlgJtEta_[algIter][jtIter] = AlgJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
+	  AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].jtpt[jtIndex[algIter][jtIter]];
+	  AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
+	  AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
 
-	  AlgJtRawPt_[algIter][jtIter] = AlgJtCollection[algIter].rawpt[jtIndex[algIter][jtIter]];
+	  AlgIniJtRawPt_[algIter][jtIter] = AlgIniJtCollection[algIter].rawpt[jtIndex[algIter][jtIter]];
 
 	  if(montecarlo){
-	    AlgRefPt_[algIter][jtIter] = AlgJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
-	    AlgRefPhi_[algIter][jtIter] = AlgJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
-	    AlgRefEta_[algIter][jtIter] = AlgJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
+	    AlgIniRefPt_[algIter][jtIter] = AlgIniJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
+	    AlgIniRefPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
+	    AlgIniRefEta_[algIter][jtIter] = AlgIniJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
 	  }
 	}
       }
@@ -339,8 +347,38 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       }
     }
 
+    //Iterate over tracks
+
+    nTrk_ = 0;
+
+    for(Int_t trkIter = 0; trkIter < c->track.nTrk; trkIter++){
+      if(TMath::Abs(c->track.trkEta[trkIter]) > 2.4)
+	continue;
+
+      if(c->track.trkPt[trkIter] <= 0.5)
+	continue;
+
+      if(!c->track.highPurity[trkIter])
+	continue;
+
+      if(TMath::Abs(c->track.trkDz1[trkIter]/c->track.trkDzError1[trkIter]) > 3)
+	continue;
+
+      if(TMath::Abs(c->track.trkDxy1[trkIter]/c->track.trkDxyError1[trkIter]) > 3)
+	continue;
+
+      if(c->track.trkPtError[trkIter]/c->track.trkPt[trkIter] > 0.1)
+	continue;
+
+      trkPt_[nTrk_] = c->track.trkPt[trkIter];
+      trkPhi_[nTrk_] = c->track.trkPhi[trkIter];
+      trkEta_[nTrk_] = c->track.trkEta[trkIter];
+      nTrk_++;
+    }
+
     rechitTreeIni_p->Fill();
     pfcandTreeIni_p->Fill();
+    trkTreeIni_p->Fill();
     jetTreeIni_p->Fill();
   }
 
@@ -350,18 +388,19 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   tempTot = tempTot - vzCut;
   std::cout << "vzCut: " << tempTot << std::endl;
 
-  for(Int_t cutIter = 0; cutIter < 3; cutIter++){
+  for(Int_t cutIter = 0; cutIter < 5; cutIter++){
     std::cout << std::endl;
-    tempTot = totEv - selectCut - vzCut - AlgLeadJtPtCut[cutIter];
-    std::cout << "AlgLeadJtPtCut[" << cutIter << "]: " << tempTot << std::endl;
-    tempTot = tempTot - AlgSubLeadJtPtCut[cutIter];
-    std::cout << "AlgSubLeadJtPtCut[" << cutIter << "]: " << tempTot << std::endl;
+    tempTot = totEv - selectCut - vzCut - AlgIniLeadJtPtCut[cutIter];
+    std::cout << "AlgIniLeadJtPtCut[" << cutIter << "]: " << tempTot << std::endl;
+    tempTot = tempTot - AlgIniSubLeadJtPtCut[cutIter];
+    std::cout << "AlgIniSubLeadJtPtCut[" << cutIter << "]: " << tempTot << std::endl;
   }
 
   outFile->cd();
 
   rechitTreeIni_p->Write("", TObject::kOverwrite);
   pfcandTreeIni_p->Write("", TObject::kOverwrite);
+  trkTreeIni_p->Write("", TObject::kOverwrite);
   jetTreeIni_p->Write("", TObject::kOverwrite);
 
   outFile->Close();
