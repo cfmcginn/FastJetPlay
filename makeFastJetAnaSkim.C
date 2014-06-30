@@ -9,11 +9,93 @@
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 
-#include "../fjcontrib-install/include/fastjet/contrib/Nsubjettiness.hh"
-#include "../fjcontrib-install/include/fastjet/contrib/Njettiness.hh"
-#include "../fjcontrib-install/include/fastjet/contrib/NjettinessPlugin.hh"
- 
+#include "fastjet/contrib/Nsubjettiness.hh"
+#include "fastjet/contrib/Njettiness.hh"
+#include "fastjet/contrib/NjettinessPlugin.hh"
 
+Double_t beta_5 = 0.5;
+Double_t beta1 = 1.0;
+Double_t beta2 = 2.0;
+fastjet::contrib::WTA_KT_Axes axisMode1;
+fastjet::contrib::UnnormalizedMeasure measureSpec_5(beta_5);
+fastjet::contrib::UnnormalizedMeasure measureSpec1(beta1);
+fastjet::contrib::UnnormalizedMeasure measureSpec2(beta2);
+
+fastjet::contrib::Nsubjettiness nSub1_beta_5(1, axisMode1, measureSpec_5);
+fastjet::contrib::Nsubjettiness nSub2_beta_5(2, axisMode1, measureSpec_5);
+fastjet::contrib::Nsubjettiness nSub3_beta_5(3, axisMode1, measureSpec_5);
+fastjet::contrib::NsubjettinessRatio nSub21_beta_5(2, 1, axisMode1, measureSpec_5);
+fastjet::contrib::NsubjettinessRatio nSub32_beta_5(3, 2, axisMode1, measureSpec_5);
+
+fastjet::contrib::Nsubjettiness nSub1_beta1(1, axisMode1, measureSpec1);
+fastjet::contrib::Nsubjettiness nSub2_beta1(2, axisMode1, measureSpec1);
+fastjet::contrib::Nsubjettiness nSub3_beta1(3, axisMode1, measureSpec1);
+fastjet::contrib::NsubjettinessRatio nSub21_beta1(2, 1, axisMode1, measureSpec1);
+fastjet::contrib::NsubjettinessRatio nSub32_beta1(3, 2, axisMode1, measureSpec1);
+
+fastjet::contrib::Nsubjettiness nSub1_beta2(1, axisMode1, measureSpec2);
+fastjet::contrib::Nsubjettiness nSub2_beta2(2, axisMode1, measureSpec2);
+fastjet::contrib::Nsubjettiness nSub3_beta2(3, axisMode1, measureSpec2);
+fastjet::contrib::NsubjettinessRatio nSub21_beta2(2, 1, axisMode1, measureSpec2);
+fastjet::contrib::NsubjettinessRatio nSub32_beta2(3, 2, axisMode1, measureSpec2);
+
+Double_t R = 0.3;
+fastjet::JetAlgorithm algorithm = fastjet::antikt_algorithm;
+fastjet::JetDefinition jetDef(algorithm, R, fastjet::E_scheme, fastjet::Best);
+
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t tau1[5][3], Float_t tau2[5][3], Float_t tau3[5][3], Float_t tau21[5][3], Float_t tau32[5][3])
+{
+  std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
+  TLorentzVector tempTL;
+
+  for(Int_t iter = 0; iter < nMax; iter++){
+    if(pt[iter] > .010){
+       tempTL.SetPtEtaPhiM(pt[iter], eta[iter], phi[iter], 0);
+       algVect_p->push_back(tempTL);
+    }       
+  }
+
+  fastjet::ClusterSequence cs(*algVect_p, jetDef);
+  std::vector<fastjet::PseudoJet> algSortVect = sorted_by_pt(cs.inclusive_jets());
+
+  Int_t breakIter = 0;
+
+  for(Int_t iter = 0; iter < (Int_t)algSortVect.size(); iter++){
+    if(TMath::Abs(algSortVect[iter].eta()) < 2.0){
+      outPt[breakIter] = algSortVect[iter].perp();
+      outPhi[breakIter] = algSortVect[iter].phi_std();
+      outEta[breakIter] = algSortVect[iter].eta();
+	 
+      tau1[breakIter][0] = nSub1_beta_5(algSortVect[iter]);
+      tau2[breakIter][0] = nSub2_beta_5(algSortVect[iter]);
+      tau3[breakIter][0] = nSub3_beta_5(algSortVect[iter]);
+      tau21[breakIter][0] = nSub21_beta_5(algSortVect[iter]);
+      tau32[breakIter][0] = nSub32_beta_5(algSortVect[iter]);
+
+      tau1[breakIter][1] = nSub1_beta1(algSortVect[iter]);
+      tau2[breakIter][1] = nSub2_beta1(algSortVect[iter]);
+      tau3[breakIter][1] = nSub3_beta1(algSortVect[iter]);
+      tau21[breakIter][1] = nSub21_beta1(algSortVect[iter]);
+      tau32[breakIter][1] = nSub32_beta1(algSortVect[iter]);
+
+      tau1[breakIter][2] = nSub1_beta2(algSortVect[iter]);
+      tau2[breakIter][2] = nSub2_beta2(algSortVect[iter]);
+      tau3[breakIter][2] = nSub3_beta2(algSortVect[iter]);
+      tau21[breakIter][2] = nSub21_beta2(algSortVect[iter]);
+      tau32[breakIter][2] = nSub32_beta2(algSortVect[iter]);
+
+      if(breakIter == 4) break;
+
+      breakIter++;
+    }
+  }
+
+  algSortVect.clear();
+  algVect_p->clear();
+  delete algVect_p;
+}
+
+ 
 int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root")
 {
   Bool_t montecarlo = false;
@@ -57,12 +139,8 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   std::cout << nentries << std::endl;
 
-  std::vector<fastjet::PseudoJet>* rechitPVect_p = new std::vector<fastjet::PseudoJet>;
-  std::vector<fastjet::PseudoJet>* pfPVect_p = new std::vector<fastjet::PseudoJet>;
-  std::vector<fastjet::PseudoJet>* trkPVect_p = new std::vector<fastjet::PseudoJet>;
-
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
-    if(jentry%10000 == 0)
+  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+    if(jentry%1000 == 0)
       std::cout << jentry << std::endl;
 
     rechitTreeIni_p->GetEntry(jentry);
@@ -72,83 +150,11 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
     InitJtVar();
 
-    TLorentzVector tempTLVect;
-    Double_t R = 0.3;
-    Double_t beta = 1.0;
-    fastjet::JetDefinition jetDef(fastjet::antikt_algorithm, R);
-
-    fastjet::contrib::Nsubjettiness nSub1KT(1, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
-    fastjet::contrib::Nsubjettiness nSub2KT(2, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
-    fastjet::contrib::Nsubjettiness nSub3KT(3, fastjet::contrib::Njettiness::kt_axes, beta, R, R);
-
-    for(Int_t rIter = 0; rIter < nRechits_; rIter++){
-      tempTLVect.SetPtEtaPhiM(rechitPt_[rIter], rechitEta_[rIter], rechitPhi_[rIter], 0);
-      rechitPVect_p->push_back(tempTLVect);
-    }
-
-    fastjet::ClusterSequence rechitCS(*rechitPVect_p, jetDef);
-    std::vector<fastjet::PseudoJet> rechitJt = sorted_by_pt(rechitCS.inclusive_jets());
-
-    for(Int_t rIter = 0; rIter < (Int_t)rechitJt.size(); rIter++){
-      rechitJtRawPt_[rIter] = rechitJt[rIter].perp();
-      rechitJtRawPhi_[rIter] = rechitJt[rIter].phi_std();
-      rechitJtRawEta_[rIter] = rechitJt[rIter].eta();
-
-      rechitTauOne_[rIter] = nSub1KT(rechitJt[rIter]);
-      rechitTauTwo_[rIter] = nSub2KT(rechitJt[rIter]);
-      rechitTauThree_[rIter] = nSub3KT(rechitJt[rIter]);
-
-      if(rIter == 4) break;
-    }
-
-    rechitPVect_p->clear();
-    rechitJt.clear();
-
-    for(Int_t rIter = 0; rIter < nPF_; rIter++){
-      tempTLVect.SetPtEtaPhiM(pfPt_[rIter], pfEta_[rIter], pfPhi_[rIter], 0);
-      pfPVect_p->push_back(tempTLVect);
-    }
-
-    fastjet::ClusterSequence pfCS(*pfPVect_p, jetDef);
-    std::vector<fastjet::PseudoJet> pfJt = sorted_by_pt(pfCS.inclusive_jets());
-
-    for(Int_t pfIter = 0; pfIter < (Int_t)pfJt.size(); pfIter++){
-      pfJtRawPt_[pfIter] = pfJt[pfIter].perp();
-      pfJtRawPhi_[pfIter] = pfJt[pfIter].phi_std();
-      pfJtRawEta_[pfIter] = pfJt[pfIter].eta();
-
-      pfTauOne_[pfIter] = nSub1KT(pfJt[pfIter]);
-      pfTauTwo_[pfIter] = nSub2KT(pfJt[pfIter]);
-      pfTauThree_[pfIter] = nSub3KT(pfJt[pfIter]);
-
-      if(pfIter == 4) break;
-    }
-    
-    pfPVect_p->clear();
-    pfJt.clear();
-
-    for(Int_t trkIter = 0; trkIter < nTrk_; trkIter++){
-      tempTLVect.SetPtEtaPhiM(trkPt_[trkIter], trkEta_[trkIter], trkPhi_[trkIter], 0);
-      trkPVect_p->push_back(tempTLVect);
-    }
-
-    fastjet::ClusterSequence trkCS(*trkPVect_p, jetDef);
-    std::vector<fastjet::PseudoJet> trkJt = sorted_by_pt(trkCS.inclusive_jets());
-
-    for(Int_t trkIter = 0; trkIter < (Int_t)trkJt.size(); trkIter++){
-      trkJtRawPt_[trkIter] = trkJt[trkIter].perp();
-      trkJtRawPhi_[trkIter] = trkJt[trkIter].phi_std();
-      trkJtRawEta_[trkIter] = trkJt[trkIter].eta();
-
-      trkTauOne_[trkIter] = nSub1KT(trkJt[trkIter]);
-      trkTauTwo_[trkIter] = nSub2KT(trkJt[trkIter]);
-      trkTauThree_[trkIter] = nSub3KT(trkJt[trkIter]);
-
-      if(trkIter == 4) break;
-    }
-    
-    trkPVect_p->clear();
-    trkJt.clear();
+    getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitRawTau1_, rechitRawTau2_, rechitRawTau3_, rechitRawTau21_, rechitRawTau32_);
+    getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitVsTau1_, rechitVsTau2_, rechitVsTau3_, rechitVsTau21_, rechitVsTau32_);
+    getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfRawTau1_, pfRawTau2_, pfRawTau3_, pfRawTau21_, pfRawTau32_);
+    getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfVsTau1_, pfVsTau2_, pfVsTau3_, pfVsTau21_, pfVsTau32_);
+    getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkRawTau1_, trkRawTau2_, trkRawTau3_, trkRawTau21_, trkRawTau32_);
 
     run_ = runIni_;
     evt_ = evtIni_;
@@ -193,12 +199,6 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   delete outFile_p;
 
   CleanupFastJetAnaSkim();
-
-  delete trkPVect_p;
-  delete pfPVect_p;
-  delete rechitPVect_p;
-
-
 
   iniSkim_p->Close();
   delete iniSkim_p;
