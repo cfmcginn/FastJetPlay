@@ -24,26 +24,38 @@ fastjet::contrib::UnnormalizedMeasure measureSpec2(beta2);
 fastjet::contrib::Nsubjettiness nSub1_beta_5(1, axisMode1, measureSpec_5);
 fastjet::contrib::Nsubjettiness nSub2_beta_5(2, axisMode1, measureSpec_5);
 fastjet::contrib::Nsubjettiness nSub3_beta_5(3, axisMode1, measureSpec_5);
-fastjet::contrib::NsubjettinessRatio nSub21_beta_5(2, 1, axisMode1, measureSpec_5);
-fastjet::contrib::NsubjettinessRatio nSub32_beta_5(3, 2, axisMode1, measureSpec_5);
+fastjet::contrib::NjettinessPlugin nSub1_beta_5_plugin(1, axisMode1, measureSpec_5);
+fastjet::contrib::NjettinessPlugin nSub2_beta_5_plugin(2, axisMode1, measureSpec_5);
+fastjet::contrib::NjettinessPlugin nSub3_beta_5_plugin(3, axisMode1, measureSpec_5);
+fastjet::JetDefinition nSub1_beta_5_jetDef(&nSub1_beta_5_plugin);
+fastjet::JetDefinition nSub2_beta_5_jetDef(&nSub2_beta_5_plugin);
+fastjet::JetDefinition nSub3_beta_5_jetDef(&nSub3_beta_5_plugin);
 
 fastjet::contrib::Nsubjettiness nSub1_beta1(1, axisMode1, measureSpec1);
 fastjet::contrib::Nsubjettiness nSub2_beta1(2, axisMode1, measureSpec1);
 fastjet::contrib::Nsubjettiness nSub3_beta1(3, axisMode1, measureSpec1);
-fastjet::contrib::NsubjettinessRatio nSub21_beta1(2, 1, axisMode1, measureSpec1);
-fastjet::contrib::NsubjettinessRatio nSub32_beta1(3, 2, axisMode1, measureSpec1);
+fastjet::contrib::NjettinessPlugin nSub1_beta1_plugin(1, axisMode1, measureSpec1);
+fastjet::contrib::NjettinessPlugin nSub2_beta1_plugin(2, axisMode1, measureSpec1);
+fastjet::contrib::NjettinessPlugin nSub3_beta1_plugin(3, axisMode1, measureSpec1);
+fastjet::JetDefinition nSub1_beta1_jetDef(&nSub1_beta1_plugin);
+fastjet::JetDefinition nSub2_beta1_jetDef(&nSub2_beta1_plugin);
+fastjet::JetDefinition nSub3_beta1_jetDef(&nSub3_beta1_plugin);
 
 fastjet::contrib::Nsubjettiness nSub1_beta2(1, axisMode1, measureSpec2);
 fastjet::contrib::Nsubjettiness nSub2_beta2(2, axisMode1, measureSpec2);
 fastjet::contrib::Nsubjettiness nSub3_beta2(3, axisMode1, measureSpec2);
-fastjet::contrib::NsubjettinessRatio nSub21_beta2(2, 1, axisMode1, measureSpec2);
-fastjet::contrib::NsubjettinessRatio nSub32_beta2(3, 2, axisMode1, measureSpec2);
+fastjet::contrib::NjettinessPlugin nSub1_beta2_plugin(1, axisMode1, measureSpec2);
+fastjet::contrib::NjettinessPlugin nSub2_beta2_plugin(2, axisMode1, measureSpec2);
+fastjet::contrib::NjettinessPlugin nSub3_beta2_plugin(3, axisMode1, measureSpec2);
+fastjet::JetDefinition nSub1_beta2_jetDef(&nSub1_beta2_plugin);
+fastjet::JetDefinition nSub2_beta2_jetDef(&nSub2_beta2_plugin);
+fastjet::JetDefinition nSub3_beta2_jetDef(&nSub3_beta2_plugin);
 
 Double_t R = 0.3;
 fastjet::JetAlgorithm algorithm = fastjet::antikt_algorithm;
 fastjet::JetDefinition jetDef(algorithm, R, fastjet::E_scheme, fastjet::Best);
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t tau1[5][3], Float_t tau2[5][3], Float_t tau3[5][3], Float_t tau21[5][3], Float_t tau32[5][3])
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t tau[5][3][3])
 {
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
@@ -66,23 +78,17 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
       outPhi[breakIter] = algSortVect[iter].phi_std();
       outEta[breakIter] = algSortVect[iter].eta();
 	 
-      tau1[breakIter][0] = nSub1_beta_5(algSortVect[iter]);
-      tau2[breakIter][0] = nSub2_beta_5(algSortVect[iter]);
-      tau3[breakIter][0] = nSub3_beta_5(algSortVect[iter]);
-      tau21[breakIter][0] = nSub21_beta_5(algSortVect[iter]);
-      tau32[breakIter][0] = nSub32_beta_5(algSortVect[iter]);
+      tau[breakIter][0][0] = nSub1_beta_5(algSortVect[iter]);
+      tau[breakIter][1][0] = nSub2_beta_5(algSortVect[iter]);
+      tau[breakIter][2][0] = nSub3_beta_5(algSortVect[iter]);
 
-      tau1[breakIter][1] = nSub1_beta1(algSortVect[iter]);
-      tau2[breakIter][1] = nSub2_beta1(algSortVect[iter]);
-      tau3[breakIter][1] = nSub3_beta1(algSortVect[iter]);
-      tau21[breakIter][1] = nSub21_beta1(algSortVect[iter]);
-      tau32[breakIter][1] = nSub32_beta1(algSortVect[iter]);
+      tau[breakIter][0][1] = nSub1_beta1(algSortVect[iter]);
+      tau[breakIter][1][1] = nSub2_beta1(algSortVect[iter]);
+      tau[breakIter][2][1] = nSub3_beta1(algSortVect[iter]);
 
-      tau1[breakIter][2] = nSub1_beta2(algSortVect[iter]);
-      tau2[breakIter][2] = nSub2_beta2(algSortVect[iter]);
-      tau3[breakIter][2] = nSub3_beta2(algSortVect[iter]);
-      tau21[breakIter][2] = nSub21_beta2(algSortVect[iter]);
-      tau32[breakIter][2] = nSub32_beta2(algSortVect[iter]);
+      tau[breakIter][0][2] = nSub1_beta2(algSortVect[iter]);
+      tau[breakIter][1][2] = nSub2_beta2(algSortVect[iter]);
+      tau[breakIter][2][2] = nSub3_beta2(algSortVect[iter]);
 
       if(breakIter == 4) break;
 
@@ -150,11 +156,11 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
     InitJtVar();
 
-    getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitRawTau1_, rechitRawTau2_, rechitRawTau3_, rechitRawTau21_, rechitRawTau32_);
-    getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitVsTau1_, rechitVsTau2_, rechitVsTau3_, rechitVsTau21_, rechitVsTau32_);
-    getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfRawTau1_, pfRawTau2_, pfRawTau3_, pfRawTau21_, pfRawTau32_);
-    getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfVsTau1_, pfVsTau2_, pfVsTau3_, pfVsTau21_, pfVsTau32_);
-    getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkRawTau1_, trkRawTau2_, trkRawTau3_, trkRawTau21_, trkRawTau32_);
+    getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitRawTau_);
+    getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitVsTau_);
+    getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfRawTau_);
+    getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfVsTau_);
+    getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkRawTau_);
 
     run_ = runIni_;
     evt_ = evtIni_;

@@ -13,6 +13,12 @@
 #include "TFile.h"
 #include "TH1F.h"
 
+enum Taus{
+  tau1, //0
+  tau2, //1
+  tau3  //2
+};
+
 enum betaType{
   betaHalf, //0
   betaOne,  //1
@@ -29,51 +35,46 @@ TTree* jetTreeAna_p = 0;
 Float_t rechitJtRawPt_[5];
 Float_t rechitJtRawPhi_[5];
 Float_t rechitJtRawEta_[5];
-Float_t rechitRawTau1_[5][3];
-Float_t rechitRawTau2_[5][3];
-Float_t rechitRawTau3_[5][3];
-Float_t rechitRawTau21_[5][3];
-Float_t rechitRawTau32_[5][3];
+Float_t rechitRawTau_[5][3][3];
+Float_t rechitSubJtRawPt_[5][3][3];
+Float_t rechitSubJtRawPhi_[5][3][3];
+Float_t rechitSubJtRawEta_[5][3][3];
 
 Float_t rechitJtVsPt_[5];
 Float_t rechitJtVsPhi_[5];
 Float_t rechitJtVsEta_[5];
-Float_t rechitVsTau1_[5][3];
-Float_t rechitVsTau2_[5][3];
-Float_t rechitVsTau3_[5][3];
-Float_t rechitVsTau21_[5][3];
-Float_t rechitVsTau32_[5][3];
+Float_t rechitVsTau_[5][3][3];
+Float_t rechitSubJtVsPt_[5][3][3];
+Float_t rechitSubJtVsPhi_[5][3][3];
+Float_t rechitSubJtVsEta_[5][3][3];
 
 //pfcand TreeAna Variables
 
 Float_t pfJtRawPt_[5];
 Float_t pfJtRawPhi_[5];
 Float_t pfJtRawEta_[5];
-Float_t pfRawTau1_[5][3];
-Float_t pfRawTau2_[5][3];
-Float_t pfRawTau3_[5][3];
-Float_t pfRawTau21_[5][3];
-Float_t pfRawTau32_[5][3];
+Float_t pfRawTau_[5][3][3];
+Float_t pfSubJtRawPt_[5][3][3];
+Float_t pfSubJtRawPhi_[5][3][3];
+Float_t pfSubJtRawEta_[5][3][3];
 
 Float_t pfJtVsPt_[5];
 Float_t pfJtVsPhi_[5];
 Float_t pfJtVsEta_[5];
-Float_t pfVsTau1_[5][3];
-Float_t pfVsTau2_[5][3];
-Float_t pfVsTau3_[5][3];
-Float_t pfVsTau21_[5][3];
-Float_t pfVsTau32_[5][3];
+Float_t pfVsTau_[5][3][3];
+Float_t pfSubJtVsPt_[5][3][3];
+Float_t pfSubJtVsPhi_[5][3][3];
+Float_t pfSubJtVsEta_[5][3][3];
 
 //track TreeAna Variables
 
 Float_t trkJtRawPt_[5];
 Float_t trkJtRawPhi_[5];
 Float_t trkJtRawEta_[5];
-Float_t trkRawTau1_[5][3];
-Float_t trkRawTau2_[5][3];
-Float_t trkRawTau3_[5][3];
-Float_t trkRawTau21_[5][3];
-Float_t trkRawTau32_[5][3];
+Float_t trkRawTau_[5][3][3];
+Float_t trkSubJtRawPt_[5][3][3];
+Float_t trkSubJtRawPhi_[5][3][3];
+Float_t trkSubJtRawEta_[5][3][3];
 
 //Jet TreeAna Variables
 
@@ -103,51 +104,46 @@ void SetAnaBranches(Bool_t montecarlo = false, sampleType sType = kHIDATA)
   rechitTreeAna_p->Branch("rechitJtRawPt", &rechitJtRawPt_, "rechitJtRawPt[5]/F");
   rechitTreeAna_p->Branch("rechitJtRawPhi", &rechitJtRawPhi_, "rechitJtRawPhi[5]/F");
   rechitTreeAna_p->Branch("rechitJtRawEta", &rechitJtRawEta_, "rechitJtRawEta[5]/F");
-  rechitTreeAna_p->Branch("rechitRawTau1", &rechitRawTau1_, "rechitRawTau1[5][3]/F");
-  rechitTreeAna_p->Branch("rechitRawTau2", &rechitRawTau2_, "rechitRawTau2[5][3]/F");
-  rechitTreeAna_p->Branch("rechitRawTau3", &rechitRawTau3_, "rechitRawTau3[5][3]/F");
-  rechitTreeAna_p->Branch("rechitRawTau21", &rechitRawTau21_, "rechitRawTau21[5][3]/F");
-  rechitTreeAna_p->Branch("rechitRawTau32", &rechitRawTau32_, "rechitRawTau32[5][3]/F");
+  rechitTreeAna_p->Branch("rechitRawTau", &rechitRawTau_, "rechitRawTau[5][3][3]/F");
+  rechitTreeAna_p->Branch("rechitSubJtRawPt", &rechitSubJtRawPt_, "rechitSubJtRawPt[5][3][3]/F");
+  rechitTreeAna_p->Branch("rechitSubJtRawPhi", &rechitSubJtRawPhi_, "rechitSubJtRawPhi[5][3][3]/F");
+  rechitTreeAna_p->Branch("rechitSubJtRawEta", &rechitSubJtRawEta_, "rechitSubJtRawEta[5][3][3]/F");
 
   rechitTreeAna_p->Branch("rechitJtVsPt", &rechitJtVsPt_, "rechitJtVsPt[5]/F");
   rechitTreeAna_p->Branch("rechitJtVsPhi", &rechitJtVsPhi_, "rechitJtVsPhi[5]/F");
   rechitTreeAna_p->Branch("rechitJtVsEta", &rechitJtVsEta_, "rechitJtVsEta[5]/F");
-  rechitTreeAna_p->Branch("rechitVsTau1", &rechitVsTau1_, "rechitVsTau1[5][3]/F");
-  rechitTreeAna_p->Branch("rechitVsTau2", &rechitVsTau2_, "rechitVsTau2[5][3]/F");
-  rechitTreeAna_p->Branch("rechitVsTau3", &rechitVsTau3_, "rechitVsTau3[5][3]/F");
-  rechitTreeAna_p->Branch("rechitVsTau21", &rechitVsTau21_, "rechitVsTau21[5][3]/F");
-  rechitTreeAna_p->Branch("rechitVsTau32", &rechitVsTau32_, "rechitVsTau32[5][3]/F");
+  rechitTreeAna_p->Branch("rechitVsTau", &rechitVsTau_, "rechitVsTau[5][3][3]/F");
+  rechitTreeAna_p->Branch("rechitSubJtVsPt", &rechitSubJtVsPt_, "rechitSubJtVsPt[5][3][3]/F");
+  rechitTreeAna_p->Branch("rechitSubJtVsPhi", &rechitSubJtVsPhi_, "rechitSubJtVsPhi[5][3][3]/F");
+  rechitTreeAna_p->Branch("rechitSubJtVsEta", &rechitSubJtVsEta_, "rechitSubJtVsEta[5][3][3]/F");
 
   //PF TreeAna Branches
 
   pfcandTreeAna_p->Branch("pfJtRawPt", &pfJtRawPt_, "pfJtRawPt[5]/F");
   pfcandTreeAna_p->Branch("pfJtRawPhi", &pfJtRawPhi_, "pfJtRawPhi[5]/F");
   pfcandTreeAna_p->Branch("pfJtRawEta", &pfJtRawEta_, "pfJtRawEta[5]/F");
-  pfcandTreeAna_p->Branch("pfRawTau1", &pfRawTau1_, "pfRawTau1[5][3]/F");
-  pfcandTreeAna_p->Branch("pfRawTau2", &pfRawTau2_, "pfRawTau2[5][3]/F");
-  pfcandTreeAna_p->Branch("pfRawTau3", &pfRawTau3_, "pfRawTau3[5][3]/F");
-  pfcandTreeAna_p->Branch("pfRawTau21", &pfRawTau21_, "pfRawTau21[5][3]/F");
-  pfcandTreeAna_p->Branch("pfRawTau32", &pfRawTau32_, "pfRawTau32[5][3]/F");
+  pfcandTreeAna_p->Branch("pfRawTau", &pfRawTau_, "pfRawTau[5][3][3]/F");
+  pfcandTreeAna_p->Branch("pfSubJtRawPt", &pfSubJtRawPt_, "pfSubJtRawPt[5][3][3]/F");
+  pfcandTreeAna_p->Branch("pfSubJtRawPhi", &pfSubJtRawPhi_, "pfSubJtRawPhi[5][3][3]/F");
+  pfcandTreeAna_p->Branch("pfSubJtRawEta", &pfSubJtRawEta_, "pfSubJtRawEta[5][3][3]/F");
 
   pfcandTreeAna_p->Branch("pfJtVsPt", &pfJtVsPt_, "pfJtVsPt[5]/F");
   pfcandTreeAna_p->Branch("pfJtVsPhi", &pfJtVsPhi_, "pfJtVsPhi[5]/F");
   pfcandTreeAna_p->Branch("pfJtVsEta", &pfJtVsEta_, "pfJtVsEta[5]/F");
-  pfcandTreeAna_p->Branch("pfVsTau1", &pfVsTau1_, "pfVsTau1[5][3]/F");
-  pfcandTreeAna_p->Branch("pfVsTau2", &pfVsTau2_, "pfVsTau2[5][3]/F");
-  pfcandTreeAna_p->Branch("pfVsTau3", &pfVsTau3_, "pfVsTau3[5][3]/F");
-  pfcandTreeAna_p->Branch("pfVsTau21", &pfVsTau21_, "pfVsTau21[5][3]/F");
-  pfcandTreeAna_p->Branch("pfVsTau32", &pfVsTau32_, "pfVsTau32[5][3]/F");
+  pfcandTreeAna_p->Branch("pfVsTau", &pfVsTau_, "pfVsTau[5][3][3]/F");
+  pfcandTreeAna_p->Branch("pfSubJtVsPt", &pfSubJtVsPt_, "pfSubJtVsPt[5][3][3]/F");
+  pfcandTreeAna_p->Branch("pfSubJtVsPhi", &pfSubJtVsPhi_, "pfSubJtVsPhi[5][3][3]/F");
+  pfcandTreeAna_p->Branch("pfSubJtVsEta", &pfSubJtVsEta_, "pfSubJtVsEta[5][3][3]/F");
 
   //Trk TreeAna Branches
 
   trkTreeAna_p->Branch("trkJtRawPt", &trkJtRawPt_, "trkJtRawPt[5]/F");
   trkTreeAna_p->Branch("trkJtRawPhi", &trkJtRawPhi_, "trkJtRawPhi[5]/F");
   trkTreeAna_p->Branch("trkJtRawEta", &trkJtRawEta_, "trkJtRawEta[5]/F");
-  trkTreeAna_p->Branch("trkRawTau1", &trkRawTau1_, "trkRawTau1[5][3]/F");
-  trkTreeAna_p->Branch("trkRawTau2", &trkRawTau2_, "trkRawTau2[5][3]/F");
-  trkTreeAna_p->Branch("trkRawTau3", &trkRawTau3_, "trkRawTau3[5][3]/F");
-  trkTreeAna_p->Branch("trkRawTau21", &trkRawTau21_, "trkRawTau21[5][3]/F");
-  trkTreeAna_p->Branch("trkRawTau32", &trkRawTau32_, "trkRawTau32[5][3]/F");
+  trkTreeAna_p->Branch("trkRawTau", &trkRawTau_, "trkRawTau[5][3][3]/F");
+  trkTreeAna_p->Branch("trkSubJtRawPt", &trkSubJtRawPt_, "trkSubJtRawPt[5][3][3]/F");
+  trkTreeAna_p->Branch("trkSubJtRawPhi", &trkSubJtRawPhi_, "trkSubJtRawPhi[5][3][3]/F");
+  trkTreeAna_p->Branch("trkSubJtRawEta", &trkSubJtRawEta_, "trkSubJtRawEta[5][3][3]/F");
 
   //Jet TreeAna Branches
 
@@ -187,51 +183,46 @@ void GetAnaBranches(Bool_t montecarlo = false, sampleType sType = kHIDATA)
   rechitTreeAna_p->SetBranchAddress("rechitJtRawPt", rechitJtRawPt_);
   rechitTreeAna_p->SetBranchAddress("rechitJtRawPt", rechitJtRawPhi_);
   rechitTreeAna_p->SetBranchAddress("rechitJtRawPt", rechitJtRawEta_);
-  rechitTreeAna_p->SetBranchAddress("rechitRawTau1", rechitRawTau1_);
-  rechitTreeAna_p->SetBranchAddress("rechitRawTau2", rechitRawTau2_);
-  rechitTreeAna_p->SetBranchAddress("rechitRawTau3", rechitRawTau3_);
-  rechitTreeAna_p->SetBranchAddress("rechitRawTau21", rechitRawTau21_);
-  rechitTreeAna_p->SetBranchAddress("rechitRawTau32", rechitRawTau32_);
+  rechitTreeAna_p->SetBranchAddress("rechitRawTau", rechitRawTau_);
+  rechitTreeAna_p->SetBranchAddress("rechitSubJtRawPt", rechitSubJtRawPt_);
+  rechitTreeAna_p->SetBranchAddress("rechitSubJtRawPhi", rechitSubJtRawPhi_);
+  rechitTreeAna_p->SetBranchAddress("rechitSubJtRawEta", rechitSubJtRawEta_);
 
   rechitTreeAna_p->SetBranchAddress("rechitJtVsPt", rechitJtVsPt_);
   rechitTreeAna_p->SetBranchAddress("rechitJtVsPhi", rechitJtVsPhi_);
   rechitTreeAna_p->SetBranchAddress("rechitJtVsEta", rechitJtVsEta_);
-  rechitTreeAna_p->SetBranchAddress("rechitVsTau1", rechitVsTau1_);
-  rechitTreeAna_p->SetBranchAddress("rechitVsTau2", rechitVsTau2_);
-  rechitTreeAna_p->SetBranchAddress("rechitVsTau3", rechitVsTau3_);
-  rechitTreeAna_p->SetBranchAddress("rechitVsTau21", rechitVsTau21_);
-  rechitTreeAna_p->SetBranchAddress("rechitVsTau32", rechitVsTau32_);
+  rechitTreeAna_p->SetBranchAddress("rechitVsTau", rechitVsTau_);
+  rechitTreeAna_p->SetBranchAddress("rechitSubJtVsPt", rechitSubJtVsPt_);
+  rechitTreeAna_p->SetBranchAddress("rechitSubJtVsPhi", rechitSubJtVsPhi_);
+  rechitTreeAna_p->SetBranchAddress("rechitSubJtVsEta", rechitSubJtVsEta_);
 
   //PF TreeAna Branches
 
   pfcandTreeAna_p->SetBranchAddress("pfJtRawPt", pfJtRawPt_);
   pfcandTreeAna_p->SetBranchAddress("pfJtRawPt", pfJtRawPhi_);
   pfcandTreeAna_p->SetBranchAddress("pfJtRawPt", pfJtRawEta_);
-  pfcandTreeAna_p->SetBranchAddress("pfRawTau1", pfRawTau1_);
-  pfcandTreeAna_p->SetBranchAddress("pfRawTau2", pfRawTau2_);
-  pfcandTreeAna_p->SetBranchAddress("pfRawTau3", pfRawTau3_);
-  pfcandTreeAna_p->SetBranchAddress("pfRawTau21", pfRawTau21_);
-  pfcandTreeAna_p->SetBranchAddress("pfRawTau32", pfRawTau32_);
+  pfcandTreeAna_p->SetBranchAddress("pfRawTau", pfRawTau_);
+  pfcandTreeAna_p->SetBranchAddress("pfSubJtRawPt", pfSubJtRawPt_);
+  pfcandTreeAna_p->SetBranchAddress("pfSubJtRawPhi", pfSubJtRawPhi_);
+  pfcandTreeAna_p->SetBranchAddress("pfSubJtRawEta", pfSubJtRawEta_);
 
   pfcandTreeAna_p->SetBranchAddress("pfJtVsPt", pfJtVsPt_);
   pfcandTreeAna_p->SetBranchAddress("pfJtVsPhi", pfJtVsPhi_);
   pfcandTreeAna_p->SetBranchAddress("pfJtVsEta", pfJtVsEta_);
-  pfcandTreeAna_p->SetBranchAddress("pfVsTau1", pfVsTau1_);
-  pfcandTreeAna_p->SetBranchAddress("pfVsTau2", pfVsTau2_);
-  pfcandTreeAna_p->SetBranchAddress("pfVsTau3", pfVsTau3_);
-  pfcandTreeAna_p->SetBranchAddress("pfVsTau21", pfVsTau21_);
-  pfcandTreeAna_p->SetBranchAddress("pfVsTau32", pfVsTau32_);
+  pfcandTreeAna_p->SetBranchAddress("pfVsTau", pfVsTau_);
+  pfcandTreeAna_p->SetBranchAddress("pfSubJtVsPt", pfSubJtVsPt_);
+  pfcandTreeAna_p->SetBranchAddress("pfSubJtVsPhi", pfSubJtVsPhi_);
+  pfcandTreeAna_p->SetBranchAddress("pfSubJtVsEta", pfSubJtVsEta_);
 
   //Trk TreeAna Branches
 
   trkTreeAna_p->SetBranchAddress("trkJtRawPt", trkJtRawPt_);
   trkTreeAna_p->SetBranchAddress("trkJtRawPt", trkJtRawPhi_);
   trkTreeAna_p->SetBranchAddress("trkJtRawPt", trkJtRawEta_);
-  trkTreeAna_p->SetBranchAddress("trkRawTau1", trkRawTau1_);
-  trkTreeAna_p->SetBranchAddress("trkRawTau2", trkRawTau2_);
-  trkTreeAna_p->SetBranchAddress("trkRawTau3", trkRawTau3_);
-  trkTreeAna_p->SetBranchAddress("trkRawTau21", trkRawTau21_);
-  trkTreeAna_p->SetBranchAddress("trkRawTau32", trkRawTau32_);
+  trkTreeAna_p->SetBranchAddress("trkRawTau", trkRawTau_);
+  trkTreeAna_p->SetBranchAddress("trkSubJtRawPt", trkSubJtRawPt_);
+  trkTreeAna_p->SetBranchAddress("trkSubJtRawPhi", trkSubJtRawPhi_);
+  trkTreeAna_p->SetBranchAddress("trkSubJtRawEta", trkSubJtRawEta_);
 
   //Jet TreeAna Branches
 
@@ -321,36 +312,32 @@ void InitJtVar(){
     trkJtRawEta_[iter] = -10;
 
     for(Int_t iter2 = 0; iter2 < 3; iter2++){
-      rechitRawTau1_[iter][iter2] = -10;
-      rechitRawTau2_[iter][iter2] = -10;
-      rechitRawTau3_[iter][iter2] = -10;
-      rechitRawTau21_[iter][iter2] = -10;
-      rechitRawTau32_[iter][iter2] = -10;
-
-      rechitVsTau1_[iter][iter2] = -10;
-      rechitVsTau2_[iter][iter2] = -10;
-      rechitVsTau3_[iter][iter2] = -10;
-      rechitVsTau21_[iter][iter2] = -10;
-      rechitVsTau32_[iter][iter2] = -10;
-
-      pfRawTau1_[iter][iter2] = -10;
-      pfRawTau2_[iter][iter2] = -10;
-      pfRawTau3_[iter][iter2] = -10;
-      pfRawTau21_[iter][iter2] = -10;
-      pfRawTau32_[iter][iter2] = -10;      
-
-      pfVsTau1_[iter][iter2] = -10;
-      pfVsTau2_[iter][iter2] = -10;
-      pfVsTau3_[iter][iter2] = -10;
-      pfVsTau21_[iter][iter2] = -10;
-      pfVsTau32_[iter][iter2] = -10;      
-
-      trkRawTau1_[iter][iter2] = -10;
-      trkRawTau2_[iter][iter2] = -10;
-      trkRawTau3_[iter][iter2] = -10;
-      trkRawTau21_[iter][iter2] = -10;
-      trkRawTau32_[iter][iter2] = -10;      
-
+      for(Int_t iter3 = 0; iter3 < 3; iter3++){
+	rechitRawTau_[iter][iter2][iter3] = -10;
+	rechitSubJtRawPt_[iter][iter2][iter3] = -10;
+	rechitSubJtRawPhi_[iter][iter2][iter3] = -10;
+	rechitSubJtRawEta_[iter][iter2][iter3] = -10;
+	
+	rechitVsTau_[iter][iter2][iter3] = -10;
+	rechitSubJtVsPt_[iter][iter2][iter3] = -10;
+	rechitSubJtVsPhi_[iter][iter2][iter3] = -10;
+	rechitSubJtVsEta_[iter][iter2][iter3] = -10;
+	
+	pfRawTau_[iter][iter2][iter3] = -10;
+	pfSubJtRawPt_[iter][iter2][iter3] = -10;
+	pfSubJtRawPhi_[iter][iter2][iter3] = -10;
+	pfSubJtRawEta_[iter][iter2][iter3] = -10;
+	
+	pfVsTau_[iter][iter2][iter3] = -10;
+	pfSubJtVsPt_[iter][iter2][iter3] = -10;
+	pfSubJtVsPhi_[iter][iter2][iter3] = -10;
+	pfSubJtVsEta_[iter][iter2][iter3] = -10;
+	
+	trkRawTau_[iter][iter2][iter3] = -10;
+	trkSubJtRawPt_[iter][iter2][iter3] = -10;
+	trkSubJtRawPhi_[iter][iter2][iter3] = -10;
+	trkSubJtRawEta_[iter][iter2][iter3] = -10;
+      }
     }
 
   }
