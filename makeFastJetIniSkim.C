@@ -328,6 +328,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     for(Int_t rechitIter = 0; rechitIter < c->tower.n; rechitIter++){
       if(TMath::Abs(c->tower.eta[rechitIter]) < 2.3){
 	rechitPt_[nRechits_] = c->tower.et[rechitIter];
+	rechitVsPt_[nRechits_] = c->tower.vsPt[rechitIter];
 	rechitPhi_[nRechits_] = c->tower.phi[rechitIter];
 	rechitEta_[nRechits_] = c->tower.eta[rechitIter];
 	nRechits_++;
@@ -341,6 +342,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     for(Int_t pfIter = 0; pfIter < c->pf.nPFpart; pfIter++){
       if(TMath::Abs(c->pf.pfEta[pfIter]) < 2.3){
 	pfPt_[nPF_] = c->pf.pfPt[pfIter];
+	pfVsPt_[nPF_] = c->pf.pfVsPt[pfIter];
 	pfPhi_[nPF_] = c->pf.pfPhi[pfIter];
 	pfEta_[nPF_] = c->pf.pfEta[pfIter];
 	nPF_++;
