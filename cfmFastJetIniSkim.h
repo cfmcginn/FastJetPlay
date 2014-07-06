@@ -304,4 +304,21 @@ void GetFastJetIniSkim(TFile* iniSkimFile_p, sampleType sType = kHIDATA)
 }
 
 
+void InitIniJtVar()
+{
+  for(Int_t iter = 0; iter < 5; iter++){
+    for(Int_t iter2 = 0; iter2 < 2; iter2++){
+      AlgIniJtPt_[iter][iter2] = -10;
+      AlgIniJtPhi_[iter][iter2] = -10;
+      AlgIniJtEta_[iter][iter2] = -10;
+      AlgIniJtRawPt_[iter][iter2] = -10;
+      AlgIniRefPt_[iter][iter2] = -10;
+      AlgIniRefPhi_[iter][iter2] = -10;
+      AlgIniRefEta_[iter][iter2] = -10;
+    }
+  }
+
+}
+
+
 #endif

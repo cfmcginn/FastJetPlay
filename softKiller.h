@@ -36,7 +36,6 @@ void InitSKGrid()
   for(Int_t iter = 0; iter < etaBins*phiBins; iter++){
     etaPhiSKGrid_PartPt[iter] = 0;
   }
-  std::cout << "Init SK Grid" << std::endl;
   return;
 }
 
@@ -83,8 +82,8 @@ void testSKGrids()
 Float_t getSKMedianPt()
 {
   std::sort(etaPhiSKGrid_PartPt, etaPhiSKGrid_PartPt + etaBins*phiBins);
-  if((etaBins*phiBins)%2 == 0) return etaPhiSKGrid_PartPt[(etaBins*phiBins)/2] - .0001;
-  else return etaPhiSKGrid_PartPt[(etaBins*phiBins + 1)/2] - .0001;
+  if((etaBins*phiBins)%2 == 0) return etaPhiSKGrid_PartPt[(etaBins*phiBins)/2 - 1] + .0001;
+  else return etaPhiSKGrid_PartPt[(etaBins*phiBins - 1)/2] + .0001;
 }
 
 
@@ -94,3 +93,15 @@ Float_t getSKPtCut(Int_t nPart, Float_t partPt[], Float_t partPhi[], Float_t par
   FillSKGrid(nPart, partPt, partPhi, partEta);
   return getSKMedianPt();
 }
+
+
+/*
+Use:
+  InitSKEtaGrid;
+  InitSKPhiGrid;
+  for(Int_t iter = 0; iter < nEvents; iter++){
+    // Get entries
+    InitSKGrid;
+    eventSKPtCut = getSKPtCut(nPart, partPt, partPhi, partEta);
+  }
+*/
