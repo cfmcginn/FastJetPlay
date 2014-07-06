@@ -16,8 +16,9 @@
 #include <fstream>
 
 #include "TComplex.h"
-
 #include "TLorentzVector.h"
+
+#include "softKiller.h"
 
 const Float_t lJtPtCut = 120.;
 const Float_t sLJtPtCut = 50.;
@@ -82,9 +83,8 @@ Bool_t passesDijet(Jets jtCollection, Int_t &leadJtIndex, Int_t &subLeadJtIndex,
 int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_CFMSKIM.root", Int_t num = 0)
 {
   //Define MC or Data
-  Bool_t montecarlo = false;
-  if(sType == kPPMC || sType == kPAMC || sType == kHIMC)
-    montecarlo = true;
+  Bool_t montecarlo = isMonteCarlo(sType);
+  Bool_t hi = isHI(sType);
 
   std::cout << sType << std::endl;
   std::cout << montecarlo << std::endl;
@@ -117,7 +117,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   TFile *outFile = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
 
-  InitFastJetIniSkim(montecarlo, sType);
+  InitFastJetIniSkim(sType);
 
   HiForest *c = new HiForest(listOfFiles[0].data(), "Forest", cType, montecarlo);
 
@@ -131,13 +131,13 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   c->hasPFTree = true;
   c->hasTrackTree = true;
 
-  if(sType == kHIDATA || sType == kHIMC){
+  if(hi){
     c->hasAkPu3JetTree = true;
     c->hasAkPu3CaloJetTree = true;
     c->hasAkVs3CaloJetTree = true;
     c->hasAkVs3PFJetTree = true;
   }
-  else if(sType == kPPDATA || sType == kPPMC){
+  else{
     c->hasAk3CaloJetTree = true;
   }
 
@@ -158,7 +158,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   Long64_t nentries;
 
-  if(sType == kPPDATA || sType == kPPMC)
+  if(!hi)
     nentries = c->ak3CaloJetTree->GetEntries();
   else
     nentries = c->GetEntries();
@@ -174,7 +174,12 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Cuts, Jet pt, eta: " << lJtPtCut << ", " << jtEtaCut << std::endl; 
 
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+  InitEtaSKGrid();
+  InitPhiSKGrid();
+
+  std::cout << "Grid Init" << std::endl;
+
+  for(Long64_t jentry = 0; jentry < 1000; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
@@ -196,14 +201,14 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
     Jets AlgIniJtCollection[5];
 
-    if(sType == kHIDATA || sType == kHIMC){
+    if(hi){
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->akVs3Calo;
 
       AlgIniJtCollection[3] = c->akPu3PF;
       AlgIniJtCollection[4] = c->akVs3PF;
     }
-    else if(sType == kPPDATA || sType == kPPMC){
+    else{
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->ak3Calo;
     }
@@ -281,7 +286,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(kHIMC) pthatIni_ = c->akPu3PF.pthat;
     else if(kPPMC) pthatIni_ = c->ak3Calo.pthat;
 
-    if(sType == kHIDATA || sType == kHIMC){
+    if(hi){
       hiEvtPlaneIni_ = c->evt.hiEvtPlanes[21];                                                  
       TComplex cn1((c->pf.sumpt[0])*(c->pf.vn[2][0]), c->pf.psin[2][0], true);                    
       TComplex cn2((c->pf.sumpt[14])*(c->pf.vn[2][14]), c->pf.psin[2][14], true);                
@@ -293,7 +298,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     evtIni_ = c->evt.evt;
     lumiIni_ = c->evt.lumi;
 
-    if(sType == kHIDATA || sType == kHIMC)
+    if(hi)
       hiBinIni_ = c->evt.hiBin;
 
     //Iterate over jets
@@ -378,6 +383,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       nTrk_++;
     }
 
+    trkSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
+    rechitSKPtCut_ = -10;
+    pfSKPtCut_ = -10;
+
     rechitTreeIni_p->Fill();
     pfcandTreeIni_p->Fill();
     trkTreeIni_p->Fill();
@@ -405,10 +414,9 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   trkTreeIni_p->Write("", TObject::kOverwrite);
   jetTreeIni_p->Write("", TObject::kOverwrite);
 
-  outFile->Close();
-
   delete c;
-  CleanupFastJetIniSkim();
+  CleanupFastJetIniSkim(sType);
+  outFile->Close();
   delete outFile;
 
   printf("Done.\n");
