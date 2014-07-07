@@ -132,35 +132,35 @@ void SetIniBranches(sampleType sType = kHIDATA)
 
   rechitTreeIni_p->Branch("nRechits", &nRechits_, "nRechits/I");
   rechitTreeIni_p->Branch("rechitSKPtCut", &rechitSKPtCut_, "rechitSKPtCut/F");
-  rechitTreeIni_p->Branch("rechitPt", &rechitPt_, "rechitPt[nRechits]/F");
-  rechitTreeIni_p->Branch("rechitVsPt", &rechitVsPt_, "rechitVsPt[nRechits]/F");
-  rechitTreeIni_p->Branch("rechitPhi", &rechitPhi_, "rechitPhi[nRechits]/F");
-  rechitTreeIni_p->Branch("rechitEta", &rechitEta_, "rechitEta[nRechits]/F");
+  rechitTreeIni_p->Branch("rechitPt", rechitPt_, "rechitPt[nRechits]/F");
+  rechitTreeIni_p->Branch("rechitVsPt", rechitVsPt_, "rechitVsPt[nRechits]/F");
+  rechitTreeIni_p->Branch("rechitPhi", rechitPhi_, "rechitPhi[nRechits]/F");
+  rechitTreeIni_p->Branch("rechitEta", rechitEta_, "rechitEta[nRechits]/F");
 
   //PF TreeIni Branches
 
   pfcandTreeIni_p->Branch("nPF", &nPF_, "nPF/I");
   pfcandTreeIni_p->Branch("pfSKPtCut", &pfSKPtCut_, "pfSKPtCut/F");
-  pfcandTreeIni_p->Branch("pfPt", &pfPt_, "pfPt[nPF]/F");
-  pfcandTreeIni_p->Branch("pfVsPt", &pfVsPt_, "pfVsPt[nPF]/F");
-  pfcandTreeIni_p->Branch("pfPhi", &pfPhi_, "pfPhi[nPF]/F");
-  pfcandTreeIni_p->Branch("pfEta", &pfEta_, "pfEta[nPF]/F");
+  pfcandTreeIni_p->Branch("pfPt", pfPt_, "pfPt[nPF]/F");
+  pfcandTreeIni_p->Branch("pfVsPt", pfVsPt_, "pfVsPt[nPF]/F");
+  pfcandTreeIni_p->Branch("pfPhi", pfPhi_, "pfPhi[nPF]/F");
+  pfcandTreeIni_p->Branch("pfEta", pfEta_, "pfEta[nPF]/F");
 
   //Trk TreeIni Branches
 
   trkTreeIni_p->Branch("nTrk", &nTrk_, "nTrk/I");
   trkTreeIni_p->Branch("trkSKPtCut", &trkSKPtCut_, "trkSKPtCut/F");
-  trkTreeIni_p->Branch("trkPt", &trkPt_, "trkPt[nTrk]/F");
-  trkTreeIni_p->Branch("trkPhi", &trkPhi_, "trkPhi[nTrk]/F");
-  trkTreeIni_p->Branch("trkEta", &trkEta_, "trkEta[nTrk]/F");
+  trkTreeIni_p->Branch("trkPt", trkPt_, "trkPt[nTrk]/F");
+  trkTreeIni_p->Branch("trkPhi", trkPhi_, "trkPhi[nTrk]/F");
+  trkTreeIni_p->Branch("trkEta", trkEta_, "trkEta[nTrk]/F");
 
   //Gen TreeIni Branches
 
   if(montecarlo){
     genTreeIni_p->Branch("nGen", &nGen_, "nGen/I");
-    genTreeIni_p->Branch("genPt", &genPt_, "genPt[nGen]/F");
-    genTreeIni_p->Branch("genPhi", &genPhi_, "genPhi[nGen]/F");
-    genTreeIni_p->Branch("genEta", &genEta_, "genEta[nGen]/F");
+    genTreeIni_p->Branch("genPt", genPt_, "genPt[nGen]/F");
+    genTreeIni_p->Branch("genPhi", genPhi_, "genPhi[nGen]/F");
+    genTreeIni_p->Branch("genEta", genEta_, "genEta[nGen]/F");
   }    
 
   //Jet TreeIni Branches
@@ -181,15 +181,15 @@ void SetIniBranches(sampleType sType = kHIDATA)
     jetTreeIni_p->Branch("psinIni", &psinIni_, "psinIni/F");
   }    
 
-  jetTreeIni_p->Branch("AlgIniJtPt", &AlgIniJtPt_, "AlgIniJtPt[5][2]/F");
-  jetTreeIni_p->Branch("AlgIniJtPhi", &AlgIniJtPhi_, "AlgIniJtPhi[5][2]/F");
-  jetTreeIni_p->Branch("AlgIniJtEta", &AlgIniJtEta_, "AlgIniJtEta[5][2]/F");
-  jetTreeIni_p->Branch("AlgIniJtRawPt", &AlgIniJtRawPt_, "AlgIniJtRawPt[5][2]/F");
+  jetTreeIni_p->Branch("AlgIniJtPt", AlgIniJtPt_, "AlgIniJtPt[5][2]/F");
+  jetTreeIni_p->Branch("AlgIniJtPhi", AlgIniJtPhi_, "AlgIniJtPhi[5][2]/F");
+  jetTreeIni_p->Branch("AlgIniJtEta", AlgIniJtEta_, "AlgIniJtEta[5][2]/F");
+  jetTreeIni_p->Branch("AlgIniJtRawPt", AlgIniJtRawPt_, "AlgIniJtRawPt[5][2]/F");
 
   if(montecarlo){
-    jetTreeIni_p->Branch("AlgIniRefPt", &AlgIniRefPt_, "AlgIniRefPt[5][2]/F");
-    jetTreeIni_p->Branch("AlgIniRefPhi", &AlgIniRefPhi_, "AlgIniRefPhi[5][2]/F");
-    jetTreeIni_p->Branch("AlgIniRefEta", &AlgIniRefEta_, "AlgIniRefEta[5][2]/F");
+    jetTreeIni_p->Branch("AlgIniRefPt", AlgIniRefPt_, "AlgIniRefPt[5][2]/F");
+    jetTreeIni_p->Branch("AlgIniRefPhi", AlgIniRefPhi_, "AlgIniRefPhi[5][2]/F");
+    jetTreeIni_p->Branch("AlgIniRefEta", AlgIniRefEta_, "AlgIniRefEta[5][2]/F");
   }    
 }
 
