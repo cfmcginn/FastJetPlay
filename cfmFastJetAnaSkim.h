@@ -105,13 +105,17 @@ Float_t pthat_;
 Float_t hiEvtPlane_;
 Float_t psin_;
 
-Float_t AlgJtPt_[5][2];
-Float_t AlgJtPhi_[5][2];
-Float_t AlgJtEta_[5][2];
-Float_t AlgJtRawPt_[5][2];
-Float_t AlgRefPt_[5][2];
-Float_t AlgRefPhi_[5][2];
-Float_t AlgRefEta_[5][2];
+Float_t AlgJtPt_[5][5];
+Float_t AlgJtPhi_[5][5];
+Float_t AlgJtEta_[5][5];
+Float_t AlgJtRawPt_[5][5];
+
+Float_t AlgIsQuark_[5][5];
+Float_t AlgIsGluon_[5][5];
+
+Float_t AlgRefPt_[5][5];
+Float_t AlgRefPhi_[5][5];
+Float_t AlgRefEta_[5][5];
 
 
 void SetAnaBranches(sampleType sType = kHIDATA)
@@ -198,15 +202,18 @@ void SetAnaBranches(sampleType sType = kHIDATA)
     jetTreeAna_p->Branch("psin", &psin_, "psin/F");
   }    
 
-  jetTreeAna_p->Branch("AlgJtPt", AlgJtPt_, "AlgJtPt[5][2]/F");
-  jetTreeAna_p->Branch("AlgJtPhi", AlgJtPhi_, "AlgJtPhi[5][2]/F");
-  jetTreeAna_p->Branch("AlgJtEta", AlgJtEta_, "AlgJtEta[5][2]/F");
-  jetTreeAna_p->Branch("AlgJtRawPt", AlgJtRawPt_, "AlgJtRawPt[5][2]/F");
+  jetTreeAna_p->Branch("AlgJtPt", AlgJtPt_, "AlgJtPt[5][5]/F");
+  jetTreeAna_p->Branch("AlgJtPhi", AlgJtPhi_, "AlgJtPhi[5][5]/F");
+  jetTreeAna_p->Branch("AlgJtEta", AlgJtEta_, "AlgJtEta[5][5]/F");
+  jetTreeAna_p->Branch("AlgJtRawPt", AlgJtRawPt_, "AlgJtRawPt[5][5]/F");
 
   if(montecarlo){
-    jetTreeAna_p->Branch("AlgRefPt", AlgRefPt_, "AlgRefPt[5][2]/F");
-    jetTreeAna_p->Branch("AlgRefPhi", AlgRefPhi_, "AlgRefPhi[5][2]/F");
-    jetTreeAna_p->Branch("AlgRefEta", AlgRefEta_, "AlgRefEta[5][2]/F");
+    jetTreeAna_p->Branch("AlgIsQuark", AlgIsQuark_, "AlgIsQuark[5][5]/O");
+    jetTreeAna_p->Branch("AlgIsGluon", AlgIsGluon_, "AlgIsGluon[5][5]/O");
+
+    jetTreeAna_p->Branch("AlgRefPt", AlgRefPt_, "AlgRefPt[5][5]/F");
+    jetTreeAna_p->Branch("AlgRefPhi", AlgRefPhi_, "AlgRefPhi[5][5]/F");
+    jetTreeAna_p->Branch("AlgRefEta", AlgRefEta_, "AlgRefEta[5][5]/F");
   }    
 }
 
@@ -300,6 +307,9 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   jetTreeAna_p->SetBranchAddress("AlgJtRawPt", AlgJtRawPt_);
 
   if(montecarlo){
+    jetTreeAna_p->SetBranchAddress("AlgIsQuark", AlgIsQuark_);
+    jetTreeAna_p->SetBranchAddress("AlgIsGluon", AlgIsGluon_);
+
     jetTreeAna_p->SetBranchAddress("AlgRefPt", AlgRefPt_);
     jetTreeAna_p->SetBranchAddress("AlgRefPhi", AlgRefPhi_);
     jetTreeAna_p->SetBranchAddress("AlgRefEta", AlgRefEta_);

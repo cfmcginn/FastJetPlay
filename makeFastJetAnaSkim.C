@@ -167,7 +167,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   std::cout << nentries << std::endl;
 
-  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
     if(jentry%1000 == 0)
       std::cout << jentry << std::endl;
 
@@ -201,13 +201,16 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     for(Int_t algIter = 0; algIter < 5; algIter++){
       if(!montecarlo && algIter == 2) continue;
 
-      for(Int_t jtIter = 0; jtIter < 2; jtIter++){
+      for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	AlgJtPt_[algIter][jtIter] = AlgIniJtPt_[algIter][jtIter];
 	AlgJtPhi_[algIter][jtIter] = AlgIniJtPhi_[algIter][jtIter];
 	AlgJtEta_[algIter][jtIter] = AlgIniJtEta_[algIter][jtIter];
 	AlgJtRawPt_[algIter][jtIter] = AlgIniJtRawPt_[algIter][jtIter];
 
 	if(montecarlo){
+	  AlgIsQuark_[algIter][jtIter] = AlgIniIsQuark_[algIter][jtIter];
+	  AlgIsGluon_[algIter][jtIter] = AlgIniIsGluon_[algIter][jtIter];
+
 	  AlgRefPt_[algIter][jtIter] = AlgIniRefPt_[algIter][jtIter];
 	  AlgRefPhi_[algIter][jtIter] = AlgIniRefPhi_[algIter][jtIter];
 	  AlgRefEta_[algIter][jtIter] = AlgIniRefEta_[algIter][jtIter];
@@ -225,10 +228,10 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   pfcandTreeAna_p->Write("", TObject::kOverwrite);
   trkTreeAna_p->Write("", TObject::kOverwrite);
   jetTreeAna_p->Write("", TObject::kOverwrite);
-  outFile_p->Close();
-  delete outFile_p;
 
   CleanupFastJetAnaSkim();
+  outFile_p->Close();
+  delete outFile_p;
 
   iniSkim_p->Close();
   delete iniSkim_p;
