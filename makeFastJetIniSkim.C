@@ -26,7 +26,7 @@ const Float_t jtEtaCut = 2.0; // Default Max at 2.4 to avoid transition junk, ot
 
 collisionType getCType(sampleType sType);
 
-Bool_t passesDijet(Jets jtCollection, Int_t &leadJtIndex, Int_t &subLeadJtIndex, Int_t &leadJtCut, Int_t &subLeadJtCut)
+Bool_t passesDijet(Jets jtCollection, Int_t jtIndex[5], Int_t &leadJtCut, Int_t &subLeadJtCut)
 {
   if(jtCollection.nref == 0){
     leadJtCut++;
@@ -37,33 +37,43 @@ Bool_t passesDijet(Jets jtCollection, Int_t &leadJtIndex, Int_t &subLeadJtIndex,
     return false;
   }
 
+  Int_t nIndex = 2;
+
   for(Int_t jtEntry = 0; jtEntry < jtCollection.nref; jtEntry++){
-    if(leadJtIndex < 0){
+    if(jtCollection.jtpt[jtEntry] < sLJtPtCut) break;
+
+    if(jtIndex[0] < 0){
       if(jtCollection.jtpt[jtEntry] > lJtPtCut){
 	if(TMath::Abs(jtCollection.jteta[jtEntry]) < jtEtaCut)
-	  leadJtIndex = jtEntry;
+	  jtIndex[0] = jtEntry;
       }
       else{
 	leadJtCut++;
 	return false;
       }
     }
-    else if(subLeadJtIndex < 0){
+    else if(jtIndex[1] < 0){
       if(jtCollection.jtpt[jtEntry] > sLJtPtCut){
 	if(TMath::Abs(jtCollection.jteta[jtEntry]) < jtEtaCut)
-	  subLeadJtIndex = jtEntry;
+	  jtIndex[1] = jtEntry;
       }
       else{
 	subLeadJtCut++;
 	return false;
       }
     }
+    else if(jtIndex[nIndex] < 0 && nIndex < 5){
+      if(jtCollection.jtpt[jtEntry] > sLJtPtCut && TMath::Abs(jtCollection.jteta[jtEntry]) < jtEtaCut){
+	 jtIndex[nIndex] = jtEntry;
+	 nIndex++;
+      }
+    }
     else
       return true;
   }
 
-  if(leadJtIndex >= 0){
-    if(subLeadJtIndex >= 0)
+  if(jtIndex[0] >= 0){
+    if(jtIndex[1] >= 0)
       return true;
     else{
       subLeadJtCut++;
@@ -80,7 +90,7 @@ Bool_t passesDijet(Jets jtCollection, Int_t &leadJtIndex, Int_t &subLeadJtIndex,
 }
 
 
-int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_CFMSKIM.root", Int_t num = 0)
+int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_CFMSKIM.root", Int_t num = 0, Bool_t isGen = false)
 {
   //Define MC or Data
   Bool_t montecarlo = isMonteCarlo(sType);
@@ -117,7 +127,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   TFile *outFile = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
 
-  InitFastJetIniSkim(sType);
+  InitFastJetIniSkim(sType, isGen);
 
   HiForest *c = new HiForest(listOfFiles[0].data(), "Forest", cType, montecarlo);
 
@@ -127,9 +137,12 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   c->hasSkimTree = true;
   c->hasEvtTree = true;
-  c->hasTowerTree = true;
-  c->hasPFTree = true;
-  c->hasTrackTree = true;
+
+  if(!isGen){
+    c->hasTowerTree = true;
+    c->hasPFTree = true;
+    c->hasTrackTree = true;
+  }    
 
   if(hi){
     c->hasAkPu3JetTree = true;
@@ -144,7 +157,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   std::cout << "TreeTruth: " << c->hasAk3CaloJetTree << std::endl;
 
   Float_t meanVz = 0;
-
+  
   if(sType == kHIMC){
     c->hasGenParticleTree = true;
     //mean mc .16458, mean data -.337
@@ -155,11 +168,11 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     //MC vz = .4205,  Data vz = .6953
     meanVz = .4205 - .6953;
   }
-
+  
   Long64_t nentries;
 
   if(!hi)
-    nentries = c->ak3CaloJetTree->GetEntries();
+    nentries = c->skimTree->GetEntries();
   else
     nentries = c->GetEntries();
 
@@ -204,7 +217,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(hi){
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->akVs3Calo;
-
+      
       AlgIniJtCollection[3] = c->akPu3PF;
       AlgIniJtCollection[4] = c->akVs3PF;
     }
@@ -212,20 +225,22 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->ak3Calo;
     }
+    
 
     Bool_t algPasses[5] = {false, false, false, false, false};
 
-    Int_t jtIndex[5][2];
+    Int_t jtIndex[5][5];
     
     for(Int_t algIter = 0; algIter < 5; algIter++){
-      for(Int_t jtIter = 0; jtIter < 2; jtIter++){
+      for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	jtIndex[algIter][jtIter] = -1;
       }
     }
 
+
     for(Int_t algIter = 0; algIter < 5; algIter++){
       if(algIter != 2)
-	algPasses[algIter] = passesDijet(AlgIniJtCollection[algIter], jtIndex[algIter][0], jtIndex[algIter][1], AlgIniLeadJtPtCut[algIter], AlgIniSubLeadJtPtCut[algIter]);
+	algPasses[algIter] = passesDijet(AlgIniJtCollection[algIter], jtIndex[algIter], AlgIniLeadJtPtCut[algIter], AlgIniSubLeadJtPtCut[algIter]);
     }
 
     //truth, doesn't work w/ getLeadJt because truth doesnt get its own tree
@@ -240,7 +255,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	algPasses[2] = false;
       }
       else{
+	Int_t nIndex = 2;
 	for(Int_t jtEntry = 0; jtEntry < c->akPu3PF.ngen; jtEntry++){
+	  if(c->akPu3PF.genpt[jtEntry] < sLJtPtCut) break;
+
 	  if(jtIndex[2][0] < 0){
 	    if(c->akPu3PF.genpt[jtEntry] > lJtPtCut){
 	      if(TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut)
@@ -259,6 +277,12 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	    else{
 	      algPasses[2] = false;
 	      break;
+	    }
+	  }
+	  else if(jtIndex[2][nIndex] < 0 && nIndex < 5){
+	    if(c->akPu3PF.genpt[jtEntry] > sLJtPtCut && TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut){
+	      jtIndex[2][nIndex] = true;
+	      nIndex++;
 	    }
 	  }
 	  else{
@@ -308,18 +332,28 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     Int_t algMax = 5;
 
     for(Int_t algIter = 0; algIter < algMax; algIter++){
-      if(algIter == 2 && !montecarlo)
-	continue;
-
-      for(Int_t jtIter = 0; jtIter < 2; jtIter++){
-	if(jtIndex[algIter][jtIter] >= 0){
-	  AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].jtpt[jtIndex[algIter][jtIter]];
-	  AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
-	  AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
-
-	  AlgIniJtRawPt_[algIter][jtIter] = AlgIniJtCollection[algIter].rawpt[jtIndex[algIter][jtIter]];
-
-	  if(montecarlo){
+      if(algIter == 2){
+	if(!montecarlo)
+	  continue;
+	else{
+	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	    if(jtIndex[algIter][jtIter] >= 0){
+	      AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].genpt[jtIndex[algIter][jtIter]];
+	      AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].genphi[jtIndex[algIter][jtIter]];
+	      AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].geneta[jtIndex[algIter][jtIter]];
+	    }
+	  }
+	}
+      }
+      else{
+	for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	  if(jtIndex[algIter][jtIter] >= 0){
+	    AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].jtpt[jtIndex[algIter][jtIter]];
+	    AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
+	    AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
+	    
+	    AlgIniJtRawPt_[algIter][jtIter] = AlgIniJtCollection[algIter].rawpt[jtIndex[algIter][jtIter]];
+	    
 	    AlgIniRefPt_[algIter][jtIter] = AlgIniJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
 	    AlgIniRefPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
 	    AlgIniRefEta_[algIter][jtIter] = AlgIniJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
@@ -327,71 +361,98 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	}
       }
     }
+    
+    if(!isGen){
 
-    //Iterate over rechits
+      //Iterate over rechits
+      
+      nRechits_ = 0;
 
-    nRechits_ = 0;
+      for(Int_t rechitIter = 0; rechitIter < c->tower.n; rechitIter++){
+	if(TMath::Abs(c->tower.eta[rechitIter]) < 2.3){
+	  rechitPt_[nRechits_] = c->tower.et[rechitIter];
+	  rechitVsPt_[nRechits_] = c->tower.vsPt[rechitIter];
+	  rechitPhi_[nRechits_] = c->tower.phi[rechitIter];
+	  rechitEta_[nRechits_] = c->tower.eta[rechitIter];
+	  nRechits_++;
+	}
+      }
+      
+      //Iterate over pf
+      
+      nPF_ = 0;
+      
+      for(Int_t pfIter = 0; pfIter < c->pf.nPFpart; pfIter++){
+	if(TMath::Abs(c->pf.pfEta[pfIter]) < 2.3){
+	  pfPt_[nPF_] = c->pf.pfPt[pfIter];
+	  pfVsPt_[nPF_] = c->pf.pfVsPt[pfIter];
+	  pfPhi_[nPF_] = c->pf.pfPhi[pfIter];
+	  pfEta_[nPF_] = c->pf.pfEta[pfIter];
+	  nPF_++;
+	}
+      }
+      
+      //Iterate over tracks
 
-    for(Int_t rechitIter = 0; rechitIter < c->tower.n; rechitIter++){
-      if(TMath::Abs(c->tower.eta[rechitIter]) < 2.3){
-	rechitPt_[nRechits_] = c->tower.et[rechitIter];
-	rechitVsPt_[nRechits_] = c->tower.vsPt[rechitIter];
-	rechitPhi_[nRechits_] = c->tower.phi[rechitIter];
-	rechitEta_[nRechits_] = c->tower.eta[rechitIter];
-	nRechits_++;
+      nTrk_ = 0;
+      
+      for(Int_t trkIter = 0; trkIter < c->track.nTrk; trkIter++){
+	if(TMath::Abs(c->track.trkEta[trkIter]) > 2.4) continue;
+	
+	if(c->track.trkPt[trkIter] <= 0.5) continue;
+	
+	if(!c->track.highPurity[trkIter]) continue;
+	
+	if(TMath::Abs(c->track.trkDz1[trkIter]/c->track.trkDzError1[trkIter]) > 3) continue;
+	
+	if(TMath::Abs(c->track.trkDxy1[trkIter]/c->track.trkDxyError1[trkIter]) > 3) continue;
+	
+	if(c->track.trkPtError[trkIter]/c->track.trkPt[trkIter] > 0.1) continue;
+	
+	trkPt_[nTrk_] = c->track.trkPt[trkIter];
+	trkPhi_[nTrk_] = c->track.trkPhi[trkIter];
+	trkEta_[nTrk_] = c->track.trkEta[trkIter];
+	nTrk_++;
+
+	if(nTrk_ > maxTracks - 1){
+	  printf("ERROR: Trk arrays not large enough.\n");
+	  return(1);
+	}
       }
     }
+    if(montecarlo){
+      nGen_ = 0;
+      
+      for(Int_t genIter = 0; genIter < c->genparticle.mult; genIter++){
+	if(TMath::Abs(c->genparticle.eta[genIter]) > 2.4) continue;
+	
+	genPt_[nGen_] = c->genparticle.pt[genIter];
+	genPhi_[nGen_] = c->genparticle.phi[genIter];
+	genEta_[nGen_] = c->genparticle.eta[genIter];
+	
+	nGen_++;
 
-    //Iterate over pf
-
-    nPF_ = 0;
-
-    for(Int_t pfIter = 0; pfIter < c->pf.nPFpart; pfIter++){
-      if(TMath::Abs(c->pf.pfEta[pfIter]) < 2.3){
-	pfPt_[nPF_] = c->pf.pfPt[pfIter];
-	pfVsPt_[nPF_] = c->pf.pfVsPt[pfIter];
-	pfPhi_[nPF_] = c->pf.pfPhi[pfIter];
-	pfEta_[nPF_] = c->pf.pfEta[pfIter];
-	nPF_++;
+	if(nGen_ > maxEntrySim - 1){
+	  printf("ERROR: Gen arrays not large enough.\n");
+	  return(1);
+	}
       }
     }
-
-    //Iterate over tracks
-
-    nTrk_ = 0;
-
-    for(Int_t trkIter = 0; trkIter < c->track.nTrk; trkIter++){
-      if(TMath::Abs(c->track.trkEta[trkIter]) > 2.4)
-	continue;
-
-      if(c->track.trkPt[trkIter] <= 0.5)
-	continue;
-
-      if(!c->track.highPurity[trkIter])
-	continue;
-
-      if(TMath::Abs(c->track.trkDz1[trkIter]/c->track.trkDzError1[trkIter]) > 3)
-	continue;
-
-      if(TMath::Abs(c->track.trkDxy1[trkIter]/c->track.trkDxyError1[trkIter]) > 3)
-	continue;
-
-      if(c->track.trkPtError[trkIter]/c->track.trkPt[trkIter] > 0.1)
-	continue;
-
-      trkPt_[nTrk_] = c->track.trkPt[trkIter];
-      trkPhi_[nTrk_] = c->track.trkPhi[trkIter];
-      trkEta_[nTrk_] = c->track.trkEta[trkIter];
-      nTrk_++;
+ 
+    if(!isGen){
+      trkSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
+      rechitSKPtCut_ = -10;
+      pfSKPtCut_ = getSKPtCut(nPF_, pfPt_, pfPhi_, pfEta_);
     }
+    if(montecarlo) genSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
+    
+    if(!isGen){
+      rechitTreeIni_p->Fill();
+      pfcandTreeIni_p->Fill();
+      trkTreeIni_p->Fill();
+    }    
+    if(montecarlo) genTreeIni_p->Fill();
 
-    trkSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
-    rechitSKPtCut_ = -10;
-    pfSKPtCut_ = getSKPtCut(nPF_, pfPt_, pfPhi_, pfEta_);
-
-    rechitTreeIni_p->Fill();
-    pfcandTreeIni_p->Fill();
-    trkTreeIni_p->Fill();
     jetTreeIni_p->Fill();
   }
 
@@ -411,13 +472,16 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   outFile->cd();
 
-  rechitTreeIni_p->Write("", TObject::kOverwrite);
-  pfcandTreeIni_p->Write("", TObject::kOverwrite);
-  trkTreeIni_p->Write("", TObject::kOverwrite);
+  if(!isGen){
+    rechitTreeIni_p->Write("", TObject::kOverwrite);
+    pfcandTreeIni_p->Write("", TObject::kOverwrite);
+    trkTreeIni_p->Write("", TObject::kOverwrite);
+  }
+  if(montecarlo) jetTreeIni_p->Write("", TObject::kOverwrite);
   jetTreeIni_p->Write("", TObject::kOverwrite);
-
+    
   delete c;
-  CleanupFastJetIniSkim(sType);
+  CleanupFastJetIniSkim();
   outFile->Close();
   delete outFile;
 
@@ -446,15 +510,15 @@ collisionType getCType(sampleType sType)
 
 int main(int argc, char *argv[])
 {
-  if(argc != 5)
+  if(argc != 6)
     {
-      std::cout << "Usage: makeFastJetIniSkim <inputFile> <MCBool> <outputFile> <#>" << std::endl;
+      std::cout << "Usage: makeFastJetIniSkim <inputFile> <sampleType> <outputFile> <#> <isGenBool>" << std::endl;
       return 1;
     }
 
   int rStatus = -1;
 
-  rStatus = makeFastJetIniSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]));
+  rStatus = makeFastJetIniSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]), Bool_t(atoi(argv[5])));
 
   return rStatus;
 }
