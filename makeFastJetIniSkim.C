@@ -192,7 +192,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Grid Init" << std::endl;
 
-  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
@@ -353,10 +353,13 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	    AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
 	    
 	    AlgIniJtRawPt_[algIter][jtIter] = AlgIniJtCollection[algIter].rawpt[jtIndex[algIter][jtIter]];
-	    
-	    AlgIniRefPt_[algIter][jtIter] = AlgIniJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
-	    AlgIniRefPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
-	    AlgIniRefEta_[algIter][jtIter] = AlgIniJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
+
+	    if(montecarlo){
+	      AlgIniRefPartFlav_[algIter][jtIter] = AlgIniJtCollection[algIter].refparton_flavor[jtIndex[algIter][jtIter]];
+	      AlgIniRefPt_[algIter][jtIter] = AlgIniJtCollection[algIter].refpt[jtIndex[algIter][jtIter]];
+	      AlgIniRefPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].refphi[jtIndex[algIter][jtIter]];
+	      AlgIniRefEta_[algIter][jtIter] = AlgIniJtCollection[algIter].refeta[jtIndex[algIter][jtIter]];
+	    }
 	  }
 	}
       }
@@ -477,7 +480,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     pfcandTreeIni_p->Write("", TObject::kOverwrite);
     trkTreeIni_p->Write("", TObject::kOverwrite);
   }
-  if(montecarlo) jetTreeIni_p->Write("", TObject::kOverwrite);
+  if(montecarlo) genTreeIni_p->Write("", TObject::kOverwrite);
   jetTreeIni_p->Write("", TObject::kOverwrite);
     
   delete c;

@@ -23,50 +23,37 @@ fastjet::contrib::UnnormalizedMeasure measureSpec2(beta[2]);
 fastjet::contrib::Nsubjettiness nSub1_beta_5(1, axisMode1, measureSpec_5);
 fastjet::contrib::Nsubjettiness nSub2_beta_5(2, axisMode1, measureSpec_5);
 fastjet::contrib::Nsubjettiness nSub3_beta_5(3, axisMode1, measureSpec_5);
-fastjet::contrib::NjettinessPlugin nSub1_beta_5_plugin(1, axisMode1, measureSpec_5);
-fastjet::contrib::NjettinessPlugin nSub2_beta_5_plugin(2, axisMode1, measureSpec_5);
-fastjet::contrib::NjettinessPlugin nSub3_beta_5_plugin(3, axisMode1, measureSpec_5);
-fastjet::JetDefinition nSub1_beta_5_jetDef(&nSub1_beta_5_plugin);
-fastjet::JetDefinition nSub2_beta_5_jetDef(&nSub2_beta_5_plugin);
-fastjet::JetDefinition nSub3_beta_5_jetDef(&nSub3_beta_5_plugin);
 
 fastjet::contrib::Nsubjettiness nSub1_beta1(1, axisMode1, measureSpec1);
 fastjet::contrib::Nsubjettiness nSub2_beta1(2, axisMode1, measureSpec1);
 fastjet::contrib::Nsubjettiness nSub3_beta1(3, axisMode1, measureSpec1);
-fastjet::contrib::NjettinessPlugin nSub1_beta1_plugin(1, axisMode1, measureSpec1);
-fastjet::contrib::NjettinessPlugin nSub2_beta1_plugin(2, axisMode1, measureSpec1);
-fastjet::contrib::NjettinessPlugin nSub3_beta1_plugin(3, axisMode1, measureSpec1);
-fastjet::JetDefinition nSub1_beta1_jetDef(&nSub1_beta1_plugin);
-fastjet::JetDefinition nSub2_beta1_jetDef(&nSub2_beta1_plugin);
-fastjet::JetDefinition nSub3_beta1_jetDef(&nSub3_beta1_plugin);
 
 fastjet::contrib::Nsubjettiness nSub1_beta2(1, axisMode1, measureSpec2);
 fastjet::contrib::Nsubjettiness nSub2_beta2(2, axisMode1, measureSpec2);
 fastjet::contrib::Nsubjettiness nSub3_beta2(3, axisMode1, measureSpec2);
-fastjet::contrib::NjettinessPlugin nSub1_beta2_plugin(1, axisMode1, measureSpec2);
-fastjet::contrib::NjettinessPlugin nSub2_beta2_plugin(2, axisMode1, measureSpec2);
-fastjet::contrib::NjettinessPlugin nSub3_beta2_plugin(3, axisMode1, measureSpec2);
-fastjet::JetDefinition nSub1_beta2_jetDef(&nSub1_beta2_plugin);
-fastjet::JetDefinition nSub2_beta2_jetDef(&nSub2_beta2_plugin);
-fastjet::JetDefinition nSub3_beta2_jetDef(&nSub3_beta2_plugin);
-
-Double_t R = 0.3;
-fastjet::JetAlgorithm algorithm = fastjet::antikt_algorithm;
-fastjet::JetDefinition jetDef(algorithm, R, fastjet::E_scheme, fastjet::Best);
 
 
-void getSubJt(fastjet::PseudoJet inJt, fastjet::JetDefinition jetDef, Float_t &subPt, Float_t &subPhi, Float_t &subEta)
+Double_t jtR = 0.3;
+fastjet::JetAlgorithm jtAlg = fastjet::antikt_algorithm;
+fastjet::JetDefinition jtDef(jtAlg, jtR, fastjet::E_scheme, fastjet::Best);
+
+Double_t subJtR = 0.1;
+fastjet::JetAlgorithm subJtAlg = fastjet::cambridge_algorithm;
+fastjet::JetDefinition subJtDef(subJtAlg, subJtR, fastjet::E_scheme, fastjet::Best);
+
+void getSubJt(fastjet::PseudoJet inJt, Float_t &subPt, Float_t &subPhi, Float_t &subEta)
 {
-  fastjet::ClusterSequence subCS(inJt.constituents(), jetDef);
+  fastjet::ClusterSequence subCS(inJt.constituents(), subJtDef);
   std::vector<fastjet::PseudoJet> subJets = subCS.inclusive_jets();
   subPt = subJets[0].perp();
   subPhi = subJets[0].phi_std();
   subEta = subJets[0].eta();
   subJets.clear();
+  return;
 }
 
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t tau[5][3][3], Float_t subPt[5][3][3], Float_t subPhi[5][3][3], Float_t subEta[5][3][3], Float_t ptCut)
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t tau[5][3][3], Float_t subPt[5], Float_t subPhi[5], Float_t subEta[5], Float_t ptCut)
 {
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
@@ -78,7 +65,7 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
     }       
   }
 
-  fastjet::ClusterSequence cs(*algVect_p, jetDef);
+  fastjet::ClusterSequence cs(*algVect_p, jtDef);
   std::vector<fastjet::PseudoJet> algSortVect = sorted_by_pt(cs.inclusive_jets());
 
   Int_t breakIter = 0;
@@ -88,6 +75,8 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
       outPt[breakIter] = algSortVect[iter].perp();
       outPhi[breakIter] = algSortVect[iter].phi_std();
       outEta[breakIter] = algSortVect[iter].eta();
+
+      getSubJt(algSortVect[iter], subPt[breakIter], subPhi[breakIter], subEta[breakIter]);
 	 
       tau[breakIter][0][0] = nSub1_beta_5(algSortVect[iter]);
       tau[breakIter][1][0] = nSub2_beta_5(algSortVect[iter]);
@@ -101,18 +90,6 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
       tau[breakIter][1][2] = nSub2_beta2(algSortVect[iter]);
       tau[breakIter][2][2] = nSub3_beta2(algSortVect[iter]);
 
-      getSubJt(algSortVect[iter], nSub1_beta_5_jetDef, subPt[breakIter][0][0], subPhi[breakIter][0][0], subEta[breakIter][0][0]);
-      getSubJt(algSortVect[iter], nSub2_beta_5_jetDef, subPt[breakIter][1][0], subPhi[breakIter][1][0], subEta[breakIter][1][0]);
-      getSubJt(algSortVect[iter], nSub3_beta_5_jetDef, subPt[breakIter][2][0], subPhi[breakIter][2][0], subEta[breakIter][2][0]);
-
-      getSubJt(algSortVect[iter], nSub1_beta_5_jetDef, subPt[breakIter][0][1], subPhi[breakIter][0][1], subEta[breakIter][0][1]);
-      getSubJt(algSortVect[iter], nSub2_beta_5_jetDef, subPt[breakIter][1][1], subPhi[breakIter][1][1], subEta[breakIter][1][1]);
-      getSubJt(algSortVect[iter], nSub3_beta_5_jetDef, subPt[breakIter][2][1], subPhi[breakIter][2][1], subEta[breakIter][2][1]);
-
-      getSubJt(algSortVect[iter], nSub1_beta_5_jetDef, subPt[breakIter][0][2], subPhi[breakIter][0][2], subEta[breakIter][0][2]);
-      getSubJt(algSortVect[iter], nSub2_beta_5_jetDef, subPt[breakIter][1][2], subPhi[breakIter][1][2], subEta[breakIter][1][2]);
-      getSubJt(algSortVect[iter], nSub3_beta_5_jetDef, subPt[breakIter][2][2], subPhi[breakIter][2][2], subEta[breakIter][2][2]);
-
       if(breakIter == 4) break;
 
       breakIter++;
@@ -122,10 +99,12 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
   algSortVect.clear();
   algVect_p->clear();
   delete algVect_p;
+
+  return;
 }
 
  
-int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root")
+int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root", Bool_t isGen = false)
 {
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
@@ -156,35 +135,44 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   std::cout << "FileList Loaded" << std::endl;
 
   TFile* iniSkim_p = new TFile(listOfFiles[0].data(), "READ");
-  GetFastJetIniSkim(iniSkim_p, sType);
+  GetFastJetIniSkim(iniSkim_p, sType, isGen);
 
   std::cout << "FastJet Skim Loaded" << std::endl;
 
   TFile *outFile_p = new TFile(Form("%s.root", outName), "RECREATE");
-  InitFastJetAnaSkim(sType);
+  InitFastJetAnaSkim(sType, isGen);
 
-  Long64_t nentries = rechitTreeIni_p->GetEntries();
+  Long64_t nentries = jetTreeIni_p->GetEntries();
 
   std::cout << nentries << std::endl;
 
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+  for(Long64_t jentry = 0; jentry < 10000; jentry++){
     if(jentry%1000 == 0)
       std::cout << jentry << std::endl;
 
-    rechitTreeIni_p->GetEntry(jentry);
-    pfcandTreeIni_p->GetEntry(jentry);
-    trkTreeIni_p->GetEntry(jentry);
+    if(!isGen){
+      rechitTreeIni_p->GetEntry(jentry);
+      pfcandTreeIni_p->GetEntry(jentry);
+      trkTreeIni_p->GetEntry(jentry);
+    }
+    if(!montecarlo) genTreeIni_p->GetEntry(jentry);
     jetTreeIni_p->GetEntry(jentry);
 
     InitJtVar();
 
-    getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitRawTau_, rechitSubJtRawPt_, rechitSubJtRawPhi_, rechitSubJtRawEta_, 0.010);
-    getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitVsTau_, rechitSubJtVsPt_, rechitSubJtVsPhi_, rechitSubJtVsEta_, 0.010);
-    getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfRawTau_, pfSubJtRawPt_, pfSubJtRawPhi_, pfSubJtRawEta_, 0.010);
-    getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfVsTau_, pfSubJtVsPt_, pfSubJtVsPhi_, pfSubJtVsEta_, 0.010);
-    getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtSKPt_, pfJtSKPhi_, pfJtSKEta_, pfSKTau_, pfSubJtSKPt_, pfSubJtSKPhi_, pfSubJtSKEta_, pfSKPtCut_);
-    getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkRawTau_, trkSubJtRawPt_, trkSubJtRawPhi_, trkSubJtRawEta_, 0.010);
-    getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtSKPt_, trkJtSKPhi_, trkJtSKEta_, trkSKTau_, trkSubJtSKPt_, trkSubJtSKPhi_, trkSubJtSKEta_, trkSKPtCut_);
+    if(!isGen){
+      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitRawTau_, rechitSubJtRawPt_, rechitSubJtRawPhi_, rechitSubJtRawEta_, 0.010);
+      getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitVsTau_, rechitSubJtVsPt_, rechitSubJtVsPhi_, rechitSubJtVsEta_, 0.010);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfRawTau_, pfSubJtRawPt_, pfSubJtRawPhi_, pfSubJtRawEta_, 0.010);
+      getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfVsTau_, pfSubJtVsPt_, pfSubJtVsPhi_, pfSubJtVsEta_, 0.010);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtSKPt_, pfJtSKPhi_, pfJtSKEta_, pfSKTau_, pfSubJtSKPt_, pfSubJtSKPhi_, pfSubJtSKEta_, pfSKPtCut_);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkRawTau_, trkSubJtRawPt_, trkSubJtRawPhi_, trkSubJtRawEta_, 0.010);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtSKPt_, trkJtSKPhi_, trkJtSKEta_, trkSKTau_, trkSubJtSKPt_, trkSubJtSKPhi_, trkSubJtSKEta_, trkSKPtCut_);
+    }
+    if(montecarlo){
+      getJt(nGen_, genPt_, genPhi_, genEta_, genJtRawPt_, genJtRawPhi_, genJtRawEta_, genRawTau_, genSubJtRawPt_, genSubJtRawPhi_, genSubJtRawEta_, 0.010);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genJtSKPt_, genJtSKPhi_, genJtSKEta_, genSKTau_, genSubJtSKPt_, genSubJtSKPhi_, genSubJtSKEta_, genSKPtCut_);
+    }
 
     run_ = runIni_;
     evt_ = evtIni_;
@@ -208,9 +196,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 	AlgJtRawPt_[algIter][jtIter] = AlgIniJtRawPt_[algIter][jtIter];
 
 	if(montecarlo){
-	  AlgIsQuark_[algIter][jtIter] = AlgIniIsQuark_[algIter][jtIter];
-	  AlgIsGluon_[algIter][jtIter] = AlgIniIsGluon_[algIter][jtIter];
-
+	  AlgRefPartFlav_[algIter][jtIter] = AlgIniRefPartFlav_[algIter][jtIter];
 	  AlgRefPt_[algIter][jtIter] = AlgIniRefPt_[algIter][jtIter];
 	  AlgRefPhi_[algIter][jtIter] = AlgIniRefPhi_[algIter][jtIter];
 	  AlgRefEta_[algIter][jtIter] = AlgIniRefEta_[algIter][jtIter];
@@ -218,15 +204,21 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
       }
     }
 
-    rechitTreeAna_p->Fill();
-    pfcandTreeAna_p->Fill();
-    trkTreeAna_p->Fill();
+    if(!isGen){
+      rechitTreeAna_p->Fill();
+      pfcandTreeAna_p->Fill();
+      trkTreeAna_p->Fill();
+    }
+    if(montecarlo) genTreeAna_p->Fill();
     jetTreeAna_p->Fill();
   }
 
-  rechitTreeAna_p->Write("", TObject::kOverwrite);
-  pfcandTreeAna_p->Write("", TObject::kOverwrite);
-  trkTreeAna_p->Write("", TObject::kOverwrite);
+  if(!isGen){
+    rechitTreeAna_p->Write("", TObject::kOverwrite);
+    pfcandTreeAna_p->Write("", TObject::kOverwrite);
+    trkTreeAna_p->Write("", TObject::kOverwrite);
+  }
+  if(montecarlo) genTreeAna_p->Write("", TObject::kOverwrite);
   jetTreeAna_p->Write("", TObject::kOverwrite);
 
   CleanupFastJetAnaSkim();
@@ -242,14 +234,14 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
 int main(int argc, char* argv[])
 {
-  if(argc!=4){
-    std::cout << "Usage: jetTestScript <inputFile> <sType> <outputFile>" << std::endl;
+  if(argc!=5){
+    std::cout << "Usage: jetTestScript <inputFile> <sType> <outputFile> <isGenBool>" << std::endl;
     return 1;
   }
 
   int rStatus = -1;
 
-  rStatus = makeFastJetAnaSkim(argv[1], sampleType(atoi(argv[2])), argv[3]);
+  rStatus = makeFastJetAnaSkim(argv[1], sampleType(atoi(argv[2])), argv[3], Bool_t(atoi(argv[4])));
 
   return rStatus;
 }

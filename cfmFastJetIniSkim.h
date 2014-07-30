@@ -119,8 +119,7 @@ Float_t AlgIniJtPt_[5][5];
 Float_t AlgIniJtPhi_[5][5];
 Float_t AlgIniJtEta_[5][5];
 Float_t AlgIniJtRawPt_[5][5];
-Bool_t AlgIniIsQuark_[5][5];
-Bool_t AlgIniIsGluon_[5][5];
+Int_t AlgIniRefPartFlav_[5][5];
 Float_t AlgIniRefPt_[5][5];
 Float_t AlgIniRefPhi_[5][5];
 Float_t AlgIniRefEta_[5][5];
@@ -192,8 +191,7 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   jetTreeIni_p->Branch("AlgIniJtRawPt", AlgIniJtRawPt_, "AlgIniJtRawPt[5][5]/F");
 
   if(montecarlo){
-    jetTreeIni_p->Branch("AlgIniIsQuark", AlgIniIsQuark_, "AlgIniIsQuark[5][5]/O");
-    jetTreeIni_p->Branch("AlgIniIsGluon", AlgIniIsGluon_, "AlgIniIsGluon[5][5]/O");
+    jetTreeIni_p->Branch("AlgIniRefPartFlav", AlgIniRefPartFlav_, "AlgIniRefPartFlav[5][5]/I");
     jetTreeIni_p->Branch("AlgIniRefPt", AlgIniRefPt_, "AlgIniRefPt[5][5]/F");
     jetTreeIni_p->Branch("AlgIniRefPhi", AlgIniRefPhi_, "AlgIniRefPhi[5][5]/F");
     jetTreeIni_p->Branch("AlgIniRefEta", AlgIniRefEta_, "AlgIniRefEta[5][5]/F");
@@ -266,8 +264,7 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   jetTreeIni_p->SetBranchAddress("AlgIniJtRawPt", AlgIniJtRawPt_);
 
   if(montecarlo){
-    jetTreeIni_p->SetBranchAddress("AlgIniIsQuark", AlgIniIsQuark_);
-    jetTreeIni_p->SetBranchAddress("AlgIniIsGluon", AlgIniIsGluon_);
+    jetTreeIni_p->SetBranchAddress("AlgIniRefPartFlav", AlgIniRefPartFlav_);
     jetTreeIni_p->SetBranchAddress("AlgIniRefPt", AlgIniRefPt_);
     jetTreeIni_p->SetBranchAddress("AlgIniRefPhi", AlgIniRefPhi_);
     jetTreeIni_p->SetBranchAddress("AlgIniRefEta", AlgIniRefEta_);
@@ -328,8 +325,7 @@ void InitIniJtVar()
       AlgIniJtEta_[iter][iter2] = -10;
       AlgIniJtRawPt_[iter][iter2] = -10;
 
-      AlgIniIsQuark_[iter][iter2] = false;
-      AlgIniIsGluon_[iter][iter2] = false;
+      AlgIniRefPartFlav_[iter][iter2] = -999;
 
       AlgIniRefPt_[iter][iter2] = -10;
       AlgIniRefPhi_[iter][iter2] = -10;
