@@ -114,8 +114,9 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     return 1;
   }
   else{
-    while(!inFile.eof()){
+    while(true){
       inFile >> buffer;
+      if(inFile.eof()) break;
       listOfFiles.push_back(buffer);
       nLines++;
     }
@@ -123,8 +124,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "FileList Loaded" << std::endl;
 
-  for(Int_t iter = 0; iter < (Int_t)lisOfFiles.size(); iter++){
-    std::cout << listOfFile.at(iter) << std::endl;
+  for(Int_t iter = 0; iter < (Int_t)listOfFiles.size(); iter++){
+    std::cout << listOfFiles.at(iter) << std::endl;
   }
 
   //Setup correction tables

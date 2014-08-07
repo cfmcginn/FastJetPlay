@@ -133,8 +133,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     return 1;
   }
   else{
-    while(!inFile.eof()){
+    while(true){
       inFile >> buffer;
+      if(inFile.eof()) break;
       listOfFiles.push_back(buffer);
       nLines++;
     }
@@ -142,8 +143,8 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   
   std::cout << "FileList Loaded" << std::endl;
 
-  for(Int_t iter = 0; iter < (Int_t)lisOfFiles.size(); iter++){
-    std::cout << listOfFile.at(iter) << std::endl;
+  for(Int_t iter = 0; iter < (Int_t)listOfFiles.size(); iter++){
+    std::cout << listOfFiles.at(iter) << std::endl;
   }
 
   TFile* iniSkim_p = new TFile(listOfFiles[0].data(), "READ");
@@ -158,7 +159,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   std::cout << nentries << std::endl;
 
-  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
     if(jentry%1000 == 0)
       std::cout << jentry << std::endl;
 
