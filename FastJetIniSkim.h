@@ -12,7 +12,7 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TH1F.h"
-#include "/net/hisrv0001/home/cfmcginn/emDiJet/CMSSW_5_3_12_patch3/tempHIFA/HiForestAnalysis/commonSetup.h"
+#include "commonSetup.h"
 
 enum sampleType{
   kHIDATA, //0
