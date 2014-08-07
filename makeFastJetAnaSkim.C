@@ -1,4 +1,3 @@
-#include "/net/hisrv0001/home/cfmcginn/FastJet/CMSSW_5_3_12_patch3/src/FastJetIniSkim/cfmFastJetIniSkim.h"
 #include "cfmFastJetAnaSkim.h"
 #include <fstream>
 #include "TLorentzVector.h"
@@ -6,6 +5,7 @@
 #include <string>
 
 #include "getPTD.h"
+#include "etaPhiFunc.h"
 
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequence.hh"
@@ -15,7 +15,11 @@
 #include "fastjet/contrib/Njettiness.hh"
 #include "fastjet/contrib/NjettinessPlugin.hh"
 
-Double_t beta[3] = {0.5, 1.0, 2.0};
+const Float_t lJtPtCut = 120.;
+const Float_t sLJtPtCut = 50.;
+const Float_t jtEtaCut = 2.0; 
+
+const Double_t beta[3] = {0.5, 1.0, 2.0};
 fastjet::contrib::WTA_KT_Axes axisMode1;
 
 fastjet::contrib::UnnormalizedMeasure measureSpec_5(beta[0]);
@@ -35,11 +39,11 @@ fastjet::contrib::Nsubjettiness nSub2_beta2(2, axisMode1, measureSpec2);
 fastjet::contrib::Nsubjettiness nSub3_beta2(3, axisMode1, measureSpec2);
 
 
-Double_t jtR = 0.3;
+const Double_t jtR = 0.3;
 fastjet::JetAlgorithm jtAlg = fastjet::antikt_algorithm;
 fastjet::JetDefinition jtDef(jtAlg, jtR, fastjet::E_scheme, fastjet::Best);
 
-Double_t subJtR = 0.1;
+const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::cambridge_algorithm;
 fastjet::JetDefinition subJtDef(subJtAlg, subJtR, fastjet::E_scheme, fastjet::Best);
 
@@ -205,6 +209,19 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 	  AlgRefPhi_[algIter][jtIter] = AlgIniRefPhi_[algIter][jtIter];
 	  AlgRefEta_[algIter][jtIter] = AlgIniRefEta_[algIter][jtIter];
 	}
+      }
+
+      if(AlgJtPt_[algIter][0] > lJtPtCut && AlgJtPt_[algIter][1] > sLJtPtCut && TMath::Abs(AlgJtEta_[algIter][0]) < jtEtaCut && TMath::Abs(AlgJtEta_[algIter][1]) < jtEtaCut){
+	AlgJtDelPhi_[algIter] = TMath::Abs(getDPHI(AlgJtPhi_[algIter][0], AlgJtPhi_[algIter][1]));
+	AlgJtAsymm_[algIter] = (AlgJtPt_[algIter][0] - AlgJtPt_[algIter][1])/(AlgJtPt_[algIter][0] + AlgJtPt_[algIter][1]);
+	
+	if(AlgJtDelPhi_[algIter] > 5*TMath::Pi()/6) eventSet_[algIter] = true;
+	else eventSet_[algIter] = false;
+      }
+      else{
+	AlgJtDelPhi_[algIter]  = -10;
+	AlgJtAsymm_[algIter] = -10;
+	eventSet_[algIter] = false;
       }
     }
 

@@ -161,7 +161,7 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
 
   if(montecarlo){
     genTreeIni_p->Branch("nGen", &nGen_, "nGen/I");
-    genTreeIni_p->Branch("genSKPtCut", &genSKPtCut_, "genSKPtCut/I");
+    genTreeIni_p->Branch("genSKPtCut", &genSKPtCut_, "genSKPtCut/F");
     genTreeIni_p->Branch("genPt", genPt_, "genPt[nGen]/F");
     genTreeIni_p->Branch("genPhi", genPhi_, "genPhi[nGen]/F");
     genTreeIni_p->Branch("genEta", genEta_, "genEta[nGen]/F");
