@@ -10,7 +10,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "/net/hisrv0001/home/cfmcginn/emDiJet/CMSSW_5_3_12_patch3/tempHIFA/HiForestAnalysis/hiForest.h"
-#include "cfmFastJetIniSkim.h"
+#include "FastJetIniSkim.h"
 #include "stdlib.h"
 #include <iostream>
 #include <fstream>

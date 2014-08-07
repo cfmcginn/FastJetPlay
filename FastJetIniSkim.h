@@ -4,8 +4,8 @@
 // FastJet IniSkim Class (MC)                                                    
 //                                                                              
 //=============================================  
-#ifndef cfmFastJetIniSkim_h
-#define cfmFastJetIniSkim_h
+#ifndef FastJetIniSkim_h
+#define FastJetIniSkim_h
 
 #include <iostream>
 

@@ -4,10 +4,10 @@
 // FastJet AnaSkim Class (MC)                                                    
 //                                                                              
 //=============================================  
-#ifndef cfmFastJetAnaSkim_h
-#define cfmFastJetAnaSkim_h
+#ifndef FastJetAnaSkim_h
+#define FastJetAnaSkim_h
 
-#include "/net/hisrv0001/home/cfmcginn/FastJet/CMSSW_5_3_12_patch3/src/FastJetIniSkim/cfmFastJetIniSkim.h"
+#include "FastJetIniSkim.h"
 
 #include <iostream>
 

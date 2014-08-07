@@ -1,8 +1,8 @@
 //Placeholder for FastJetHistMaker
 
 #include <string>
-#include "/net/hisrv0001/home/cfmcginn/DijetMPt/CMSSW_5_3_12_patch3/src/DijetInitialSkim/cfmVectFunc.h"
-#include "/net/hisrv0001/home/cfmcginn/FastJet/CMSSW_5_3_12_patch3/src/FastJetAnaSkim/cfmFastJetAnaSkim.h"
+#include "cfmVectFunc.h"
+#include "FastJetAnaSkim.h"
 
 TFile* inFile_p = 0;
 TFile* outFile_p = 0;
