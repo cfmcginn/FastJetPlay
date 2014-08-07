@@ -142,6 +142,10 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   
   std::cout << "FileList Loaded" << std::endl;
 
+  for(Int_t iter = 0; iter < (Int_t)lisOfFiles.size(); iter++){
+    std::cout << listOfFile.at(iter) << std::endl;
+  }
+
   TFile* iniSkim_p = new TFile(listOfFiles[0].data(), "READ");
   GetFastJetIniSkim(iniSkim_p, sType, isGen);
 

@@ -4,7 +4,7 @@ then
   exit 1
 fi
 
-now="skimTreeJob_$(date +"%m_%d_%Y__%H_%M_%S")"
+now="FastJetAnaSkimJob_$(date +"%m_%d_%Y__%H_%M_%S")"
 mkdir $now
 mkdir -p $4
 

@@ -123,6 +123,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "FileList Loaded" << std::endl;
 
+  for(Int_t iter = 0; iter < (Int_t)lisOfFiles.size(); iter++){
+    std::cout << listOfFile.at(iter) << std::endl;
+  }
+
   //Setup correction tables
 
   TFile *outFile = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
@@ -192,7 +196,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Grid Init" << std::endl;
 
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+  for(Long64_t jentry = 0; jentry < 10000; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
