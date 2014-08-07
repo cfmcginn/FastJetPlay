@@ -14,4 +14,4 @@ cp $1 $now
 
 NAME="makeFastJetAnaSkim.C"
 g++ $NAME $(root-config --cflags --libs) -Werror -Wall -O2 -o "${NAME/%.C/}.exe" `../fastjet-install/bin/fastjet-config --cxxflags --libs --plugins` -lNsubjettiness
-cp makeFastJetAnaSkim.exe $now
+mv makeFastJetAnaSkim.exe $now
