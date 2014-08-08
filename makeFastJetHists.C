@@ -108,9 +108,12 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Int_t centLow[4] = {0, 20, 60, 100};
   const Int_t centHi[4] = {19, 59, 99, 199};
 
+  std::string centString[4];
   TH1F* pfVsPTDHist_p[4];                                                                               
+
   for(Int_t iter = 0; iter < centMax; iter++){                                           
-    pfVsPTDHist_p[iter] = new TH1F(Form("pfVsPTDHist_%d_p", iter), Form("pfVsPTDHist_%d_p", iter), nPTDBins, ptdLow, ptdHigh);   
+    centString[iter] = getCentString(sType, centLow[iter], centHi[iter]);
+    pfVsPTDHist_p[iter] = new TH1F(Form("%sPFVsPTDHist_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
     pfVsPTDHist_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
   }
 
@@ -130,11 +133,10 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     }
   }
 
-  outFile_p = new TFile(outName.c_str(), "RECREATE");
+  outFile_p = new TFile(outName.c_str(), "UPDATE");
   for(Int_t iter = 0; iter < centMax; iter++){
     pfVsPTDHist_p[iter]->Scale(1./pfVsPTDHist_p[iter]->Integral());
-    const std::string centString = getCentString(sType, centLow[iter], centHi[iter]);
-    pfVsPTDHist_p[iter]->Write(Form("%sPFVsPTDHist_%s_h", algType[setNum].c_str(), centString.c_str()), TObject::kOverwrite);
+    pfVsPTDHist_p[iter]->Write(Form("%sPFVsPTDHist_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
   }
   outFile_p->Close();
   delete outFile_p;
@@ -152,6 +154,10 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 void makeFastJetHists(const std::string inName, const std::string outName, sampleType sType = kHIDATA)
 {
   TH1::SetDefaultSumw2();
+
+  outFile_p = new TFile(outName.c_str(), "RECREATE");
+  outFile_p->Close();
+  delete outFile_p;
 
   inFile_p = new TFile(inName.c_str(), "READ");
   GetFastJetAnaSkim(inFile_p, sType);
