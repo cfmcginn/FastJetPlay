@@ -28,8 +28,8 @@
 
   gStyle->SetTitleXSize(32);
   gStyle->SetTitleYSize(27);
-  gStyle->SetTitleXOffset(1.6);
-  gStyle->SetTitleYOffset(3.5);
+  gStyle->SetTitleXOffset(1.2);
+  gStyle->SetTitleYOffset(2.0);
   gStyle->SetLabelSize(26,"XYZ");
   gStyle->SetLabelOffset(0.005,"X");
   gStyle->SetLabelOffset(0.005,"Y");

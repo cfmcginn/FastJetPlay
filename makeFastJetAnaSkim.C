@@ -121,6 +121,26 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
   return;
 }
 
+
+void getJtFlavor(Float_t realJtPhi[5], Float_t realJtEta[5], Int_t realJtRefPart[5], Float_t constJtPhi[5], Float_t constJtEta[5], Int_t constJtRefPart[5])
+{
+  for(Int_t realIter = 0; realIter < 5; realIter++){
+    if(realJtPhi[realIter] < -9 || realJtRefPart[realIter] < -900) continue;
+
+    for(Int_t constIter = 0; constIter < 5; constIter++){
+      if(constJtRefPart[constIter] > -900 || constJtPhi[constIter] < -9) continue;
+
+      if(getDR(realJtEta[realIter], realJtPhi[realIter], constJtEta[constIter], constJtPhi[constIter]) < 0.3){
+	constJtRefPart[constIter] = realJtRefPart[realIter];
+	break;
+      }
+    }
+
+  }
+
+  return;
+}
+
  
 int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root", Bool_t isGen = false)
 {
@@ -238,6 +258,8 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 	eventSet_[algIter] = false;
       }
     }
+
+    getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], pfJtVsPhi_, pfJtVsEta_, pfJtVsRefPart_);
 
     if(!isGen){
       rechitTreeAna_p->Fill();

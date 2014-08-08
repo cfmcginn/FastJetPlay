@@ -10,7 +10,9 @@ Float_t getDPHI(Float_t phi1, Float_t phi2)
     dphi = dphi + 2. * TMath::Pi();
 
   if(TMath::Abs(dphi) > TMath::Pi()) {
-    std::cout << " commonUtility::getDPHI error!!! dphi is bigger than TMath::Pi() " << std::endl;
+    std::cout << " etaPhiFunc::getDPHI error!!! dphi is bigger than TMath::Pi() " << std::endl;
+
+    std::cout << phi1 << ", " << phi2 << std::endl;
   }
 
   return dphi;
