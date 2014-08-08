@@ -40,26 +40,36 @@ fastjet::contrib::Nsubjettiness nSub3_beta2(3, axisMode1, measureSpec2);
 
 
 const Double_t jtR = 0.3;
-fastjet::JetAlgorithm jtAlg = fastjet::antikt_algorithm;
+fastjet::JetAlgorithm jtAlg = fastjet::cambridge_algorithm;
 fastjet::JetDefinition jtDef(jtAlg, jtR, fastjet::E_scheme, fastjet::Best);
 
 const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::cambridge_algorithm;
 fastjet::JetDefinition subJtDef(subJtAlg, subJtR, fastjet::E_scheme, fastjet::Best);
 
-void getSubJt(fastjet::PseudoJet inJt, Float_t &subPt, Float_t &subPhi, Float_t &subEta)
+void getSubJt(fastjet::PseudoJet inJt, Float_t subPt[2], Float_t subPhi[2], Float_t subEta[2])
 {
   fastjet::ClusterSequence subCS(inJt.constituents(), subJtDef);
   std::vector<fastjet::PseudoJet> subJets = subCS.inclusive_jets();
-  subPt = subJets[0].perp();
-  subPhi = subJets[0].phi_std();
-  subEta = subJets[0].eta();
+
+  if(subJets.size() != 0){
+    subPt[0] = subJets[0].perp();
+    subPhi[0] = subJets[0].phi_std();
+    subEta[0] = subJets[0].eta();
+
+    if(subJets.size() != 1){
+      subPt[1] = subJets[1].perp();
+      subPhi[1] = subJets[1].phi_std();
+      subEta[1] = subJets[1].eta();
+    }
+  }    
+
   subJets.clear();
   return;
 }
 
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t outPTD[5], Float_t tau[5][3][3], Float_t subPt[5], Float_t subPhi[5], Float_t subEta[5], Float_t ptCut)
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t outPTD[5], Float_t tau[5][3][3], Float_t subPt[5][2], Float_t subPhi[5][2], Float_t subEta[5][2], Float_t ptCut)
 {
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
@@ -160,8 +170,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   std::cout << nentries << std::endl;
 
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
-    if(jentry%1000 == 0)
-      std::cout << jentry << std::endl;
+    if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
 
     if(!isGen){
       rechitTreeIni_p->GetEntry(jentry);

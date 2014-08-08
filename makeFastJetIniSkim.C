@@ -197,7 +197,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Grid Init" << std::endl;
 
-  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
     c->GetEntry(jentry);
 
     totEv++;

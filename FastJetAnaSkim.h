@@ -40,18 +40,18 @@ Float_t rechitJtRawPhi_[5];
 Float_t rechitJtRawEta_[5];
 Float_t rechitJtRawPTD_[5];
 Float_t rechitRawTau_[5][3][3];
-Float_t rechitSubJtRawPt_[5];
-Float_t rechitSubJtRawPhi_[5];
-Float_t rechitSubJtRawEta_[5];
+Float_t rechitSubJtRawPt_[5][2];
+Float_t rechitSubJtRawPhi_[5][2];
+Float_t rechitSubJtRawEta_[5][2];
 
 Float_t rechitJtVsPt_[5];
 Float_t rechitJtVsPhi_[5];
 Float_t rechitJtVsEta_[5];
 Float_t rechitJtVsPTD_[5];
 Float_t rechitVsTau_[5][3][3];
-Float_t rechitSubJtVsPt_[5];
-Float_t rechitSubJtVsPhi_[5];
-Float_t rechitSubJtVsEta_[5];
+Float_t rechitSubJtVsPt_[5][2];
+Float_t rechitSubJtVsPhi_[5][2];
+Float_t rechitSubJtVsEta_[5][2];
 
 //pfcand TreeAna Variables
 
@@ -60,27 +60,27 @@ Float_t pfJtRawPhi_[5];
 Float_t pfJtRawEta_[5];
 Float_t pfJtRawPTD_[5];
 Float_t pfRawTau_[5][3][3];
-Float_t pfSubJtRawPt_[5];
-Float_t pfSubJtRawPhi_[5];
-Float_t pfSubJtRawEta_[5];
+Float_t pfSubJtRawPt_[5][2];
+Float_t pfSubJtRawPhi_[5][2];
+Float_t pfSubJtRawEta_[5][2];
 
 Float_t pfJtVsPt_[5];
 Float_t pfJtVsPhi_[5];
 Float_t pfJtVsEta_[5];
 Float_t pfJtVsPTD_[5];
 Float_t pfVsTau_[5][3][3];
-Float_t pfSubJtVsPt_[5];
-Float_t pfSubJtVsPhi_[5];
-Float_t pfSubJtVsEta_[5];
+Float_t pfSubJtVsPt_[5][2];
+Float_t pfSubJtVsPhi_[5][2];
+Float_t pfSubJtVsEta_[5][2];
 
 Float_t pfJtSKPt_[5];
 Float_t pfJtSKPhi_[5];
 Float_t pfJtSKEta_[5];
 Float_t pfJtSKPTD_[5];
 Float_t pfSKTau_[5][3][3];
-Float_t pfSubJtSKPt_[5];
-Float_t pfSubJtSKPhi_[5];
-Float_t pfSubJtSKEta_[5];
+Float_t pfSubJtSKPt_[5][2];
+Float_t pfSubJtSKPhi_[5][2];
+Float_t pfSubJtSKEta_[5][2];
 
 
 //track TreeAna Variables
@@ -90,18 +90,18 @@ Float_t trkJtRawPhi_[5];
 Float_t trkJtRawEta_[5];
 Float_t trkJtRawPTD_[5];
 Float_t trkRawTau_[5][3][3];
-Float_t trkSubJtRawPt_[5];
-Float_t trkSubJtRawPhi_[5];
-Float_t trkSubJtRawEta_[5];
+Float_t trkSubJtRawPt_[5][2];
+Float_t trkSubJtRawPhi_[5][2];
+Float_t trkSubJtRawEta_[5][2];
 
 Float_t trkJtSKPt_[5];
 Float_t trkJtSKPhi_[5];
 Float_t trkJtSKEta_[5];
 Float_t trkJtSKPTD_[5];
 Float_t trkSKTau_[5][3][3];
-Float_t trkSubJtSKPt_[5];
-Float_t trkSubJtSKPhi_[5];
-Float_t trkSubJtSKEta_[5];
+Float_t trkSubJtSKPt_[5][2];
+Float_t trkSubJtSKPhi_[5][2];
+Float_t trkSubJtSKEta_[5][2];
 
 //Gen TreeAna Variables
 
@@ -110,18 +110,18 @@ Float_t genJtRawPhi_[5];
 Float_t genJtRawEta_[5];
 Float_t genJtRawPTD_[5];
 Float_t genRawTau_[5][3][3];
-Float_t genSubJtRawPt_[5];
-Float_t genSubJtRawPhi_[5];
-Float_t genSubJtRawEta_[5];
+Float_t genSubJtRawPt_[5][2];
+Float_t genSubJtRawPhi_[5][2];
+Float_t genSubJtRawEta_[5][2];
 
 Float_t genJtSKPt_[5];
 Float_t genJtSKPhi_[5];
 Float_t genJtSKEta_[5];
 Float_t genJtSKPTD_[5];
 Float_t genSKTau_[5][3][3];
-Float_t genSubJtSKPt_[5];
-Float_t genSubJtSKPhi_[5];
-Float_t genSubJtSKEta_[5];
+Float_t genSubJtSKPt_[5][2];
+Float_t genSubJtSKPhi_[5][2];
+Float_t genSubJtSKEta_[5][2];
 
 //Jet TreeAna Variables
 
@@ -163,18 +163,18 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     rechitTreeAna_p->Branch("rechitJtRawEta", rechitJtRawEta_, "rechitJtRawEta[5]/F");
     rechitTreeAna_p->Branch("rechitJtRawPTD", rechitJtRawPTD_, "rechitJtRawPTD[5]/F");
     rechitTreeAna_p->Branch("rechitRawTau", rechitRawTau_, "rechitRawTau[5][3][3]/F");
-    rechitTreeAna_p->Branch("rechitSubJtRawPt", rechitSubJtRawPt_, "rechitSubJtRawPt[5]/F");
-    rechitTreeAna_p->Branch("rechitSubJtRawPhi", rechitSubJtRawPhi_, "rechitSubJtRawPhi[5]/F");
-    rechitTreeAna_p->Branch("rechitSubJtRawEta", rechitSubJtRawEta_, "rechitSubJtRawEta[5]/F");
+    rechitTreeAna_p->Branch("rechitSubJtRawPt", rechitSubJtRawPt_, "rechitSubJtRawPt[5][2]/F");
+    rechitTreeAna_p->Branch("rechitSubJtRawPhi", rechitSubJtRawPhi_, "rechitSubJtRawPhi[5][2]/F");
+    rechitTreeAna_p->Branch("rechitSubJtRawEta", rechitSubJtRawEta_, "rechitSubJtRawEta[5][2]/F");
     
     rechitTreeAna_p->Branch("rechitJtVsPt", rechitJtVsPt_, "rechitJtVsPt[5]/F");
     rechitTreeAna_p->Branch("rechitJtVsPhi", rechitJtVsPhi_, "rechitJtVsPhi[5]/F");
     rechitTreeAna_p->Branch("rechitJtVsEta", rechitJtVsEta_, "rechitJtVsEta[5]/F");
     rechitTreeAna_p->Branch("rechitJtVsPTD", rechitJtVsPTD_, "rechitJtVsPTD[5]/F");
     rechitTreeAna_p->Branch("rechitVsTau", rechitVsTau_, "rechitVsTau[5][3][3]/F");
-    rechitTreeAna_p->Branch("rechitSubJtVsPt", rechitSubJtVsPt_, "rechitSubJtVsPt[5]/F");
-    rechitTreeAna_p->Branch("rechitSubJtVsPhi", rechitSubJtVsPhi_, "rechitSubJtVsPhi[5]/F");
-    rechitTreeAna_p->Branch("rechitSubJtVsEta", rechitSubJtVsEta_, "rechitSubJtVsEta[5]/F");
+    rechitTreeAna_p->Branch("rechitSubJtVsPt", rechitSubJtVsPt_, "rechitSubJtVsPt[5][2]/F");
+    rechitTreeAna_p->Branch("rechitSubJtVsPhi", rechitSubJtVsPhi_, "rechitSubJtVsPhi[5][2]/F");
+    rechitTreeAna_p->Branch("rechitSubJtVsEta", rechitSubJtVsEta_, "rechitSubJtVsEta[5][2]/F");
     
     //PF TreeAna Branches
     
@@ -183,27 +183,27 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfJtRawEta", pfJtRawEta_, "pfJtRawEta[5]/F");
     pfcandTreeAna_p->Branch("pfJtRawPTD", pfJtRawPTD_, "pfJtRawPTD[5]/F");
     pfcandTreeAna_p->Branch("pfRawTau", pfRawTau_, "pfRawTau[5][3][3]/F");
-    pfcandTreeAna_p->Branch("pfSubJtRawPt", pfSubJtRawPt_, "pfSubJtRawPt[5]/F");
-    pfcandTreeAna_p->Branch("pfSubJtRawPhi", pfSubJtRawPhi_, "pfSubJtRawPhi[5]/F");
-    pfcandTreeAna_p->Branch("pfSubJtRawEta", pfSubJtRawEta_, "pfSubJtRawEta[5]/F");
+    pfcandTreeAna_p->Branch("pfSubJtRawPt", pfSubJtRawPt_, "pfSubJtRawPt[5][2]/F");
+    pfcandTreeAna_p->Branch("pfSubJtRawPhi", pfSubJtRawPhi_, "pfSubJtRawPhi[5][2]/F");
+    pfcandTreeAna_p->Branch("pfSubJtRawEta", pfSubJtRawEta_, "pfSubJtRawEta[5][2]/F");
     
     pfcandTreeAna_p->Branch("pfJtVsPt", pfJtVsPt_, "pfJtVsPt[5]/F");
     pfcandTreeAna_p->Branch("pfJtVsPhi", pfJtVsPhi_, "pfJtVsPhi[5]/F");
     pfcandTreeAna_p->Branch("pfJtVsEta", pfJtVsEta_, "pfJtVsEta[5]/F");
     pfcandTreeAna_p->Branch("pfJtVsPTD", pfJtVsPTD_, "pfJtVsPTD[5]/F");
     pfcandTreeAna_p->Branch("pfVsTau", pfVsTau_, "pfVsTau[5][3][3]/F");
-    pfcandTreeAna_p->Branch("pfSubJtVsPt", pfSubJtVsPt_, "pfSubJtVsPt[5]/F");
-    pfcandTreeAna_p->Branch("pfSubJtVsPhi", pfSubJtVsPhi_, "pfSubJtVsPhi[5]/F");
-    pfcandTreeAna_p->Branch("pfSubJtVsEta", pfSubJtVsEta_, "pfSubJtVsEta[5]/F");
+    pfcandTreeAna_p->Branch("pfSubJtVsPt", pfSubJtVsPt_, "pfSubJtVsPt[5][2]/F");
+    pfcandTreeAna_p->Branch("pfSubJtVsPhi", pfSubJtVsPhi_, "pfSubJtVsPhi[5][2]/F");
+    pfcandTreeAna_p->Branch("pfSubJtVsEta", pfSubJtVsEta_, "pfSubJtVsEta[5][2]/F");
     
     pfcandTreeAna_p->Branch("pfJtSKPt", pfJtSKPt_, "pfJtSKPt[5]/F");
     pfcandTreeAna_p->Branch("pfJtSKPhi", pfJtSKPhi_, "pfJtSKPhi[5]/F");
     pfcandTreeAna_p->Branch("pfJtSKEta", pfJtSKEta_, "pfJtSKEta[5]/F");
     pfcandTreeAna_p->Branch("pfJtSKPTD", pfJtSKPTD_, "pfJtSKPTD[5]/F");
     pfcandTreeAna_p->Branch("pfSKTau", pfSKTau_, "pfSKTau[5][3][3]/F");
-    pfcandTreeAna_p->Branch("pfSubJtSKPt", pfSubJtSKPt_, "pfSubJtSKPt[5]/F");
-    pfcandTreeAna_p->Branch("pfSubJtSKPhi", pfSubJtSKPhi_, "pfSubJtSKPhi[5]/F");
-    pfcandTreeAna_p->Branch("pfSubJtSKEta", pfSubJtSKEta_, "pfSubJtSKEta[5]/F");
+    pfcandTreeAna_p->Branch("pfSubJtSKPt", pfSubJtSKPt_, "pfSubJtSKPt[5][2]/F");
+    pfcandTreeAna_p->Branch("pfSubJtSKPhi", pfSubJtSKPhi_, "pfSubJtSKPhi[5][2]/F");
+    pfcandTreeAna_p->Branch("pfSubJtSKEta", pfSubJtSKEta_, "pfSubJtSKEta[5][2]/F");
     
     //Trk TreeAna Branches
     
@@ -212,18 +212,18 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     trkTreeAna_p->Branch("trkJtRawEta", trkJtRawEta_, "trkJtRawEta[5]/F");
     trkTreeAna_p->Branch("trkJtRawPTD", trkJtRawPTD_, "trkJtRawPTD[5]/F");
     trkTreeAna_p->Branch("trkRawTau", trkRawTau_, "trkRawTau[5][3][3]/F");
-    trkTreeAna_p->Branch("trkSubJtRawPt", trkSubJtRawPt_, "trkSubJtRawPt[5]/F");
-    trkTreeAna_p->Branch("trkSubJtRawPhi", trkSubJtRawPhi_, "trkSubJtRawPhi[5]/F");
-    trkTreeAna_p->Branch("trkSubJtRawEta", trkSubJtRawEta_, "trkSubJtRawEta[5]/F");
+    trkTreeAna_p->Branch("trkSubJtRawPt", trkSubJtRawPt_, "trkSubJtRawPt[5][2]/F");
+    trkTreeAna_p->Branch("trkSubJtRawPhi", trkSubJtRawPhi_, "trkSubJtRawPhi[5][2]/F");
+    trkTreeAna_p->Branch("trkSubJtRawEta", trkSubJtRawEta_, "trkSubJtRawEta[5][2]/F");
     
     trkTreeAna_p->Branch("trkJtSKPt", trkJtSKPt_, "trkJtSKPt[5]/F");
     trkTreeAna_p->Branch("trkJtSKPhi", trkJtSKPhi_, "trkJtSKPhi[5]/F");
     trkTreeAna_p->Branch("trkJtSKEta", trkJtSKEta_, "trkJtSKEta[5]/F");
     trkTreeAna_p->Branch("trkJtSKPTD", trkJtSKPTD_, "trkJtSKPTD[5]/F");
     trkTreeAna_p->Branch("trkSKTau", trkSKTau_, "trkSKTau[5][3][3]/F");
-    trkTreeAna_p->Branch("trkSubJtSKPt", trkSubJtSKPt_, "trkSubJtSKPt[5]/F");
-    trkTreeAna_p->Branch("trkSubJtSKPhi", trkSubJtSKPhi_, "trkSubJtSKPhi[5]/F");
-    trkTreeAna_p->Branch("trkSubJtSKEta", trkSubJtSKEta_, "trkSubJtSKEta[5]/F");
+    trkTreeAna_p->Branch("trkSubJtSKPt", trkSubJtSKPt_, "trkSubJtSKPt[5][2]/F");
+    trkTreeAna_p->Branch("trkSubJtSKPhi", trkSubJtSKPhi_, "trkSubJtSKPhi[5][2]/F");
+    trkTreeAna_p->Branch("trkSubJtSKEta", trkSubJtSKEta_, "trkSubJtSKEta[5][2]/F");
   }    
 
   //Gen TreeAna Branches
@@ -233,18 +233,18 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeAna_p->Branch("genJtRawEta", genJtRawEta_, "genJtRawEta[5]/F");
     genTreeAna_p->Branch("genJtRawPTD", genJtRawPTD_, "genJtRawPTD[5]/F");
     genTreeAna_p->Branch("genRawTau", genRawTau_, "genRawTau[5][3][3]/F");
-    genTreeAna_p->Branch("genSubJtRawPt", genSubJtRawPt_, "genSubJtRawPt[5]/F");
-    genTreeAna_p->Branch("genSubJtRawPhi", genSubJtRawPhi_, "genSubJtRawPhi[5]/F");
-    genTreeAna_p->Branch("genSubJtRawEta", genSubJtRawEta_, "genSubJtRawEta[5]/F");
+    genTreeAna_p->Branch("genSubJtRawPt", genSubJtRawPt_, "genSubJtRawPt[5][2]/F");
+    genTreeAna_p->Branch("genSubJtRawPhi", genSubJtRawPhi_, "genSubJtRawPhi[5][2]/F");
+    genTreeAna_p->Branch("genSubJtRawEta", genSubJtRawEta_, "genSubJtRawEta[5][2]/F");
 
     genTreeAna_p->Branch("genJtSKPt", genJtSKPt_, "genJtSKPt[5]/F");
     genTreeAna_p->Branch("genJtSKPhi", genJtSKPhi_, "genJtSKPhi[5]/F");
     genTreeAna_p->Branch("genJtSKEta", genJtSKEta_, "genJtSKEta[5]/F");
     genTreeAna_p->Branch("genJtSKPTD", genJtSKPTD_, "genJtSKPTD[5]/F");
     genTreeAna_p->Branch("genSKTau", genSKTau_, "genSKTau[5][3][3]/F");
-    genTreeAna_p->Branch("genSubJtSKPt", genSubJtSKPt_, "genSubJtSKPt[5]/F");
-    genTreeAna_p->Branch("genSubJtSKPhi", genSubJtSKPhi_, "genSubJtSKPhi[5]/F");
-    genTreeAna_p->Branch("genSubJtSKEta", genSubJtSKEta_, "genSubJtSKEta[5]/F");
+    genTreeAna_p->Branch("genSubJtSKPt", genSubJtSKPt_, "genSubJtSKPt[5][2]/F");
+    genTreeAna_p->Branch("genSubJtSKPhi", genSubJtSKPhi_, "genSubJtSKPhi[5][2]/F");
+    genTreeAna_p->Branch("genSubJtSKEta", genSubJtSKEta_, "genSubJtSKEta[5][2]/F");
   }
 
   //Jet TreeAna Branches
@@ -463,73 +463,84 @@ void InitJtVar(){
     rechitJtRawPhi_[iter] = -10;
     rechitJtRawEta_[iter] = -10;
     rechitJtRawPTD_[iter] = -10;
-    rechitSubJtRawPt_[iter] = -10;
-    rechitSubJtRawPhi_[iter] = -10;
-    rechitSubJtRawEta_[iter] = -10;
 
     rechitJtVsPt_[iter] = -10;
     rechitJtVsPhi_[iter] = -10;
     rechitJtVsEta_[iter] = -10;
     rechitJtVsPTD_[iter] = -10;
-    rechitSubJtVsPt_[iter] = -10;
-    rechitSubJtVsPhi_[iter] = -10;
-    rechitSubJtVsEta_[iter] = -10;
 
     pfJtRawPt_[iter] = -10;
     pfJtRawPhi_[iter] = -10;
     pfJtRawEta_[iter] = -10;
     pfJtRawPTD_[iter] = -10;
-    pfSubJtRawPt_[iter] = -10;
-    pfSubJtRawPhi_[iter] = -10;
-    pfSubJtRawEta_[iter] = -10;
 
     pfJtVsPt_[iter] = -10;
     pfJtVsPhi_[iter] = -10;
     pfJtVsEta_[iter] = -10;
     pfJtVsPTD_[iter] = -10;
-    pfSubJtVsPt_[iter] = -10;
-    pfSubJtVsPhi_[iter] = -10;
-    pfSubJtVsEta_[iter] = -10;
 
     pfJtSKPt_[iter] = -10;
     pfJtSKPhi_[iter] = -10;
     pfJtSKEta_[iter] = -10;
     pfJtSKPTD_[iter] = -10;
-    pfSubJtSKPt_[iter] = -10;
-    pfSubJtSKPhi_[iter] = -10;
-    pfSubJtSKEta_[iter] = -10;
 
     trkJtRawPt_[iter] = -10;
     trkJtRawPhi_[iter] = -10;
     trkJtRawEta_[iter] = -10;
     trkJtRawPTD_[iter] = -10;
-    trkSubJtRawPt_[iter] = -10;
-    trkSubJtRawPhi_[iter] = -10;
-    trkSubJtRawEta_[iter] = -10;
 
     trkJtSKPt_[iter] = -10;
     trkJtSKPhi_[iter] = -10;
     trkJtSKEta_[iter] = -10;
     trkJtSKPTD_[iter] = -10;
-    trkSubJtSKPt_[iter] = -10;
-    trkSubJtSKPhi_[iter] = -10;
-    trkSubJtSKEta_[iter] = -10;
 
     genJtRawPt_[iter] = -10;
     genJtRawPhi_[iter] = -10;
     genJtRawEta_[iter] = -10;
     genJtRawPTD_[iter] = -10;
-    genSubJtRawPt_[iter] = -10;
-    genSubJtRawPhi_[iter] = -10;
-    genSubJtRawEta_[iter] = -10;
 
     genJtSKPt_[iter] = -10;
     genJtSKPhi_[iter] = -10;
     genJtSKEta_[iter] = -10;
     genJtSKPTD_[iter] = -10;
-    genSubJtSKPt_[iter] = -10;
-    genSubJtSKPhi_[iter] = -10;
-    genSubJtSKEta_[iter] = -10;
+
+    for(Int_t iter2 = 0; iter2 < 2; iter2++){
+      rechitSubJtRawPt_[iter][iter2] = -10;
+      rechitSubJtRawPhi_[iter][iter2] = -10;
+      rechitSubJtRawEta_[iter][iter2] = -10;
+
+      rechitSubJtVsPt_[iter][iter2] = -10;
+      rechitSubJtVsPhi_[iter][iter2] = -10;
+      rechitSubJtVsEta_[iter][iter2] = -10;
+
+      pfSubJtRawPt_[iter][iter2] = -10;
+      pfSubJtRawPhi_[iter][iter2] = -10;
+      pfSubJtRawEta_[iter][iter2] = -10;
+
+      pfSubJtVsPt_[iter][iter2] = -10;
+      pfSubJtVsPhi_[iter][iter2] = -10;
+      pfSubJtVsEta_[iter][iter2] = -10;
+
+      pfSubJtSKPt_[iter][iter2] = -10;
+      pfSubJtSKPhi_[iter][iter2] = -10;
+      pfSubJtSKEta_[iter][iter2] = -10;
+
+      trkSubJtRawPt_[iter][iter2] = -10;
+      trkSubJtRawPhi_[iter][iter2] = -10;
+      trkSubJtRawEta_[iter][iter2] = -10;
+
+      trkSubJtSKPt_[iter][iter2] = -10;
+      trkSubJtSKPhi_[iter][iter2] = -10;
+      trkSubJtSKEta_[iter][iter2] = -10;
+
+      genSubJtRawPt_[iter][iter2] = -10;
+      genSubJtRawPhi_[iter][iter2] = -10;
+      genSubJtRawEta_[iter][iter2] = -10;
+
+      genSubJtSKPt_[iter][iter2] = -10;
+      genSubJtSKPhi_[iter][iter2] = -10;
+      genSubJtSKEta_[iter][iter2] = -10;
+    }
 
     for(Int_t iter2 = 0; iter2 < 3; iter2++){
       for(Int_t iter3 = 0; iter3 < 3; iter3++){

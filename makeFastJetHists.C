@@ -1,7 +1,7 @@
 //Placeholder for FastJetHistMaker
 
 #include <string>
-#include "cfmVectFunc.h"
+#include "VectFunc.h"
 #include "FastJetAnaSkim.h"
 
 TFile* inFile_p = 0;
@@ -102,7 +102,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   Int_t centMax = 1;                                                                             
   if(hi) centMax = 4;
   
-  const Int_t nPTDBins  = 100;                                                                            
+  const Int_t nPTDBins  = 25;                                                                            
   const Int_t ptdLow = 0;                                                                                
   const Int_t ptdHigh = 1;
   const Int_t centLow[4] = {0, 20, 60, 100};
@@ -132,7 +132,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
   outFile_p = new TFile(outName.c_str(), "UPDATE");
   for(Int_t iter = 0; iter < centMax; iter++){
-
+    pfVsPTDHist_p[iter]->Scale(1./pfVsPTDHist_p[iter]->Integral());
     const std::string centString = getCentString(sType, centLow[iter], centHi[iter]);
     pfVsPTDHist_p[iter]->Write(Form("%sPFVsPTDHist_%s_h", algType[setNum].c_str(), centString.c_str()));
   }
@@ -159,10 +159,11 @@ void makeFastJetHists(const std::string inName, const std::string outName, sampl
   std::cout << "AnaSkim Loaded" << std::endl;
 
   jetTreeAna_p->AddFriend(pfcandTreeAna_p);
-  Int_t algMax = 2;
-  if(isMonteCarlo(sType)) algMax = 3;
+  Int_t algMax = 5;
 
   for(Int_t setIter = 0; setIter < algMax; setIter++){
+    if(!isMonteCarlo(sType)) continue;
+    
     makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType);
   }
 
