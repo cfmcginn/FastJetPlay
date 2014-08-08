@@ -130,11 +130,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     }
   }
 
-  outFile_p = new TFile(outName.c_str(), "UPDATE");
+  outFile_p = new TFile(outName.c_str(), "RECREATE");
   for(Int_t iter = 0; iter < centMax; iter++){
     pfVsPTDHist_p[iter]->Scale(1./pfVsPTDHist_p[iter]->Integral());
     const std::string centString = getCentString(sType, centLow[iter], centHi[iter]);
-    pfVsPTDHist_p[iter]->Write(Form("%sPFVsPTDHist_%s_h", algType[setNum].c_str(), centString.c_str()));
+    pfVsPTDHist_p[iter]->Write(Form("%sPFVsPTDHist_%s_h", algType[setNum].c_str(), centString.c_str()), TObject::kOverwrite);
   }
   outFile_p->Close();
   delete outFile_p;

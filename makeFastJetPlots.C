@@ -18,8 +18,10 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
 
   TH1F* getHist_p[4];
 
+  const std::string centString = {"50100", "3050", "1030", "010"}
+
   for(Int_t iter = 0; iter < 4; iter++){
-    getHist_p[iter] = (TH1F*)f->Get(Form());
+    getHist_p[iter] = (TH1F*)f->Get(Form("%sPFVsPTDHist_%s_h", alg.c_str(), centString[iter].c_str()));
   }
 }
 
