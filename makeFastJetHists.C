@@ -126,7 +126,12 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     else{
       for(Int_t centIter = 0; centIter < centMax; centIter++){
 	if(hiBin_ >= centLow[centIter] && hiBin_ <= centHi[centIter]){
-	  pfVsPTDHist_p[centIter]->Fill(pfJtVsPTD_[0]);
+
+	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	    if(pfJtVsPt_[jtIter] < 50) break;
+
+	    pfVsPTDHist_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+	  }
 	  break; 
 	}
       }
@@ -168,7 +173,7 @@ void makeFastJetHists(const std::string inName, const std::string outName, sampl
   Int_t algMax = 5;
 
   for(Int_t setIter = 0; setIter < algMax; setIter++){
-    if(!isMonteCarlo(sType)) continue;
+    if(!isMonteCarlo(sType) && setIter == 2) continue;
     
     makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType);
   }
