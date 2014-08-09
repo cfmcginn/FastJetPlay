@@ -122,7 +122,6 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   TH1F* pfVsPTDHist_Q_p[4];                                                                        
   TH1F* pfVsPTDHist_G_p[4];                                                              
   TH1F* pfVsPTDHist_Else_p[4];                                                 
-      
 
   for(Int_t iter = 0; iter < centMax; iter++){                                           
     centString[iter] = getCentString(sType, centLow[iter], centHi[iter]);
@@ -153,6 +152,21 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     pfVsPTDHist_Else_p[iter] = new TH1F(Form("%sPFVsPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
     pfVsPTDHist_Else_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
+  }
+
+  Int_t nCentBins = 20;
+
+  TH1F* pfRawPTDHiBinHist_p = new TH1F(Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), nCentBins, -0.5, 199.5);      
+  TH1F* pfVsPTDHiBinHist_p = new TH1F(Form("%sPFVsPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFVsPTDHiBinHist_p",algType[setNum].c_str()), nCentBins, -0.5, 199.5); 
+
+  std::vector<Float_t>* pfRawPTDHiBinVect_p[nCentBins];
+  std::vector<Float_t>* pfVsPTDHiBinVect_p[nCentBins];
+
+  if(hi){
+    for(Int_t iter = 0; iter < nCentBins; iter++){
+      pfRawPTDHiBinVect_p[iter] = new std::vector<Float_t>;
+      pfVsPTDHiBinVect_p[iter] = new std::vector<Float_t>;
+    }
   }
 
   for(Int_t jEntry = 0; jEntry < (Int_t)anaTree_p->GetEntries(); jEntry++){
@@ -218,6 +232,41 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	  break; 
 	}
       }
+    
+      for(Int_t centIter = 0; centIter < nCentBins; centIter++){
+	if(hiBin_ < centIter*200./nCentBins){
+
+	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	    if(pfJtRawPt_[jtIter] < totJtPtCut) break;
+
+            if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
+
+	    pfRawPTDHiBinVect_p[centIter]->push_back(pfJtRawPTD_[jtIter]);
+	  }
+
+	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	    if(pfJtVsPt_[jtIter] < totJtPtCut) break;
+
+            if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
+
+	    pfVsPTDHiBinVect_p[centIter]->push_back(pfJtVsPTD_[jtIter]);
+	  }
+
+	  break;
+	}
+      } 
+    }
+  }
+
+  if(hi){
+    for(Int_t centIter = 0; centIter < nCentBins; centIter++){
+      Float_t mean = getMean(pfVsPTDHiBinVect_p[centIter]);
+      pfVsPTDHiBinHist_p->SetBinContent(centIter + 1, mean);
+      pfVsPTDHiBinHist_p->SetBinError(centIter + 1, getError(pfVsPTDHiBinVect_p[centIter], mean));
+
+      mean = getMean(pfRawPTDHiBinVect_p[centIter]);
+      pfRawPTDHiBinHist_p->SetBinContent(centIter + 1, mean);
+      pfRawPTDHiBinHist_p->SetBinError(centIter + 1, getError(pfRawPTDHiBinVect_p[centIter], mean));
     }
   }
 
@@ -247,6 +296,12 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     pfRawPTDHist_Tot_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
     pfRawPTDHist_Tot_p[iter]->Write(Form("%sPFRawPTDHist_Tot_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
   }
+
+  if(hi){
+    pfRawPTDHiBinHist_p->Write("", TObject::kOverwrite);
+    pfVsPTDHiBinHist_p->Write("", TObject::kOverwrite);
+  }
+
   outFile_p->Close();
   delete outFile_p;
   outFile_p = 0;
