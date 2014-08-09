@@ -53,21 +53,29 @@ void drawMeanLine(Float_t histMean)
 }
 
 
-void plotFastJetPTD(const std::string histFileName, const std::string alg)
+void plotFastJetPTD(const std::string histFileName, const std::string alg, const std::string constAlg)
 {
   TFile *f = new TFile(histFileName.c_str(), "UPDATE");
 
-  TH1F* getHist_p[4];
+  TH1F* getHist_Tot_p[4];
+  TH1F* getHist_Q_p[4];
+  TH1F* getHist_G_p[4];
 
   const std::string centString[4] = {"50100", "3050", "1030", "010"};
   const std::string centString2[4] = {"50-100%", "30-50%", "10-30%", "0-10%"};
 
   for(Int_t iter = 0; iter < 4; iter++){
-    getHist_p[iter] = (TH1F*)f->Get(Form("%sPFVsPTDHist_%s_h", alg.c_str(), centString[iter].c_str()));
-    niceTH1(getHist_p[iter], .16, 0.0, 505, 402);
+    getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    niceTH1(getHist_Tot_p[iter], .20, 0.0, 505, 402);
+
+    getHist_Q_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Q_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    niceTH1(getHist_Q_p[iter], .20, 0.0, 505, 402);
+
+    getHist_G_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_G_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    niceTH1(getHist_G_p[iter], .20, 0.0, 505, 402);
   }
 
-  TCanvas* plotCanvas_p = new TCanvas(Form("%sPFVsPTDCanv_c", alg.c_str()), Form("%sPFVsPTDCanv_c", alg.c_str()), 4*300, 2*350);
+  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTDCanv_c", alg.c_str(), constAlg.c_str()), Form("%s%sPTDCanv_c", alg.c_str(), constAlg.c_str()), 4*300, 2*350);
   plotCanvas_p->Divide(4, 2, 0.0, 0.0);
 
   TLatex* label_p = new TLatex();
@@ -77,47 +85,52 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg)
 
   for(Int_t iter = 0; iter < 4; iter++){
     plotCanvas_p->cd(iter+1);
-    getHist_p[iter]->SetXTitle("PTD_{1}");
-    getHist_p[iter]->SetYTitle("Event Fraction");
-    getHist_p[iter]->SetAxisRange(.001, .999);
-    getHist_p[iter]->DrawCopy("Hist");
-    drawMeanLine(getHist_p[iter]->GetMean());
+    getHist_Tot_p[iter]->SetXTitle("PTD_{1}");
+    getHist_Tot_p[iter]->SetYTitle("Event Fraction");
+    getHist_Tot_p[iter]->SetAxisRange(.001, .999);
+    getHist_Tot_p[iter]->DrawCopy("Hist");
 
+    getHist_Q_p[iter]->SetFillColor(kBlue);
+    getHist_G_p[iter]->SetFillColor(kRed);
+
+    for(Int_t histIter = 0; histIter < getHist_Q_p[iter]->GetNbinsX(); histIter++){
+      Float_t tempContent = getHist_Q_p[iter]->GetBinContent(histIter+1) + getHist_G_p[iter]->GetBinContent(histIter+1);
+      getHist_Q_p[iter]->SetBinContent(histIter+1, tempContent);
+    }
+
+    getHist_Q_p[iter]->DrawCopy("SAME HIST");
+    getHist_G_p[iter]->DrawCopy("SAME HIST");
+
+    drawMeanLine(getHist_Tot_p[iter]->GetMean());
     label_p->DrawLatex(.7, .8, alg.c_str());
     label_p->DrawLatex(.7, .7, centString2[iter].c_str());
   }
 
-  TLine* oneLine_p = new TLine(0.0, 1.0, 1.0, 1.0);
-  oneLine_p->SetLineColor(1);
-  oneLine_p->SetLineStyle(2);
+  for(Int_t iter = 0; iter < 4; iter++){
+    plotCanvas_p->cd(iter+5);
 
-  plotCanvas_p->cd(6);
-  niceTH1(getHist_p[1], 1.5, .5, 505, 402);
-  getHist_p[1]->Divide(getHist_p[0]);
-  getHist_p[1]->DrawCopy();
-  oneLine_p->Draw("SAME");
+    for(Int_t histIter = 0; histIter < getHist_Q_p[iter]->GetNbinsX(); histIter++){
+      Float_t tempContent = getHist_Q_p[iter]->GetBinContent(histIter+1) - getHist_G_p[iter]->GetBinContent(histIter+1);
+      getHist_Q_p[iter]->SetBinContent(histIter+1, tempContent);
+    }
 
-  plotCanvas_p->cd(7);
-  niceTH1(getHist_p[2], 1.5, .5, 505, 402);
-  getHist_p[2]->Divide(getHist_p[0]);
-  getHist_p[2]->DrawCopy();
-  oneLine_p->Draw("SAME");
+    getHist_Q_p[iter]->Divide(getHist_Tot_p[iter]);
+    getHist_G_p[iter]->Divide(getHist_Tot_p[iter]);
 
-  plotCanvas_p->cd(8);
-  niceTH1(getHist_p[3], 1.5, .5, 505, 402);
-  getHist_p[3]->Divide(getHist_p[0]);
-  getHist_p[3]->DrawCopy();
-  oneLine_p->Draw("SAME");
+    niceTH1(getHist_Q_p[iter], 1.0, 0.0, 505, 505);
+    niceTH1(getHist_G_p[iter], 1.0, 0.0, 505, 505);
+    getHist_Q_p[iter]->SetYTitle("Ratio");
+    getHist_G_p[iter]->SetYTitle("Ratio");
 
-  plotCanvas_p->cd(5);
-  niceTH1(getHist_p[0], 1.5, .5, 505, 402);
-  getHist_p[0]->Divide(getHist_p[0]);
-  getHist_p[0]->SetYTitle("Ratio w/ Peripheral");
-  getHist_p[0]->DrawCopy();
-  oneLine_p->Draw("SAME");
+    getHist_Q_p[iter]->SetMarkerColor(kBlue);
+    getHist_G_p[iter]->SetMarkerColor(kRed);
+
+    getHist_Q_p[iter]->DrawCopy();
+    getHist_G_p[iter]->DrawCopy("SAME");
+  }
 
   plotCanvas_p->Write("", TObject::kOverwrite);
-  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%sPFVsPTDCanv", alg.c_str()), "pdf");
+  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sPTDCanv", alg.c_str(), constAlg.c_str()), "pdf");
 
   delete label_p;
   delete plotCanvas_p;
@@ -134,7 +147,8 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
   for(Int_t iter = 0; iter < 5; iter++){
     if(iter == 2) continue;
     
-    plotFastJetPTD(histFileName, algType[iter]);
+    plotFastJetPTD(histFileName, algType[iter], "PFVs");
+    plotFastJetPTD(histFileName, algType[iter], "PFRaw");
   }
   return;
 }

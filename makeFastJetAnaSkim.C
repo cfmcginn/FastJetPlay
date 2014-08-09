@@ -260,6 +260,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     }
 
     getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], pfJtVsPhi_, pfJtVsEta_, pfJtVsRefPart_);
+    getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], pfJtRawPhi_, pfJtRawEta_, pfJtRawRefPart_);
 
     if(!isGen){
       rechitTreeAna_p->Fill();

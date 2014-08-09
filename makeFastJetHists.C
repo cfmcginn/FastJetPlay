@@ -10,6 +10,9 @@ TFile* outFile_p = 0;
 const Float_t leadJtCut = 120.;
 const Float_t subLeadJtCut = 50.;
 
+const Float_t totJtPtCut = 80.;
+const Float_t totJtEtaCut = 2.0;
+
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
 std::string getCentString(sampleType sType, Int_t centLow, Int_t centHi)
@@ -109,28 +112,108 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Int_t centHi[4] = {19, 59, 99, 199};
 
   std::string centString[4];
-  TH1F* pfVsPTDHist_p[4];                                                                               
+
+  TH1F* pfRawPTDHist_Tot_p[4];                                                                
+  TH1F* pfRawPTDHist_Q_p[4];                                                                        
+  TH1F* pfRawPTDHist_G_p[4];                                                              
+  TH1F* pfRawPTDHist_Else_p[4];                                                 
+
+  TH1F* pfVsPTDHist_Tot_p[4];                                                                
+  TH1F* pfVsPTDHist_Q_p[4];                                                                        
+  TH1F* pfVsPTDHist_G_p[4];                                                              
+  TH1F* pfVsPTDHist_Else_p[4];                                                 
+      
 
   for(Int_t iter = 0; iter < centMax; iter++){                                           
     centString[iter] = getCentString(sType, centLow[iter], centHi[iter]);
-    pfVsPTDHist_p[iter] = new TH1F(Form("%sPFVsPTDHist_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-    pfVsPTDHist_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
+
+    //Raw
+    pfRawPTDHist_Tot_p[iter] = new TH1F(Form("%sPFRawPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+    pfRawPTDHist_Tot_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+
+    pfRawPTDHist_Q_p[iter] = new TH1F(Form("%sPFRawPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+    pfRawPTDHist_Q_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+
+    pfRawPTDHist_G_p[iter] = new TH1F(Form("%sPFRawPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+    pfRawPTDHist_G_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+
+    pfRawPTDHist_Else_p[iter] = new TH1F(Form("%sPFRawPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+    pfRawPTDHist_Else_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);         
+
+    //Vs
+
+    pfVsPTDHist_Tot_p[iter] = new TH1F(Form("%sPFVsPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+    pfVsPTDHist_Tot_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                    
+
+    pfVsPTDHist_Q_p[iter] = new TH1F(Form("%sPFVsPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+    pfVsPTDHist_Q_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+
+    pfVsPTDHist_G_p[iter] = new TH1F(Form("%sPFVsPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+    pfVsPTDHist_G_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);   
+
+    pfVsPTDHist_Else_p[iter] = new TH1F(Form("%sPFVsPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+    pfVsPTDHist_Else_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
   }
 
   for(Int_t jEntry = 0; jEntry < (Int_t)anaTree_p->GetEntries(); jEntry++){
     anaTree_p->GetEntry(jEntry);
     if(jEntry%10000 == 0) std::cout << jEntry << std::endl;
     if(isEventCut(setNum, sType)) continue;
-    if(!hi)
-      pfVsPTDHist_p[0]->Fill(pfJtVsPTD_[0]);                                                                         
+    if(!hi){
+      for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	if(pfJtVsPt_[jtIter] < totJtPtCut) break;
+
+	if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
+
+	pfVsPTDHist_Tot_p[0]->Fill(pfJtVsPTD_[jtIter]);                                                                         
+
+	if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[0]->Fill(pfJtVsPTD_[jtIter]);                                                     
+	else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[0]->Fill(pfJtVsPTD_[jtIter]);                                                       
+	else pfVsPTDHist_Else_p[0]->Fill(pfJtVsPTD_[jtIter]);
+	  
+      }
+
+      for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	if(pfJtRawPt_[jtIter] < totJtPtCut) break;
+
+	if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
+
+	pfRawPTDHist_Tot_p[0]->Fill(pfJtRawPTD_[jtIter]);                                                                         
+
+	if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[0]->Fill(pfJtRawPTD_[jtIter]);                                                     
+	else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[0]->Fill(pfJtRawPTD_[jtIter]);                                                       
+	else pfRawPTDHist_Else_p[0]->Fill(pfJtRawPTD_[jtIter]);
+	  
+      }
+    }
     else{
       for(Int_t centIter = 0; centIter < centMax; centIter++){
 	if(hiBin_ >= centLow[centIter] && hiBin_ <= centHi[centIter]){
 
 	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	    if(pfJtVsPt_[jtIter] < 50) break;
+	    if(pfJtVsPt_[jtIter] < totJtPtCut) break;
 
-	    pfVsPTDHist_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+	    if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
+
+	    pfVsPTDHist_Tot_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+
+	    if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+	    else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+	    else pfVsPTDHist_Else_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+
+	  }
+
+	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
+	    if(pfJtRawPt_[jtIter] < totJtPtCut) break;
+
+	    if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
+
+	    pfRawPTDHist_Tot_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
+
+	    if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
+	    else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
+	    else pfRawPTDHist_Else_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
+
 	  }
 	  break; 
 	}
@@ -140,16 +223,58 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
   outFile_p = new TFile(outName.c_str(), "UPDATE");
   for(Int_t iter = 0; iter < centMax; iter++){
-    pfVsPTDHist_p[iter]->Scale(1./pfVsPTDHist_p[iter]->Integral());
-    pfVsPTDHist_p[iter]->Write(Form("%sPFVsPTDHist_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+    pfVsPTDHist_Q_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
+    pfVsPTDHist_Q_p[iter]->Write(Form("%sPFVsPTDHist_Q_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfVsPTDHist_G_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
+    pfVsPTDHist_G_p[iter]->Write(Form("%sPFVsPTDHist_G_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfVsPTDHist_Else_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
+    pfVsPTDHist_Else_p[iter]->Write(Form("%sPFVsPTDHist_Else_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfVsPTDHist_Tot_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
+    pfVsPTDHist_Tot_p[iter]->Write(Form("%sPFVsPTDHist_Tot_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfRawPTDHist_Q_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
+    pfRawPTDHist_Q_p[iter]->Write(Form("%sPFRawPTDHist_Q_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfRawPTDHist_G_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
+    pfRawPTDHist_G_p[iter]->Write(Form("%sPFRawPTDHist_G_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfRawPTDHist_Else_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
+    pfRawPTDHist_Else_p[iter]->Write(Form("%sPFRawPTDHist_Else_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+
+    pfRawPTDHist_Tot_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
+    pfRawPTDHist_Tot_p[iter]->Write(Form("%sPFRawPTDHist_Tot_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
   }
   outFile_p->Close();
   delete outFile_p;
   outFile_p = 0;
   
   for(Int_t iter = 0; iter < centMax; iter++){
-    delete pfVsPTDHist_p[iter];
-    pfVsPTDHist_p[iter] = 0;
+    delete pfVsPTDHist_Tot_p[iter];
+    pfVsPTDHist_Tot_p[iter] = 0;
+
+    delete pfVsPTDHist_Q_p[iter];
+    pfVsPTDHist_Q_p[iter] = 0;
+
+    delete pfVsPTDHist_G_p[iter];
+    pfVsPTDHist_G_p[iter] = 0;
+
+    delete pfVsPTDHist_Else_p[iter];
+    pfVsPTDHist_Else_p[iter] = 0;
+
+    delete pfRawPTDHist_Tot_p[iter];
+    pfRawPTDHist_Tot_p[iter] = 0;
+
+    delete pfRawPTDHist_Q_p[iter];
+    pfRawPTDHist_Q_p[iter] = 0;
+
+    delete pfRawPTDHist_G_p[iter];
+    pfRawPTDHist_G_p[iter] = 0;
+
+    delete pfRawPTDHist_Else_p[iter];
+    pfRawPTDHist_Else_p[iter] = 0;
   }
 
   return;
