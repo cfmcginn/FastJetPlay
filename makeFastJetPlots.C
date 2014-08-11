@@ -67,7 +67,7 @@ void SetTitleLabel(TH1F* inHist_p, Int_t titleSize, Int_t labelSize, std::string
 }
 
 
-void plotFastJetPTD(const std::string histFileName, const std::string alg, const std::string constAlg, const std::string dataFileName = "")
+void plotFastJetPTD(const std::string histFileName, const std::string alg, const std::string constAlg, const std::string LeadSubLead, const std::string dataFileName = "")
 {
   const Int_t titleSize = 24;
   const Int_t labelSize = 20;
@@ -82,7 +82,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
     dataFile = new TFile(dataFileName.c_str(), "READ");
 
     for(Int_t iter = 0; iter < 4; iter++){
-      getHist_Data_p[iter] = (TH1F*)dataFile->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+      getHist_Data_p[iter] = (TH1F*)dataFile->Get(Form("%s%sPTD%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
       niceTH1(getHist_Data_p[iter], 0.4, 0.000, 505, 202);  
     }
   }
@@ -95,17 +95,17 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
   TH1F* getHist_G_p[4];
 
   for(Int_t iter = 0; iter < 4; iter++){
-    getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%sPTD%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_Tot_p[iter], 0.40, 0.00, 505, 202);
 
-    getHist_Q_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Q_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    getHist_Q_p[iter] = (TH1F*)f->Get(Form("%s%sPTD%s_Q_%s_h", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_Q_p[iter], 0.40, 0.00, 505, 202);
 
-    getHist_G_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_G_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    getHist_G_p[iter] = (TH1F*)f->Get(Form("%s%sPTD%s_G_%s_h", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_G_p[iter], 0.40, 0.00, 505, 202);
   }
 
-  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTDCanv_c", alg.c_str(), constAlg.c_str()), Form("%s%sPTDCanv_c", alg.c_str(), constAlg.c_str()), 4*300, 2*350);
+  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTD%s_c", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str()), Form("%s%sPTD%s_c", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str()), 4*300, 2*350);
   plotCanvas_p->Divide(4, 2, 0.0, 0.0);
 
   TLatex* label_p = new TLatex();
@@ -114,7 +114,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
   label_p->SetTextSizePixels(23);
 
   const std::string jetLabels[4] = {Form("Dijet selection w/ ak%s", alg.c_str()), Form("Recluster w/ %s", constAlg.c_str()), "CA Algorithm", "R = 0.3"};
-  const std::string cutLabels[4] = {"p_{T} > 50 GeV/c", "|#eta| < 2.0", "A_{J} Inclusive", "Subleading Jet"};
+  const std::string cutLabels[4] = {"p_{T} > 50 GeV/c", "|#eta| < 2.0", "A_{J} < 0.22", Form("%s Jet", LeadSubLead.c_str())};
 
   for(Int_t iter = 0; iter < 4; iter++){
     plotCanvas_p->cd(iter+1); 
@@ -186,7 +186,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
   }
 
   plotCanvas_p->Write("", TObject::kOverwrite);
-  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sPTDCanv", alg.c_str(), constAlg.c_str()), "pdf");
+  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sPTD%s", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str()), "pdf");
 
   delete label_p;
   delete plotCanvas_p;
@@ -212,7 +212,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
 }
 
 
-void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string alg, const std::string dataFileName = "")
+void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string alg, const std::string LeadSubLead, const std::string dataFileName = "")
 {
   const Int_t titleSize = 20;
   const Int_t labelSize = 20;
@@ -222,8 +222,8 @@ void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string a
 
   if(strcmp(dataFileName.c_str(), "") != 0){
     dataFile = new TFile(dataFileName.c_str(), "READ");
-    getHist_p[2] = (TH1F*)dataFile->Get(Form("%sPFVsPTDHiBinHist_p", alg.c_str()));
-    getHist_p[3] = (TH1F*)dataFile->Get(Form("%sPFRawPTDHiBinHist_p", alg.c_str()));
+    getHist_p[2] = (TH1F*)dataFile->Get(Form("%sPFVsPTDHiBin%s_h", alg.c_str(), LeadSubLead.c_str()));
+    getHist_p[3] = (TH1F*)dataFile->Get(Form("%sPFRawPTDHiBin%s_h", alg.c_str(), LeadSubLead.c_str()));
 
     niceTH1(getHist_p[2], 0.4999, 0.0001, 505, 505);
     niceTH1(getHist_p[3], 0.4999, 0.0001, 505, 505);
@@ -237,11 +237,11 @@ void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string a
 
 
   TFile *f = new TFile(histFileName.c_str(), "UPDATE");
-  getHist_p[0] = (TH1F*)f->Get(Form("%sPFVsPTDHiBinHist_p", alg.c_str()));
-  getHist_p[1] = (TH1F*)f->Get(Form("%sPFRawPTDHiBinHist_p", alg.c_str()));
+  getHist_p[0] = (TH1F*)f->Get(Form("%sPFVsPTDHiBin%s_h", alg.c_str(), LeadSubLead.c_str()));
+  getHist_p[1] = (TH1F*)f->Get(Form("%sPFRawPTDHiBin%s_h", alg.c_str(), LeadSubLead.c_str()));
 
 
-  TCanvas* plotCanvas_p = new TCanvas(Form("%sMeanPTDHiBinCanv_c", alg.c_str()), Form("%sMeanPTDHiBinCanv_c", alg.c_str()), 1*300, 1*350);
+  TCanvas* plotCanvas_p = new TCanvas(Form("%sMeanPTDHiBin%s_c", alg.c_str(), LeadSubLead.c_str()), Form("%sMeanPTDHiBin%s_c", alg.c_str(), LeadSubLead.c_str()), 1*300, 1*350);
 
   niceTH1(getHist_p[0], 0.4999, 0.0001, 505, 505);
   niceTH1(getHist_p[1], 0.4999, 0.0001, 505, 505);
@@ -275,8 +275,16 @@ void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string a
 
   leg_p->Draw("SAME");
 
+  TLatex* label_p = new TLatex();
+  label_p->SetNDC();
+  label_p->SetTextFont(43);
+  label_p->SetTextSizePixels(20);
+
+  label_p->DrawLatex(.30, .60, Form("%s A_{J} < 0.22", LeadSubLead.c_str()));
+
+
   plotCanvas_p->Write("", TObject::kOverwrite);
-  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%sMeanPTDHiBinCanv", alg.c_str()), "pdf");
+  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%sMeanPTDHiBin%s", alg.c_str(), LeadSubLead.c_str()), "pdf");
 
   delete plotCanvas_p;
 
@@ -291,7 +299,7 @@ void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string a
 }
 
 
-void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, const std::string constAlg, const std::string dataFileName = "")
+void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, const std::string constAlg, const std::string LeadSubLead, const std::string dataFileName = "")
 {
   const Int_t titleSize = 20;
   const Int_t labelSize = 20;
@@ -308,7 +316,7 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
   if(strcmp(dataFileName.c_str(), "") !=  0){
     dataFile = new TFile(dataFileName.c_str(), "READ");
     for(Int_t iter = 0; iter < 4; iter++){
-      getHist_Data_p[iter] = (TH1F*)dataFile->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+      getHist_Data_p[iter] = (TH1F*)dataFile->Get(Form("%s%sPTD%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
       niceTH1(getHist_Data_p[iter], 0.40, 0.00, 505, 202);
       
       getHist_Data_p[iter]->SetMarkerColor(colors[iter]);
@@ -321,14 +329,14 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
   TH1F* getHist_MC_p[4];
 
   for(Int_t iter = 0; iter < 4; iter++){
-    getHist_MC_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    getHist_MC_p[iter] = (TH1F*)f->Get(Form("%s%sPTD%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_MC_p[iter], 0.40, 0.00, 505, 202);
 
     getHist_MC_p[iter]->SetMarkerColor(colors[iter]);
     SetTitleLabel(getHist_MC_p[iter], titleSize, labelSize, "p_{T}D", 2.0, "Event Fraction", 2.5);
   }
 
-  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTDHiBinCanv_c", alg.c_str(), constAlg.c_str()), Form("%s%sPTDHiBinCanv_c", alg.c_str(), constAlg.c_str()), 2*300, 2*350);
+  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTDHiBin%s_c", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str()), Form("%s%sPTDHiBin%s_c", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str()), 2*300, 2*350);
   plotCanvas_p->Divide(2, 2, 0.0, 0.0);
 
   plotCanvas_p->cd(1);
@@ -362,8 +370,8 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
     }
   }
 
-  label_p->DrawLatex(.50, .93, "Subleading");
-  label_p->DrawLatex(.50, .85, "A_{J} Inclusive");
+  label_p->DrawLatex(.50, .93, LeadSubLead.c_str());
+  label_p->DrawLatex(.50, .85, "A_{J} < 0.22");
   label_p->DrawLatex(.50, .77, "p_{T} > 50; |#eta| < 2");
   label_p->DrawLatex(.50, .69, "PbPb");
 
@@ -392,7 +400,7 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
   }
 
   plotCanvas_p->Write("", TObject::kOverwrite);
-  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sPTDHiBinCanv", alg.c_str(), constAlg.c_str()), "pdf");
+  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sPTDHiBin%s", alg.c_str(), constAlg.c_str(), LeadSubLead.c_str()), "pdf");
 
   delete leg_p;
   delete plotCanvas_p;
@@ -412,17 +420,22 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
 {
   TH1::SetDefaultSumw2();
 
+  const std::string LeadSubLead[2] = {"Leading", "Subleading"};
+
   for(Int_t iter = 0; iter < 5; iter++){
     if(iter == 2) continue;
     
-    plotFastJetPTD(histFileName, algType[iter], "PFVs", dataFileName);
-    plotFastJetPTD(histFileName, algType[iter], "PFRaw", dataFileName);
-
-    plotFastJetMeanPTDHiBin(histFileName, algType[iter], dataFileName);
-    plotFastJetMeanPTDHiBin(histFileName, algType[iter], dataFileName);
-
-    plotFastJetPTDHiBin(histFileName, algType[iter], "PFVs", dataFileName);
-    plotFastJetPTDHiBin(histFileName, algType[iter], "PFRaw", dataFileName);
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      plotFastJetPTD(histFileName, algType[iter], "PFVs", LeadSubLead[subIter], dataFileName);
+      plotFastJetPTD(histFileName, algType[iter], "PFRaw", LeadSubLead[subIter], dataFileName);
+      
+      plotFastJetMeanPTDHiBin(histFileName, algType[iter], LeadSubLead[subIter], dataFileName);
+      plotFastJetMeanPTDHiBin(histFileName, algType[iter], LeadSubLead[subIter], dataFileName);
+      
+      plotFastJetPTDHiBin(histFileName, algType[iter], "PFVs", LeadSubLead[subIter], dataFileName);
+      plotFastJetPTDHiBin(histFileName, algType[iter], "PFRaw", LeadSubLead[subIter], dataFileName);
+    }
   }
+
   return;
 }

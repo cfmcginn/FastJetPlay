@@ -12,7 +12,7 @@ const Float_t subLeadJtCut = 50.;
 
 const Float_t totJtPtCut = 50.;
 const Float_t totJtEtaCut = 2.0;
-const Float_t totJtAjCut = 0;
+const Float_t totJtAjCut = 0.22;
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
@@ -131,61 +131,67 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Int_t centHi[4] = {19, 59, 99, 199};
 
   std::string centString[4];
+  const std::string LeadSubLead[2] = {"Leading", "Subleading"};
 
-  TH1F* pfRawPTDHist_Tot_p[4];                                                                
-  TH1F* pfRawPTDHist_Q_p[4];                                                                        
-  TH1F* pfRawPTDHist_G_p[4];                                                              
-  TH1F* pfRawPTDHist_Else_p[4];                                                 
+  TH1F* pfRawPTDHist_Tot_p[4][2];                                                                
+  TH1F* pfRawPTDHist_Q_p[4][2];                                                                        
+  TH1F* pfRawPTDHist_G_p[4][2];                                                              
+  TH1F* pfRawPTDHist_Else_p[4][2];                                                 
 
-  TH1F* pfVsPTDHist_Tot_p[4];                                                                
-  TH1F* pfVsPTDHist_Q_p[4];                                                                        
-  TH1F* pfVsPTDHist_G_p[4];                                                              
-  TH1F* pfVsPTDHist_Else_p[4];                                                 
+  TH1F* pfVsPTDHist_Tot_p[4][2];                                                                
+  TH1F* pfVsPTDHist_Q_p[4][2];                                                                        
+  TH1F* pfVsPTDHist_G_p[4][2];                                                              
+  TH1F* pfVsPTDHist_Else_p[4][2];                                                 
 
   for(Int_t iter = 0; iter < centMax; iter++){                                           
     centString[iter] = getCentString(sType, centLow[iter], centHi[iter]);
 
-    //Raw
-    pfRawPTDHist_Tot_p[iter] = new TH1F(Form("%sPFRawPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-    pfRawPTDHist_Tot_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-
-    pfRawPTDHist_Q_p[iter] = new TH1F(Form("%sPFRawPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-    pfRawPTDHist_Q_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-
-    pfRawPTDHist_G_p[iter] = new TH1F(Form("%sPFRawPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-    pfRawPTDHist_G_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-
-    pfRawPTDHist_Else_p[iter] = new TH1F(Form("%sPFRawPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFRawPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-    pfRawPTDHist_Else_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);         
-
-    //Vs
-
-    pfVsPTDHist_Tot_p[iter] = new TH1F(Form("%sPFVsPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Tot_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-    pfVsPTDHist_Tot_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                    
-
-    pfVsPTDHist_Q_p[iter] = new TH1F(Form("%sPFVsPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Q_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-    pfVsPTDHist_Q_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-
-    pfVsPTDHist_G_p[iter] = new TH1F(Form("%sPFVsPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_G_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-    pfVsPTDHist_G_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);   
-
-    pfVsPTDHist_Else_p[iter] = new TH1F(Form("%sPFVsPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), Form("%sPFVsPTDHist_Else_%s_p", algType[setNum].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-    pfVsPTDHist_Else_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      //Raw
+      pfRawPTDHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFRawPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+      pfRawPTDHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+      
+      pfRawPTDHist_Q_p[iter][subIter] = new TH1F(Form("%sPFRawPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+      pfRawPTDHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+      
+      pfRawPTDHist_G_p[iter][subIter] = new TH1F(Form("%sPFRawPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+      pfRawPTDHist_G_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+      
+      pfRawPTDHist_Else_p[iter][subIter] = new TH1F(Form("%sPFRawPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+      pfRawPTDHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);         
+      
+      //Vs
+      
+      pfVsPTDHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+      pfVsPTDHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                    
+      
+      pfVsPTDHist_Q_p[iter][subIter] = new TH1F(Form("%sPFVsPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+      pfVsPTDHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+      
+      pfVsPTDHist_G_p[iter][subIter] = new TH1F(Form("%sPFVsPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+      pfVsPTDHist_G_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);   
+      
+      pfVsPTDHist_Else_p[iter][subIter] = new TH1F(Form("%sPFVsPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+      pfVsPTDHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
+    }
   }
 
   Int_t nCentBins = 10;
 
-  TH1F* pfRawPTDHiBinHist_p = new TH1F(Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), nCentBins, -0.5, 199.5);      
-  TH1F* pfVsPTDHiBinHist_p = new TH1F(Form("%sPFVsPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFVsPTDHiBinHist_p",algType[setNum].c_str()), nCentBins, -0.5, 199.5); 
-
-  TH1F* pfRawPTDHiBinMean_p[nCentBins];
-  TH1F* pfVsPTDHiBinMean_p[nCentBins];
+  TH1F* pfRawPTDHiBinHist_p[2];      
+  TH1F* pfVsPTDHiBinHist_p[2]; 
+  TH1F* pfRawPTDHiBinMean_p[nCentBins][2];
+  TH1F* pfVsPTDHiBinMean_p[nCentBins][2];
 
   if(hi){
-    for(Int_t iter = 0; iter < nCentBins; iter++){
-      pfRawPTDHiBinMean_p[iter] = new TH1F(Form("%sPFRawPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), Form("%sPFRawPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
-      pfVsPTDHiBinMean_p[iter] = new TH1F(Form("%sPFVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), Form("%sP\
-FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      pfRawPTDHiBinHist_p[subIter] = new TH1F(Form("%sPFRawPTDHiBin%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str()), Form("%sPFRawPTDHiBin%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str()), nCentBins, -0.5, 199.5);
+      pfVsPTDHiBinHist_p[subIter] = new TH1F(Form("%sPFVsPTDHiBin%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str()), Form("%sPFVsPTDHiBin%s_h",algType[setNum].c_str(), LeadSubLead[subIter].c_str()), nCentBins, -0.5, 199.5);
+
+      for(Int_t iter = 0; iter < nCentBins; iter++){
+	pfRawPTDHiBinMean_p[iter][subIter] = new TH1F(Form("%sPFRawPTDHiBinMean%s_%d_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), iter), Form("%sPFRawPTDHiBinMean%s_%d_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), iter), 100, 0, 1);
+	pfVsPTDHiBinMean_p[iter][subIter] = new TH1F(Form("%sPFVsPTDHiBinMean%s_%d_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), iter), Form("%sPFVsPTDHiBinMean%s_%d_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), iter), 100, 0, 1);
+      }
     }
   }
 
@@ -198,48 +204,52 @@ FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
 
     if(montecarlo) hatWeight = getHatWeight(pthat_);
 
+    if(AlgJtAsymm_[setNum] > totJtAjCut) continue;
+
     if(!hi){
 
-      if(TMath::Abs(pfJtVsEta_[1]) < totJtEtaCut && pfJtVsPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
+      for(Int_t subIter = 0; subIter < 2; subIter++){
+	if(TMath::Abs(pfJtVsEta_[subIter]) < totJtEtaCut && pfJtVsPt_[subIter] > totJtPtCut){
 
-	pfVsPTDHist_Tot_p[0]->Fill(pfJtVsPTD_[1], hatWeight);                                                                         
-	if(TMath::Abs(pfJtVsRefPart_[1]) < 9) pfVsPTDHist_Q_p[0]->Fill(pfJtVsPTD_[1], hatWeight);                                                     
-	else if(pfJtVsRefPart_[1] == 21) pfVsPTDHist_G_p[0]->Fill(pfJtVsPTD_[1], hatWeight);                                                       
-	else pfVsPTDHist_Else_p[0]->Fill(pfJtVsPTD_[1], hatWeight);  
-      }
-
+	  pfVsPTDHist_Tot_p[0][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);                                        
+	  if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9) pfVsPTDHist_Q_p[0][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);         
+	  else if(pfJtVsRefPart_[subIter] == 21) pfVsPTDHist_G_p[0][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);   
+	  else pfVsPTDHist_Else_p[0][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);  
+	}
       
-      if(TMath::Abs(pfJtRawEta_[1]) < totJtEtaCut && pfJtRawPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
+	if(TMath::Abs(pfJtRawEta_[subIter]) < totJtEtaCut && pfJtRawPt_[subIter] > totJtPtCut){
 
-	pfRawPTDHist_Tot_p[0]->Fill(pfJtRawPTD_[1], hatWeight);                                                                         
-	if(TMath::Abs(pfJtRawRefPart_[1]) < 9) pfRawPTDHist_Q_p[0]->Fill(pfJtRawPTD_[1], hatWeight);                                                     
-	else if(pfJtRawRefPart_[1] == 21) pfRawPTDHist_G_p[0]->Fill(pfJtRawPTD_[1], hatWeight);                                                       
-	else pfRawPTDHist_Else_p[0]->Fill(pfJtRawPTD_[1], hatWeight);	
+	  pfRawPTDHist_Tot_p[0][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);                                                      
+	  if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9) pfRawPTDHist_Q_p[0][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);           
+	  else if(pfJtRawRefPart_[subIter] == 21) pfRawPTDHist_G_p[0][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight); 
+	  else pfRawPTDHist_Else_p[0][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);	
+	}
       }
     }
     else{
       for(Int_t centIter = 0; centIter < centMax; centIter++){
 	if(hiBin_ >= centLow[centIter] && hiBin_ <= centHi[centIter]){
 
-	  if(TMath::Abs(pfJtVsEta_[1]) < totJtEtaCut && pfJtVsPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
-
-	    pfVsPTDHist_Tot_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
-
-	    if(TMath::Abs(pfJtVsRefPart_[1]) < 9) pfVsPTDHist_Q_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
-	    else if(pfJtVsRefPart_[1] == 21) pfVsPTDHist_G_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
-	    else pfVsPTDHist_Else_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
-
+	  for(Int_t subIter = 0; subIter < 2; subIter++){
+	    if(TMath::Abs(pfJtVsEta_[subIter]) < totJtEtaCut && pfJtVsPt_[subIter] > totJtPtCut){
+	      
+	      pfVsPTDHist_Tot_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
+	      
+	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9) pfVsPTDHist_Q_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
+	      else if(pfJtVsRefPart_[subIter] == 21) pfVsPTDHist_G_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
+	      else pfVsPTDHist_Else_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight); 
+	    }
+	    
+	    if(TMath::Abs(pfJtRawEta_[subIter]) < totJtEtaCut && pfJtRawPt_[subIter] > totJtPtCut){
+	      
+	      pfRawPTDHist_Tot_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+	      
+	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9) pfRawPTDHist_Q_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+	      else if(pfJtRawRefPart_[subIter] == 21) pfRawPTDHist_G_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+	      else pfRawPTDHist_Else_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+	    }
 	  }
 
-	  if(TMath::Abs(pfJtRawEta_[1]) < totJtEtaCut && pfJtRawPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
-
-	    pfRawPTDHist_Tot_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
-
-	    if(TMath::Abs(pfJtRawRefPart_[1]) < 9) pfRawPTDHist_Q_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
-	    else if(pfJtRawRefPart_[1] == 21) pfRawPTDHist_G_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
-	    else pfRawPTDHist_Else_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
-
-	  }
 	  break; 
 	}
       }
@@ -247,11 +257,14 @@ FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
       for(Int_t centIter = 0; centIter < nCentBins; centIter++){
 	if(hiBin_ < centIter*200./nCentBins){
 
-	  if(TMath::Abs(pfJtRawEta_[1]) < totJtEtaCut && pfJtRawPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut)
-	    pfRawPTDHiBinMean_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
+	  for(Int_t subIter = 0; subIter < 2; subIter++){
 
-	  if(TMath::Abs(pfJtVsEta_[1]) < totJtEtaCut && pfJtVsPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut)
-	    pfVsPTDHiBinMean_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
+	    if(TMath::Abs(pfJtRawEta_[subIter]) < totJtEtaCut && pfJtRawPt_[subIter] > totJtPtCut)
+	      pfRawPTDHiBinMean_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+	    
+	    if(TMath::Abs(pfJtVsEta_[subIter]) < totJtEtaCut && pfJtVsPt_[subIter] > totJtPtCut)
+	      pfVsPTDHiBinMean_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
+	  }
 
 	  break;
 	}
@@ -260,45 +273,51 @@ FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
   }
 
   if(hi){
-    for(Int_t centIter = 0; centIter < nCentBins; centIter++){
-      pfVsPTDHiBinHist_p->SetBinContent(centIter + 1, pfVsPTDHiBinMean_p[centIter]->GetMean());
-      pfVsPTDHiBinHist_p->SetBinError(centIter + 1, pfVsPTDHiBinMean_p[centIter]->GetMeanError());
-
-      pfRawPTDHiBinHist_p->SetBinContent(centIter + 1, pfRawPTDHiBinMean_p[centIter]->GetMean());
-      pfRawPTDHiBinHist_p->SetBinError(centIter + 1, pfRawPTDHiBinMean_p[centIter]->GetMeanError());
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      for(Int_t centIter = 0; centIter < nCentBins; centIter++){
+	pfVsPTDHiBinHist_p[subIter]->SetBinContent(centIter + 1, pfVsPTDHiBinMean_p[centIter][subIter]->GetMean());
+	pfVsPTDHiBinHist_p[subIter]->SetBinError(centIter + 1, pfVsPTDHiBinMean_p[centIter][subIter]->GetMeanError());
+	
+	pfRawPTDHiBinHist_p[subIter]->SetBinContent(centIter + 1, pfRawPTDHiBinMean_p[centIter][subIter]->GetMean());
+	pfRawPTDHiBinHist_p[subIter]->SetBinError(centIter + 1, pfRawPTDHiBinMean_p[centIter][subIter]->GetMeanError());
+      }
     }
   }
 
   outFile_p = new TFile(outName.c_str(), "UPDATE");
   for(Int_t iter = 0; iter < centMax; iter++){
-    pfVsPTDHist_Q_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
-    pfVsPTDHist_Q_p[iter]->Write(Form("%sPFVsPTDHist_Q_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfVsPTDHist_G_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
-    pfVsPTDHist_G_p[iter]->Write(Form("%sPFVsPTDHist_G_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfVsPTDHist_Else_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
-    pfVsPTDHist_Else_p[iter]->Write(Form("%sPFVsPTDHist_Else_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfVsPTDHist_Tot_p[iter]->Scale(1./pfVsPTDHist_Tot_p[iter]->Integral());
-    pfVsPTDHist_Tot_p[iter]->Write(Form("%sPFVsPTDHist_Tot_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfRawPTDHist_Q_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
-    pfRawPTDHist_Q_p[iter]->Write(Form("%sPFRawPTDHist_Q_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfRawPTDHist_G_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
-    pfRawPTDHist_G_p[iter]->Write(Form("%sPFRawPTDHist_G_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfRawPTDHist_Else_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
-    pfRawPTDHist_Else_p[iter]->Write(Form("%sPFRawPTDHist_Else_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
-
-    pfRawPTDHist_Tot_p[iter]->Scale(1./pfRawPTDHist_Tot_p[iter]->Integral());
-    pfRawPTDHist_Tot_p[iter]->Write(Form("%sPFRawPTDHist_Tot_%s_h", algType[setNum].c_str(), centString[iter].c_str()), TObject::kOverwrite);
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      pfVsPTDHist_Q_p[iter][subIter]->Scale(1./pfVsPTDHist_Tot_p[iter][subIter]->Integral());
+      pfVsPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfVsPTDHist_G_p[iter][subIter]->Scale(1./pfVsPTDHist_Tot_p[iter][subIter]->Integral());
+      pfVsPTDHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfVsPTDHist_Else_p[iter][subIter]->Scale(1./pfVsPTDHist_Tot_p[iter][subIter]->Integral());
+      pfVsPTDHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfVsPTDHist_Tot_p[iter][subIter]->Scale(1./pfVsPTDHist_Tot_p[iter][subIter]->Integral());
+      pfVsPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfRawPTDHist_Q_p[iter][subIter]->Scale(1./pfRawPTDHist_Tot_p[iter][subIter]->Integral());
+      pfRawPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfRawPTDHist_G_p[iter][subIter]->Scale(1./pfRawPTDHist_Tot_p[iter][subIter]->Integral());
+      pfRawPTDHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfRawPTDHist_Else_p[iter][subIter]->Scale(1./pfRawPTDHist_Tot_p[iter][subIter]->Integral());
+      pfRawPTDHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+      
+      pfRawPTDHist_Tot_p[iter][subIter]->Scale(1./pfRawPTDHist_Tot_p[iter][subIter]->Integral());
+      pfRawPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+    }
   }
 
   if(hi){
-    pfRawPTDHiBinHist_p->Write("", TObject::kOverwrite);
-    pfVsPTDHiBinHist_p->Write("", TObject::kOverwrite);
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      pfRawPTDHiBinHist_p[subIter]->Write("", TObject::kOverwrite);
+      pfVsPTDHiBinHist_p[subIter]->Write("", TObject::kOverwrite);
+    }
   }
 
   outFile_p->Close();
@@ -306,37 +325,50 @@ FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
   outFile_p = 0;
   
   for(Int_t iter = 0; iter < centMax; iter++){
-    delete pfVsPTDHist_Tot_p[iter];
-    pfVsPTDHist_Tot_p[iter] = 0;
-
-    delete pfVsPTDHist_Q_p[iter];
-    pfVsPTDHist_Q_p[iter] = 0;
-
-    delete pfVsPTDHist_G_p[iter];
-    pfVsPTDHist_G_p[iter] = 0;
-
-    delete pfVsPTDHist_Else_p[iter];
-    pfVsPTDHist_Else_p[iter] = 0;
-
-    delete pfRawPTDHist_Tot_p[iter];
-    pfRawPTDHist_Tot_p[iter] = 0;
-
-    delete pfRawPTDHist_Q_p[iter];
-    pfRawPTDHist_Q_p[iter] = 0;
-
-    delete pfRawPTDHist_G_p[iter];
-    pfRawPTDHist_G_p[iter] = 0;
-
-    delete pfRawPTDHist_Else_p[iter];
-    pfRawPTDHist_Else_p[iter] = 0;
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      delete pfVsPTDHist_Tot_p[iter][subIter];
+      pfVsPTDHist_Tot_p[iter][subIter] = 0;
+      
+      delete pfVsPTDHist_Q_p[iter][subIter];
+      pfVsPTDHist_Q_p[iter][subIter] = 0;
+      
+      delete pfVsPTDHist_G_p[iter][subIter];
+      pfVsPTDHist_G_p[iter][subIter] = 0;
+      
+      delete pfVsPTDHist_Else_p[iter][subIter];
+      pfVsPTDHist_Else_p[iter][subIter] = 0;
+      
+      delete pfRawPTDHist_Tot_p[iter][subIter];
+      pfRawPTDHist_Tot_p[iter][subIter] = 0;
+      
+      delete pfRawPTDHist_Q_p[iter][subIter];
+      pfRawPTDHist_Q_p[iter][subIter] = 0;
+      
+      delete pfRawPTDHist_G_p[iter][subIter];
+      pfRawPTDHist_G_p[iter][subIter] = 0;
+      
+      delete pfRawPTDHist_Else_p[iter][subIter];
+      pfRawPTDHist_Else_p[iter][subIter] = 0;
+    }
+  }
+    
+  for(Int_t iter = 0; iter < nCentBins; iter++){
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+      delete pfRawPTDHiBinMean_p[iter][subIter];
+      pfRawPTDHiBinMean_p[iter][subIter] = 0;
+      
+      delete pfVsPTDHiBinMean_p[iter][subIter];
+      pfVsPTDHiBinMean_p[iter][subIter] = 0;
+    }
   }
 
-  for(Int_t iter = 0; iter < nCentBins; iter++){
-    delete pfRawPTDHiBinMean_p[iter];
-    pfRawPTDHiBinMean_p[iter] = 0;
 
-    delete pfVsPTDHiBinMean_p[iter];
-    pfVsPTDHiBinMean_p[iter] = 0;
+  for(Int_t iter = 0; iter < 2; iter++){
+    delete pfRawPTDHiBinHist_p[iter];
+    pfRawPTDHiBinHist_p[iter] = 0;
+
+    delete pfVsPTDHiBinHist_p[iter];
+    pfVsPTDHiBinHist_p[iter] = 0;
   }
 
   return;
