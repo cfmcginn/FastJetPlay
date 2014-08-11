@@ -15,6 +15,24 @@ const Float_t totJtEtaCut = 2.0;
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
+Int_t ptHatCuts_PYTHHYD[4] = {80, 100, 120, 1000000};
+Float_t ptHatWeights_PYTHHYD[3] = {.342827, .106555, .0279868};
+
+
+Float_t getHatWeight(Float_t inHat)
+{
+  for(Int_t iter = 0; iter < 3; iter++){
+    if(inHat > ptHatCuts_PYTHHYD[iter] && inHat < ptHatCuts_PYTHHYD[iter + 1]){
+      return ptHatWeights_PYTHHYD[iter];
+    }
+  }
+
+  std::cout << inHat << std::endl;
+  std::cout << "No weight assigned; check for error." << std::endl;
+  return 0;
+}
+
+
 std::string getCentString(sampleType sType, Int_t centLow, Int_t centHi)
 {
   if(isHI(sType)) return Form("%d%d", (Int_t)(centLow*.5), (Int_t)((centHi+1)*.5));
@@ -99,7 +117,7 @@ void makeTauHist(TTree* anaTree_p, const char* outName, Int_t setNum, sampleType
 
 void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t setNum, sampleType sType = kHIDATA)
 {
-  //  const Bool_t montecarlo = isMonteCarlo(sType);                                                         
+  const Bool_t montecarlo = isMonteCarlo(sType);                                                         
   const Bool_t hi = isHI(sType);                                                                       
                                                                                                
   Int_t centMax = 1;                                                                             
@@ -159,13 +177,14 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   TH1F* pfRawPTDHiBinHist_p = new TH1F(Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), nCentBins, -0.5, 199.5);      
   TH1F* pfVsPTDHiBinHist_p = new TH1F(Form("%sPFVsPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFVsPTDHiBinHist_p",algType[setNum].c_str()), nCentBins, -0.5, 199.5); 
 
-  std::vector<Float_t>* pfRawPTDHiBinVect_p[nCentBins];
-  std::vector<Float_t>* pfVsPTDHiBinVect_p[nCentBins];
+  TH1F* pfRawPTDHiBinMean_p[nCentBins];
+  TH1F* pfVsPTDHiBinMean_p[nCentBins];
 
   if(hi){
     for(Int_t iter = 0; iter < nCentBins; iter++){
-      pfRawPTDHiBinVect_p[iter] = new std::vector<Float_t>;
-      pfVsPTDHiBinVect_p[iter] = new std::vector<Float_t>;
+      pfRawPTDHiBinMean_p[iter] = new TH1F(Form("%sPFRawPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), Form("%sPFRawPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
+      pfVsPTDHiBinMean_p[iter] = new TH1F(Form("%sPFVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), Form("%sP\
+FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
     }
   }
 
@@ -173,17 +192,22 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     anaTree_p->GetEntry(jEntry);
     if(jEntry%10000 == 0) std::cout << jEntry << std::endl;
     if(isEventCut(setNum, sType)) continue;
+
+    Float_t hatWeight = 1;
+
+    if(montecarlo) hatWeight = getHatWeight(pthat_);
+
     if(!hi){
       for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	if(pfJtVsPt_[jtIter] < totJtPtCut) break;
 
 	if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
 
-	pfVsPTDHist_Tot_p[0]->Fill(pfJtVsPTD_[jtIter]);                                                                         
+	pfVsPTDHist_Tot_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);                                                                         
 
-	if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[0]->Fill(pfJtVsPTD_[jtIter]);                                                     
-	else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[0]->Fill(pfJtVsPTD_[jtIter]);                                                       
-	else pfVsPTDHist_Else_p[0]->Fill(pfJtVsPTD_[jtIter]);
+	if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);                                                     
+	else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);                                                       
+	else pfVsPTDHist_Else_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);
 	  
       }
 
@@ -192,11 +216,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
 	if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
 
-	pfRawPTDHist_Tot_p[0]->Fill(pfJtRawPTD_[jtIter]);                                                                         
+	pfRawPTDHist_Tot_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);                                                                         
 
-	if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[0]->Fill(pfJtRawPTD_[jtIter]);                                                     
-	else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[0]->Fill(pfJtRawPTD_[jtIter]);                                                       
-	else pfRawPTDHist_Else_p[0]->Fill(pfJtRawPTD_[jtIter]);
+	if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);                                                     
+	else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);                                                       
+	else pfRawPTDHist_Else_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 	  
       }
     }
@@ -209,11 +233,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
 	    if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
 
-	    pfVsPTDHist_Tot_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+	    pfVsPTDHist_Tot_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
 
-	    if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
-	    else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
-	    else pfVsPTDHist_Else_p[centIter]->Fill(pfJtVsPTD_[jtIter]);
+	    if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
+	    else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
+	    else pfVsPTDHist_Else_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
 
 	  }
 
@@ -222,11 +246,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
 	    if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
 
-	    pfRawPTDHist_Tot_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
+	    pfRawPTDHist_Tot_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 
-	    if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
-	    else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
-	    else pfRawPTDHist_Else_p[centIter]->Fill(pfJtRawPTD_[jtIter]);
+	    if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	    else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	    else pfRawPTDHist_Else_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 
 	  }
 	  break; 
@@ -241,7 +265,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
             if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
 
-	    pfRawPTDHiBinVect_p[centIter]->push_back(pfJtRawPTD_[jtIter]);
+	    pfRawPTDHiBinMean_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 	  }
 
 	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
@@ -249,7 +273,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
             if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
 
-	    pfVsPTDHiBinVect_p[centIter]->push_back(pfJtVsPTD_[jtIter]);
+	    pfVsPTDHiBinMean_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
 	  }
 
 	  break;
@@ -260,13 +284,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
   if(hi){
     for(Int_t centIter = 0; centIter < nCentBins; centIter++){
-      Float_t mean = getMean(pfVsPTDHiBinVect_p[centIter]);
-      pfVsPTDHiBinHist_p->SetBinContent(centIter + 1, mean);
-      pfVsPTDHiBinHist_p->SetBinError(centIter + 1, getError(pfVsPTDHiBinVect_p[centIter], mean));
+      pfVsPTDHiBinHist_p->SetBinContent(centIter + 1, pfVsPTDHiBinMean_p[centIter]->GetMean());
+      pfVsPTDHiBinHist_p->SetBinError(centIter + 1, pfVsPTDHiBinMean_p[centIter]->GetMeanError());
 
-      mean = getMean(pfRawPTDHiBinVect_p[centIter]);
-      pfRawPTDHiBinHist_p->SetBinContent(centIter + 1, mean);
-      pfRawPTDHiBinHist_p->SetBinError(centIter + 1, getError(pfRawPTDHiBinVect_p[centIter], mean));
+      pfRawPTDHiBinHist_p->SetBinContent(centIter + 1, pfRawPTDHiBinMean_p[centIter]->GetMean());
+      pfRawPTDHiBinHist_p->SetBinError(centIter + 1, pfRawPTDHiBinMean_p[centIter]->GetMeanError());
     }
   }
 
@@ -330,6 +352,14 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     delete pfRawPTDHist_Else_p[iter];
     pfRawPTDHist_Else_p[iter] = 0;
+  }
+
+  for(Int_t iter = 0; iter < nCentBins; iter++){
+    delete pfRawPTDHiBinMean_p[iter];
+    pfRawPTDHiBinMean_p[iter] = 0;
+
+    delete pfVsPTDHiBinMean_p[iter];
+    pfVsPTDHiBinMean_p[iter] = 0;
   }
 
   return;

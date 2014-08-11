@@ -197,7 +197,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
       pfcandTreeIni_p->GetEntry(jentry);
       trkTreeIni_p->GetEntry(jentry);
     }
-    if(!montecarlo) genTreeIni_p->GetEntry(jentry);
+    if(montecarlo) genTreeIni_p->GetEntry(jentry);
     jetTreeIni_p->GetEntry(jentry);
 
     InitJtVar();
