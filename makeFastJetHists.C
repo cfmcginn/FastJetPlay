@@ -10,8 +10,9 @@ TFile* outFile_p = 0;
 const Float_t leadJtCut = 120.;
 const Float_t subLeadJtCut = 50.;
 
-const Float_t totJtPtCut = 80.;
+const Float_t totJtPtCut = 50.;
 const Float_t totJtEtaCut = 2.0;
+const Float_t totJtAjCut = 0;
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
@@ -123,7 +124,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   Int_t centMax = 1;                                                                             
   if(hi) centMax = 4;
   
-  const Int_t nPTDBins  = 25;                                                                            
+  const Int_t nPTDBins  = 15;                                                                            
   const Int_t ptdLow = 0;                                                                                
   const Int_t ptdHigh = 1;
   const Int_t centLow[4] = {0, 20, 60, 100};
@@ -172,7 +173,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     pfVsPTDHist_Else_p[iter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                                          
   }
 
-  Int_t nCentBins = 20;
+  Int_t nCentBins = 10;
 
   TH1F* pfRawPTDHiBinHist_p = new TH1F(Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFRawPTDHiBinHist_p", algType[setNum].c_str()), nCentBins, -0.5, 199.5);      
   TH1F* pfVsPTDHiBinHist_p = new TH1F(Form("%sPFVsPTDHiBinHist_p", algType[setNum].c_str()), Form("%sPFVsPTDHiBinHist_p",algType[setNum].c_str()), nCentBins, -0.5, 199.5); 
@@ -198,59 +199,45 @@ FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
     if(montecarlo) hatWeight = getHatWeight(pthat_);
 
     if(!hi){
-      for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	if(pfJtVsPt_[jtIter] < totJtPtCut) break;
 
-	if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
+      if(TMath::Abs(pfJtVsEta_[1]) < totJtEtaCut && pfJtVsPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
 
-	pfVsPTDHist_Tot_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);                                                                         
-
-	if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);                                                     
-	else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);                                                       
-	else pfVsPTDHist_Else_p[0]->Fill(pfJtVsPTD_[jtIter], hatWeight);
-	  
+	pfVsPTDHist_Tot_p[0]->Fill(pfJtVsPTD_[1], hatWeight);                                                                         
+	if(TMath::Abs(pfJtVsRefPart_[1]) < 9) pfVsPTDHist_Q_p[0]->Fill(pfJtVsPTD_[1], hatWeight);                                                     
+	else if(pfJtVsRefPart_[1] == 21) pfVsPTDHist_G_p[0]->Fill(pfJtVsPTD_[1], hatWeight);                                                       
+	else pfVsPTDHist_Else_p[0]->Fill(pfJtVsPTD_[1], hatWeight);  
       }
 
-      for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	if(pfJtRawPt_[jtIter] < totJtPtCut) break;
+      
+      if(TMath::Abs(pfJtRawEta_[1]) < totJtEtaCut && pfJtRawPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
 
-	if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
-
-	pfRawPTDHist_Tot_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);                                                                         
-
-	if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);                                                     
-	else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);                                                       
-	else pfRawPTDHist_Else_p[0]->Fill(pfJtRawPTD_[jtIter], hatWeight);
-	  
+	pfRawPTDHist_Tot_p[0]->Fill(pfJtRawPTD_[1], hatWeight);                                                                         
+	if(TMath::Abs(pfJtRawRefPart_[1]) < 9) pfRawPTDHist_Q_p[0]->Fill(pfJtRawPTD_[1], hatWeight);                                                     
+	else if(pfJtRawRefPart_[1] == 21) pfRawPTDHist_G_p[0]->Fill(pfJtRawPTD_[1], hatWeight);                                                       
+	else pfRawPTDHist_Else_p[0]->Fill(pfJtRawPTD_[1], hatWeight);	
       }
     }
     else{
       for(Int_t centIter = 0; centIter < centMax; centIter++){
 	if(hiBin_ >= centLow[centIter] && hiBin_ <= centHi[centIter]){
 
-	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	    if(pfJtVsPt_[jtIter] < totJtPtCut) break;
+	  if(TMath::Abs(pfJtVsEta_[1]) < totJtEtaCut && pfJtVsPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
 
-	    if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
+	    pfVsPTDHist_Tot_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
 
-	    pfVsPTDHist_Tot_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
-
-	    if(TMath::Abs(pfJtVsRefPart_[jtIter]) < 9) pfVsPTDHist_Q_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
-	    else if(pfJtVsRefPart_[jtIter] == 21) pfVsPTDHist_G_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
-	    else pfVsPTDHist_Else_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
+	    if(TMath::Abs(pfJtVsRefPart_[1]) < 9) pfVsPTDHist_Q_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
+	    else if(pfJtVsRefPart_[1] == 21) pfVsPTDHist_G_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
+	    else pfVsPTDHist_Else_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
 
 	  }
 
-	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	    if(pfJtRawPt_[jtIter] < totJtPtCut) break;
+	  if(TMath::Abs(pfJtRawEta_[1]) < totJtEtaCut && pfJtRawPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut){
 
-	    if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
+	    pfRawPTDHist_Tot_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
 
-	    pfRawPTDHist_Tot_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
-
-	    if(TMath::Abs(pfJtRawRefPart_[jtIter]) < 9) pfRawPTDHist_Q_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
-	    else if(pfJtRawRefPart_[jtIter] == 21) pfRawPTDHist_G_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
-	    else pfRawPTDHist_Else_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	    if(TMath::Abs(pfJtRawRefPart_[1]) < 9) pfRawPTDHist_Q_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
+	    else if(pfJtRawRefPart_[1] == 21) pfRawPTDHist_G_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
+	    else pfRawPTDHist_Else_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
 
 	  }
 	  break; 
@@ -260,21 +247,11 @@ FVsPTDHiBinMean_%d_p", algType[setNum].c_str(), iter), 100, 0, 1);
       for(Int_t centIter = 0; centIter < nCentBins; centIter++){
 	if(hiBin_ < centIter*200./nCentBins){
 
-	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	    if(pfJtRawPt_[jtIter] < totJtPtCut) break;
+	  if(TMath::Abs(pfJtRawEta_[1]) < totJtEtaCut && pfJtRawPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut)
+	    pfRawPTDHiBinMean_p[centIter]->Fill(pfJtRawPTD_[1], hatWeight);
 
-            if(TMath::Abs(pfJtRawEta_[jtIter]) > totJtEtaCut) continue;
-
-	    pfRawPTDHiBinMean_p[centIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
-	  }
-
-	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
-	    if(pfJtVsPt_[jtIter] < totJtPtCut) break;
-
-            if(TMath::Abs(pfJtVsEta_[jtIter]) > totJtEtaCut) continue;
-
-	    pfVsPTDHiBinMean_p[centIter]->Fill(pfJtVsPTD_[jtIter], hatWeight);
-	  }
+	  if(TMath::Abs(pfJtVsEta_[1]) < totJtEtaCut && pfJtVsPt_[1] > totJtPtCut && AlgJtAsymm_[setNum] > totJtAjCut)
+	    pfVsPTDHiBinMean_p[centIter]->Fill(pfJtVsPTD_[1], hatWeight);
 
 	  break;
 	}

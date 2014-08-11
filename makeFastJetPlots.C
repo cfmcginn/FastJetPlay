@@ -83,7 +83,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
 
     for(Int_t iter = 0; iter < 4; iter++){
       getHist_Data_p[iter] = (TH1F*)dataFile->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
-      niceTH1(getHist_Data_p[iter], 0.20, 0.00, 505, 202);  
+      niceTH1(getHist_Data_p[iter], 0.4, 0.000, 505, 202);  
     }
   }
 
@@ -96,13 +96,13 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
 
   for(Int_t iter = 0; iter < 4; iter++){
     getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
-    niceTH1(getHist_Tot_p[iter], 0.20, 0.00, 505, 202);
+    niceTH1(getHist_Tot_p[iter], 0.40, 0.00, 505, 202);
 
     getHist_Q_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Q_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
-    niceTH1(getHist_Q_p[iter], 0.20, 0.00, 505, 202);
+    niceTH1(getHist_Q_p[iter], 0.40, 0.00, 505, 202);
 
     getHist_G_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_G_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
-    niceTH1(getHist_G_p[iter], 0.20, 0.00, 505, 202);
+    niceTH1(getHist_G_p[iter], 0.40, 0.00, 505, 202);
   }
 
   TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTDCanv_c", alg.c_str(), constAlg.c_str()), Form("%s%sPTDCanv_c", alg.c_str(), constAlg.c_str()), 4*300, 2*350);
@@ -114,7 +114,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
   label_p->SetTextSizePixels(23);
 
   const std::string jetLabels[4] = {Form("Dijet selection w/ ak%s", alg.c_str()), Form("Recluster w/ %s", constAlg.c_str()), "CA Algorithm", "R = 0.3"};
-  const std::string cutLabels[4] = {"p_{T} > 80 GeV/c", "|#eta| < 2.0", "", ""};
+  const std::string cutLabels[4] = {"p_{T} > 50 GeV/c", "|#eta| < 2.0", "A_{J} Inclusive", "Subleading Jet"};
 
   for(Int_t iter = 0; iter < 4; iter++){
     plotCanvas_p->cd(iter+1); 
@@ -212,7 +212,7 @@ void plotFastJetPTD(const std::string histFileName, const std::string alg, const
 }
 
 
-void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, const std::string dataFileName = "")
+void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string alg, const std::string dataFileName = "")
 {
   const Int_t titleSize = 20;
   const Int_t labelSize = 20;
@@ -241,7 +241,7 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
   getHist_p[1] = (TH1F*)f->Get(Form("%sPFRawPTDHiBinHist_p", alg.c_str()));
 
 
-  TCanvas* plotCanvas_p = new TCanvas(Form("%sPTDHiBinCanv_c", alg.c_str()), Form("%sPTDHiBinCanv_c", alg.c_str()), 1*300, 1*350);
+  TCanvas* plotCanvas_p = new TCanvas(Form("%sMeanPTDHiBinCanv_c", alg.c_str()), Form("%sMeanPTDHiBinCanv_c", alg.c_str()), 1*300, 1*350);
 
   niceTH1(getHist_p[0], 0.4999, 0.0001, 505, 505);
   niceTH1(getHist_p[1], 0.4999, 0.0001, 505, 505);
@@ -276,7 +276,7 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
   leg_p->Draw("SAME");
 
   plotCanvas_p->Write("", TObject::kOverwrite);
-  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%sPTDHiBinCanv", alg.c_str()), "pdf");
+  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%sMeanPTDHiBinCanv", alg.c_str()), "pdf");
 
   delete plotCanvas_p;
 
@@ -291,6 +291,122 @@ void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, 
 }
 
 
+void plotFastJetPTDHiBin(const std::string histFileName, const std::string alg, const std::string constAlg, const std::string dataFileName = "")
+{
+  const Int_t titleSize = 20;
+  const Int_t labelSize = 20;
+
+  const std::string centString[4] = {"50100", "3050", "1030", "010"};
+  const std::string centString2[4] = {"50-100%", "30-50%", "10-30%", "0-10%"};
+
+  std::string drawOpt[4] = {"E1" , "E1 SAME", "E1 SAME", "E1 SAME"};
+  const Int_t colors[4] = {kBlue, kYellow+1, kOrange+7, kRed};
+
+  TFile* dataFile;
+  TH1F* getHist_Data_p[4];
+
+  if(strcmp(dataFileName.c_str(), "") !=  0){
+    dataFile = new TFile(dataFileName.c_str(), "READ");
+    for(Int_t iter = 0; iter < 4; iter++){
+      getHist_Data_p[iter] = (TH1F*)dataFile->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+      niceTH1(getHist_Data_p[iter], 0.40, 0.00, 505, 202);
+      
+      getHist_Data_p[iter]->SetMarkerColor(colors[iter]);
+      SetTitleLabel(getHist_Data_p[iter], titleSize, labelSize, "p_{T}D", 2.0, "EventFraction", 2.5);
+    }
+  }
+
+
+  TFile* f = new TFile(histFileName.c_str(), "UPDATE");
+  TH1F* getHist_MC_p[4];
+
+  for(Int_t iter = 0; iter < 4; iter++){
+    getHist_MC_p[iter] = (TH1F*)f->Get(Form("%s%sPTDHist_Tot_%s_h", alg.c_str(), constAlg.c_str(), centString[iter].c_str()));
+    niceTH1(getHist_MC_p[iter], 0.40, 0.00, 505, 202);
+
+    getHist_MC_p[iter]->SetMarkerColor(colors[iter]);
+    SetTitleLabel(getHist_MC_p[iter], titleSize, labelSize, "p_{T}D", 2.0, "Event Fraction", 2.5);
+  }
+
+  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sPTDHiBinCanv_c", alg.c_str(), constAlg.c_str()), Form("%s%sPTDHiBinCanv_c", alg.c_str(), constAlg.c_str()), 2*300, 2*350);
+  plotCanvas_p->Divide(2, 2, 0.0, 0.0);
+
+  plotCanvas_p->cd(1);
+
+  TLegend* leg_p = new TLegend(0.60, 0.75, 0.95, 0.95);
+  leg_p->SetFillColor(0);
+  leg_p->SetFillStyle(0);
+  leg_p->SetTextFont(43);
+  leg_p->SetTextSizePixels(12);
+  leg_p->SetBorderSize(0);
+
+  for(Int_t iter = 0; iter < 4; iter++){
+    leg_p->AddEntry(getHist_MC_p[iter], Form("%s %s", constAlg.c_str(), centString2[iter].c_str()), "P");
+    getHist_MC_p[iter]->DrawCopy(drawOpt[iter].c_str());
+  }
+
+  leg_p->Draw("SAME");
+
+  TLatex* label_p = new TLatex();
+  label_p->SetNDC();
+  label_p->SetTextFont(43);
+  label_p->SetTextSizePixels(20);
+
+  label_p->DrawLatex(.65, .65, "P+H");
+
+  plotCanvas_p->cd(2);
+
+  if(strcmp(dataFileName.c_str(),"") != 0){
+    for(Int_t iter = 0; iter < 4; iter++){
+      getHist_Data_p[iter]->DrawCopy(drawOpt[iter].c_str());
+    }
+  }
+
+  label_p->DrawLatex(.50, .93, "Subleading");
+  label_p->DrawLatex(.50, .85, "A_{J} Inclusive");
+  label_p->DrawLatex(.50, .77, "p_{T} > 50; |#eta| < 2");
+  label_p->DrawLatex(.50, .69, "PbPb");
+
+  plotCanvas_p->cd(3);
+
+  drawOpt[3] = "SAME HIST P";
+
+  for(Int_t iter = 0; iter < 4; iter++){
+    getHist_MC_p[3 - iter]->Divide(getHist_MC_p[0]);
+    niceTH1(getHist_MC_p[3-iter], 2.999, 0.001, 504, 505);
+    getHist_MC_p[3-iter]->SetMarkerColor(colors[3-iter]);
+    SetTitleLabel(getHist_MC_p[3-iter], titleSize, labelSize, "p_{T}D", 2.0, "Ratio w/ Peripheral", 2.5);
+    getHist_MC_p[3-iter]->DrawCopy(drawOpt[iter].c_str());
+  }
+
+  plotCanvas_p->cd(4);
+
+  if(strcmp(dataFileName.c_str(), "") != 0){
+    for(Int_t iter = 0; iter < 4; iter++){
+      getHist_Data_p[3 - iter]->Divide(getHist_Data_p[0]);
+      niceTH1(getHist_Data_p[3-iter], 2.999, 0.001, 504, 505);
+      getHist_Data_p[3-iter]->SetMarkerColor(colors[3-iter]);
+      SetTitleLabel(getHist_Data_p[3-iter], titleSize, labelSize, "p_{T}D", 2.0, "Ratio w/ Peripheral", 2.5);
+      getHist_Data_p[3-iter]->DrawCopy(drawOpt[iter].c_str());
+    }
+  }
+
+  plotCanvas_p->Write("", TObject::kOverwrite);
+  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sPTDHiBinCanv", alg.c_str(), constAlg.c_str()), "pdf");
+
+  delete leg_p;
+  delete plotCanvas_p;
+
+  f->Close();
+  delete f;
+
+  if(strcmp(dataFileName.c_str(), "") != 0){
+    dataFile->Close();
+    delete dataFile;
+  }
+
+  return;
+}
 
 void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = false, const std::string dataFileName = "")
 {
@@ -302,8 +418,11 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
     plotFastJetPTD(histFileName, algType[iter], "PFVs", dataFileName);
     plotFastJetPTD(histFileName, algType[iter], "PFRaw", dataFileName);
 
-    plotFastJetPTDHiBin(histFileName, algType[iter], dataFileName);
-    plotFastJetPTDHiBin(histFileName, algType[iter], dataFileName);
+    plotFastJetMeanPTDHiBin(histFileName, algType[iter], dataFileName);
+    plotFastJetMeanPTDHiBin(histFileName, algType[iter], dataFileName);
+
+    plotFastJetPTDHiBin(histFileName, algType[iter], "PFVs", dataFileName);
+    plotFastJetPTDHiBin(histFileName, algType[iter], "PFRaw", dataFileName);
   }
   return;
 }
