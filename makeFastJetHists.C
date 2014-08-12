@@ -10,7 +10,7 @@ TFile* outFile_p = 0;
 const Float_t leadJtCut = 120.;
 const Float_t subLeadJtCut = 50.;
 
-const Float_t totJtPtCut = 50.;
+const Float_t totJtPtCut = 100.;
 const Float_t totJtEtaCut = 2.0;
 const Float_t totJtAjCut = 0.22;
 
@@ -124,7 +124,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   Int_t centMax = 1;                                                                             
   if(hi) centMax = 4;
   
-  const Int_t nPTDBins  = 15;                                                                            
+  const Int_t nPTDBins  = 10;                                                                            
   const Int_t ptdLow = 0;                                                                                
   const Int_t ptdHigh = 1;
   const Int_t centLow[4] = {0, 20, 60, 100};
@@ -255,7 +255,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       }
     
       for(Int_t centIter = 0; centIter < nCentBins; centIter++){
-	if(hiBin_ < centIter*200./nCentBins){
+	if(hiBin_ < (centIter+1)*200./nCentBins){
 
 	  for(Int_t subIter = 0; subIter < 2; subIter++){
 
