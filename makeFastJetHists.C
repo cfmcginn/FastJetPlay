@@ -68,6 +68,9 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Int_t nPTDBins  = 10;                                                                            
   const Int_t ptdLow = 0;                                                                                
   const Int_t ptdHigh = 1;
+  const Int_t nSubBins  = 25;                                                                            
+  const Int_t subLow = 0;                                                                                
+  const Int_t subHigh = 1;
   const Int_t centLow[4] = {0, 20, 60, 100};
   const Int_t centHi[4] = {19, 59, 99, 199};
 
@@ -120,11 +123,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       //RatHist
 
-      pfRawSubRatHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFRawSubRat%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawSubRat%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-      pfRawSubRatHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+      pfRawSubRatHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFRawSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
+      pfRawSubRatHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(subLow, subHigh);
 
-      pfVsSubRatHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsSubRat%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsSubRat%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-      pfVsSubRatHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+      pfVsSubRatHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
+      pfVsSubRatHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(subLow, subHigh);
     }
   }
 
@@ -188,7 +191,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      pfVsPTDHist_Tot_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
 
 
-	      if(pfSubJtVsPt[subIter][0] > 0 && pfJtVsPt[subIter] > 50) pfVsSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtVsPt[subIter][0]/pfJtVsPt[subIter], hatWeight);
+	      if(pfSubJtVsPt_[subIter][0] > 0 && pfJtVsPt_[subIter] > 50 && pfSubJtVsPt_[subIter][0] > 30) pfVsSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtVsPt_[subIter][0]/pfJtVsPt_[subIter], hatWeight);
       
 	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9) pfVsPTDHist_Q_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
 	      else if(pfJtVsRefPart_[subIter] == 21) pfVsPTDHist_G_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
@@ -199,7 +202,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      
 	      pfRawPTDHist_Tot_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
 
-	      if(pfSubJtRawPt[subIter][0] > 0 && pfJtRawPt[subIter] > 50) pfRawSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtRawPt[subIter][0]/pfJtRawPt[subIter], hatWeight);
+	      if(pfSubJtRawPt_[subIter][0] > 0 && pfJtRawPt_[subIter] > 50 && pfSubJtRawPt_[subIter][0] > 30) pfRawSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtRawPt_[subIter][0]/pfJtRawPt_[subIter], hatWeight);
 	      
 	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9) pfRawPTDHist_Q_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
 	      else if(pfJtRawRefPart_[subIter] == 21) pfRawPTDHist_G_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
