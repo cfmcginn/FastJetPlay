@@ -14,7 +14,7 @@
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
-const Int_t totJtPtCut = 100;
+const Int_t totJtPtCut = 50;
 
 void handsomeTH1( TH1 *a=0, Int_t col =1, Float_t size=1, Int_t markerstyle=20)
 {

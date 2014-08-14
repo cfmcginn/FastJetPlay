@@ -10,7 +10,7 @@ TFile* outFile_p = 0;
 const Float_t leadJtCut = 120.;
 const Float_t subLeadJtCut = 50.;
 
-const Float_t totJtPtCut = 100.;
+const Float_t totJtPtCut = 50.;
 const Float_t totJtEtaCut = 2.0;
 const Float_t totJtAjCut = 0.22;
 
@@ -204,7 +204,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     if(montecarlo) hatWeight = getHatWeight(pthat_);
 
-    if(AlgJtAsymm_[setNum] > totJtAjCut) continue;
+    if(AlgJtAsymm_[setNum] < totJtAjCut) continue;
 
     if(!hi){
 
