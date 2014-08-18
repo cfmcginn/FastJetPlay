@@ -216,14 +216,23 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	    if(TMath::Abs(pfJtVsEta_[subIter]) < totJtEtaCut && pfJtVsPt_[subIter] > totJtPtCut){
 	      
 	      pfVsPTDHist_Tot_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
-	      pfVsTauHist_Tot_p[centIter][subIter]->Fill(pfJtVsTau_[subIter][1][0]/pfJtVsTau_[subIter][0][0], hatWeight);
+	      pfVsTauHist_Tot_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
 
 
 	      if(pfSubJtVsPt_[subIter][0] > 50 && pfJtVsPt_[subIter] > 50) pfVsSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtVsPt_[subIter][0]/pfJtVsPt_[subIter], hatWeight);
       
-	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9) pfVsPTDHist_Q_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
-	      else if(pfJtVsRefPart_[subIter] == 21) pfVsPTDHist_G_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
-	      else pfVsPTDHist_Else_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight); 
+	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9){
+		pfVsPTDHist_Q_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
+		pfVsTauHist_Q_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+	      }
+	      else if(pfJtVsRefPart_[subIter] == 21){
+		pfVsPTDHist_G_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
+		pfVsTauHist_G_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+	      }
+	      else{
+		pfVsPTDHist_Else_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight); 
+		pfVsTauHist_Else_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+	      }
 	    }
 	    
 	    if(TMath::Abs(pfJtRawEta_[subIter]) < totJtEtaCut && pfJtRawPt_[subIter] > totJtPtCut){
@@ -300,8 +309,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       pfRawPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
 
       //Tau
-      pfVsTauHist_Q_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
-      pfVsTauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+      pfVsTauHist_Tot_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
+      pfVsTauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
 
       //Sub Rat
 
