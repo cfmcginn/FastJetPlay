@@ -39,7 +39,7 @@ fastjet::contrib::Nsubjettiness nSub2_beta2(2, axisMode1, measureSpec2);
 fastjet::contrib::Nsubjettiness nSub3_beta2(3, axisMode1, measureSpec2);
 
 
-const Double_t jtR = 0.3;
+const Double_t jtR = 0.4;
 fastjet::JetAlgorithm jtAlg = fastjet::cambridge_algorithm;
 fastjet::JetDefinition jtDef(jtAlg, jtR, fastjet::E_scheme, fastjet::Best);
 
