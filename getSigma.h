@@ -5,6 +5,8 @@
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/PseudoJet.hh"
 
+Float_t internalSig = {0.0, 0.0, 0.0};
+
 Float_t getAveEta(std::vector<fastjet::PseudoJet>* inConst)
 {
   Float_t etaSum = 0.0;
@@ -40,7 +42,7 @@ void getEigenN2(Float_t inMatrix[4], Float_t &eigen1, Float_t &eigen2)
   return;
 }
 
-Float_t getSigma(fastjet::PseudoJet* inJt)
+void calcSigma(fastjet::PseudoJet* inJt)
 {
   std::vector<fastjet::PseudoJet> jtConst = inJt->constituents();
 
@@ -62,8 +64,15 @@ Float_t getSigma(fastjet::PseudoJet* inJt)
 
   getEigenN2(matElement, eigen1, eigen2);
 
-  eigen1 = eigen1/ptSum;
-  eigen2 = eigen2/ptSum;
+  internalSig[0] = eigen1/ptSum;
+  internalSig[1] = eigen2/ptSum;
+  internalSig[2] = TMath::Sqrt(eigen1*eigen1 + eigen2*eigen2);
 
-  return TMath::Sqrt(eigen1*eigen1 + eigen2*eigen2);
+  return;
+}
+
+Float_t getSigma(Int_t sigPos)
+{
+  if(sigPos > 2 || sigPos < 0) return -1;
+  else return internalSig[sigPos];
 }

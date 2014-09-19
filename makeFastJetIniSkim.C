@@ -314,8 +314,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
     InitIniJtVar();
 
-    if(kHIMC) pthatIni_ = c->akPu3PF.pthat;
-    else if(kPPMC) pthatIni_ = c->ak3Calo.pthat;
+    if(kHIMC == sType) pthatIni_ = c->akPu3PF.pthat;
+    else if(kPPMC == sType) pthatIni_ = c->ak3Calo.pthat;
 
     if(hi){
       hiEvtPlaneIni_ = c->evt.hiEvtPlanes[21];                                                  

@@ -73,9 +73,9 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Int_t subLow = 0;                                                                                
   const Int_t subHigh = 1;
 
-  const Int_t nTauBins = 25;
+  const Int_t nTauBins = 10;
   const Float_t TauLow = 0;
-  const Float_t TauHigh = 1.25;
+  const Float_t TauHigh = 1.00;
 
   const Int_t centLow[4] = {0, 20, 60, 100};
   const Int_t centHi[4] = {19, 59, 99, 199};
@@ -98,8 +98,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   TH1F* pfVsTauHist_G_p[4][2];                                                              
   TH1F* pfVsTauHist_Else_p[4][2];                                                 
 
-  TH1F* pfRawSubRatHist_Tot_p[4][2];
-  TH1F* pfVsSubRatHist_Tot_p[4][2];
+  TH1F* pfRawSubRatHist_Tot_p[4][2][2];
+  TH1F* pfVsSubRatHist_Tot_p[4][2][2];
 
   for(Int_t iter = 0; iter < centMax; iter++){                                           
     centString[iter] = getCentString(sType, centLow[iter], centHi[iter]);
@@ -134,26 +134,28 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       //Nsubjettiness beta = 0.5
 
-      pfVsTauHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsTau%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfVsTauHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
       pfVsTauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
       
-      pfVsTauHist_Q_p[iter][subIter] = new TH1F(Form("%sPFVsTau%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfVsTauHist_Q_p[iter][subIter] = new TH1F(Form("%sPFVsTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
       pfVsTauHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);
       
-      pfVsTauHist_G_p[iter][subIter] = new TH1F(Form("%sPFVsTau%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfVsTauHist_G_p[iter][subIter] = new TH1F(Form("%sPFVsTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
       pfVsTauHist_G_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);   
       
-      pfVsTauHist_Else_p[iter][subIter] = new TH1F(Form("%sPFVsTau%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfVsTauHist_Else_p[iter][subIter] = new TH1F(Form("%sPFVsTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
       pfVsTauHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                           
               
 
       //RatHist
 
-      pfRawSubRatHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFRawSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
-      pfRawSubRatHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(subLow, subHigh);
-
-      pfVsSubRatHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsSubRat%s_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
-      pfVsSubRatHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(subLow, subHigh);
+      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+	pfRawSubRatHist_Tot_p[iter][subIter][subIter2] = new TH1F(Form("%sPFRawSub%dRat%s_%s_h", algType[setNum].c_str(), subIter2 + 1, LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawSub%dRat%s_%s_h", algType[setNum].c_str(), subIter2 + 1, LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
+	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->GetXaxis()->SetLimits(subLow, subHigh);
+	
+	pfVsSubRatHist_Tot_p[iter][subIter][subIter2] = new TH1F(Form("%sPFVsSub%dRat%s_%s_h", algType[setNum].c_str(), subIter2 + 1, LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsSub%dRat%s_%s_h", algType[setNum].c_str(), subIter2 + 1, LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
+	pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->GetXaxis()->SetLimits(subLow, subHigh);
+      }
     }
   }
 
@@ -216,22 +218,24 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	    if(TMath::Abs(pfJtVsEta_[subIter]) < totJtEtaCut && pfJtVsPt_[subIter] > totJtPtCut){
 	      
 	      pfVsPTDHist_Tot_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
-	      pfVsTauHist_Tot_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+	      pfVsTauHist_Tot_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][4]/pfVsTau_[subIter][0][4], hatWeight);
 
 
-	      if(pfSubJtVsPt_[subIter][0] > 50 && pfJtVsPt_[subIter] > 50) pfVsSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtVsPt_[subIter][0]/pfJtVsPt_[subIter], hatWeight);
-      
+	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+		if(pfJtVsPt_[subIter] > 100 && pfSubJtVsPt_[subIter][subIter2] > 50) pfVsSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtVsPt_[subIter][subIter2]/pfJtVsPt_[subIter], hatWeight);
+	      }      
+
 	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9){
 		pfVsPTDHist_Q_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
-		pfVsTauHist_Q_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+		pfVsTauHist_Q_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][4]/pfVsTau_[subIter][0][4], hatWeight);
 	      }
 	      else if(pfJtVsRefPart_[subIter] == 21){
 		pfVsPTDHist_G_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
-		pfVsTauHist_G_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+		pfVsTauHist_G_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][4]/pfVsTau_[subIter][0][4], hatWeight);
 	      }
 	      else{
 		pfVsPTDHist_Else_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight); 
-		pfVsTauHist_Else_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][0]/pfVsTau_[subIter][0][0], hatWeight);
+		pfVsTauHist_Else_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][4]/pfVsTau_[subIter][0][4], hatWeight);
 	      }
 	    }
 	    
@@ -239,8 +243,10 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      
 	      pfRawPTDHist_Tot_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
 
-	      if(pfSubJtRawPt_[subIter][0] > 50 && pfJtRawPt_[subIter] > 50) pfRawSubRatHist_Tot_p[centIter][subIter]->Fill(pfSubJtRawPt_[subIter][0]/pfJtRawPt_[subIter], hatWeight);
-	      
+	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+		if(pfJtRawPt_[subIter] > 50) pfRawSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtRawPt_[subIter][subIter2]/pfJtRawPt_[subIter], hatWeight);
+	      }	      
+
 	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9) pfRawPTDHist_Q_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
 	      else if(pfJtRawRefPart_[subIter] == 21) pfRawPTDHist_G_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
 	      else pfRawPTDHist_Else_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
@@ -309,16 +315,28 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       pfRawPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
 
       //Tau
+
+      pfVsTauHist_Q_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
+      pfVsTauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+
+      pfVsTauHist_G_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
+      pfVsTauHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+
+      pfVsTauHist_Else_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
+      pfVsTauHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+
       pfVsTauHist_Tot_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
       pfVsTauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
 
+
       //Sub Rat
-
-      pfRawSubRatHist_Tot_p[iter][subIter]->Scale(1./pfRawSubRatHist_Tot_p[iter][subIter]->Integral());
-      pfRawSubRatHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      pfVsSubRatHist_Tot_p[iter][subIter]->Scale(1./pfVsSubRatHist_Tot_p[iter][subIter]->Integral());
-      pfVsSubRatHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Scale(1./pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Integral());
+	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Write("", TObject::kOverwrite);
+	
+	pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->Scale(1./pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->Integral());
+	pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->Write("", TObject::kOverwrite);
+      }
     }
   }
 
@@ -364,13 +382,24 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       delete pfVsTauHist_Tot_p[iter][subIter];
       pfVsTauHist_Tot_p[iter][subIter] = 0;
 
+      delete pfVsTauHist_Q_p[iter][subIter];
+      pfVsTauHist_Q_p[iter][subIter] = 0;
+
+      delete pfVsTauHist_G_p[iter][subIter];
+      pfVsTauHist_G_p[iter][subIter] = 0;
+
+      delete pfVsTauHist_Else_p[iter][subIter];
+      pfVsTauHist_Else_p[iter][subIter] = 0;
+
       //SubRat
 
-      delete pfRawSubRatHist_Tot_p[iter][subIter];
-      pfRawSubRatHist_Tot_p[iter][subIter] = 0;
-
-      delete pfVsSubRatHist_Tot_p[iter][subIter];
-      pfVsSubRatHist_Tot_p[iter][subIter] = 0;
+      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+	delete pfRawSubRatHist_Tot_p[iter][subIter][subIter2];
+	pfRawSubRatHist_Tot_p[iter][subIter][subIter2] = 0;
+	
+	delete pfVsSubRatHist_Tot_p[iter][subIter][subIter2];
+	pfVsSubRatHist_Tot_p[iter][subIter][subIter2] = 0;
+      }
     }
   }
     
