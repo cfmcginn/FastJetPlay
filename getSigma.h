@@ -33,7 +33,9 @@ Float_t getAvePhi(std::vector<fastjet::PseudoJet>* inConst)
 
 void getEigenN2(Float_t inMatrix[4], Float_t &eigen1, Float_t &eigen2)
 {
-
+  Float_t sqrtTerm = TMath::Sqrt(pow(inMatrix[0], 2.0) + pow(inMatrix[3], 2.0) - 2*inMatrix[0]*inMatrix[3] + 4*inMatrix[1]*inMatrix[2]);
+  eigen1 = (inMatrix[0] + inMatrix[3] + sqrtTerm)/2;
+  eigen2 = (inMatrix[0] + inMatrix[3] - sqrtTerm)/2;
 
   return;
 }
@@ -59,6 +61,9 @@ Float_t getSigma(fastjet::PseudoJet* inJt)
   }
 
   getEigenN2(matElement, eigen1, eigen2);
+
+  eigen1 = eigen1/ptSum;
+  eigen2 = eigen2/ptSum;
 
   return TMath::Sqrt(eigen1*eigen1 + eigen2*eigen2);
 }
