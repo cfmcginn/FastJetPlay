@@ -329,8 +329,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     evtIni_ = c->evt.evt;
     lumiIni_ = c->evt.lumi;
 
-    if(hi)
+    if(hi){
       hiBinIni_ = c->evt.hiBin;
+      if(montecarlo) bIni_ = c->genparticle.b;
+    }
 
     //Iterate over jets
 

@@ -109,6 +109,7 @@ Int_t runIni_;
 Int_t evtIni_;
 Int_t lumiIni_;
 Int_t hiBinIni_;
+Float_t bIni_;
 
 Float_t pthatIni_;
 
@@ -173,9 +174,10 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   jetTreeIni_p->Branch("evtIni", &evtIni_, "evtIni/I");
   jetTreeIni_p->Branch("lumiIni", &lumiIni_, "lumiIni/I");
 
-  if(hi)
+  if(hi){
     jetTreeIni_p->Branch("hiBinIni", &hiBinIni_, "hiBinIni/I");
-
+    jetTreeIni_p->Branch("bIni", &bIni_, "bIni/F");
+  }
    
   if(montecarlo)
     jetTreeIni_p->Branch("pthatIni", &pthatIni_, "pthatIni/F");
@@ -247,8 +249,10 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   jetTreeIni_p->SetBranchAddress("evtIni", &evtIni_);
   jetTreeIni_p->SetBranchAddress("lumiIni", &lumiIni_);
 
-  if(hi)
+  if(hi){
     jetTreeIni_p->SetBranchAddress("hiBinIni", &hiBinIni_);
+    jetTreeIni_p->SetBranchAddress("bIni", &bIni_);
+  }
 
   if(montecarlo)
     jetTreeIni_p->SetBranchAddress("pthatIni", &pthatIni_);
