@@ -176,7 +176,7 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
 
   if(hi){
     jetTreeIni_p->Branch("hiBinIni", &hiBinIni_, "hiBinIni/I");
-    jetTreeIni_p->Branch("bIni", &bIni_, "bIni/F");
+    if(montecarlo) jetTreeIni_p->Branch("bIni", &bIni_, "bIni/F");
   }
    
   if(montecarlo)
@@ -251,7 +251,7 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
 
   if(hi){
     jetTreeIni_p->SetBranchAddress("hiBinIni", &hiBinIni_);
-    jetTreeIni_p->SetBranchAddress("bIni", &bIni_);
+    if(montecarlo) jetTreeIni_p->SetBranchAddress("bIni", &bIni_);
   }
 
   if(montecarlo)

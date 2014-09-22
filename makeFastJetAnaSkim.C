@@ -204,7 +204,11 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     run_ = runIni_;
     evt_ = evtIni_;
     lumi_ = lumiIni_;
-    hiBin_ = hiBinIni_;
+
+    if(hi){
+      hiBin_ = hiBinIni_;
+      if(montecarlo) b_ = bIni_;
+    }
 
     if(montecarlo) pthat_ = pthatIni_;
 
