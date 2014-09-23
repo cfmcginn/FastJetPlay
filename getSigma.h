@@ -1,3 +1,6 @@
+#ifndef getSigma_h
+#define getSigma_h
+
 #include <vector>
 #include <math.h>
 #include "etaPhiFunc.h"
@@ -5,16 +8,16 @@
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/PseudoJet.hh"
 
-Float_t internalSig = {0.0, 0.0, 0.0};
+Float_t internalSig[3] = {0.0, 0.0, 0.0};
 
 Float_t getAveEta(std::vector<fastjet::PseudoJet>* inConst)
 {
   Float_t etaSum = 0.0;
   Float_t ptSum = 0.0;
 
-  for(Int_t iter = 0; iter < inConst.size(); iter++){
-    etaSum += inConst.eta()*pow(inConst.perp(), 2.0);
-    ptSum += pow(inConst.perp(), 2.0);
+  for(Int_t iter = 0; iter < (Int_t)(inConst->size()); iter++){
+    etaSum += inConst->at(iter).eta()*pow(inConst->at(iter).perp(), 2.0);
+    ptSum += pow(inConst->at(iter).perp(), 2.0);
   }
 
   return etaSum/ptSum;
@@ -25,9 +28,9 @@ Float_t getAvePhi(std::vector<fastjet::PseudoJet>* inConst)
   Float_t phiSum = 0.0;
   Float_t ptSum = 0.0;
 
-  for(Int_t iter = 0; iter < inConst.size(); iter++){
-    phiSum += inConst.phi_std()*pow(inConst.perp(), 2.0);
-    ptSum += pow(inConst.perp(), 2.0);
+  for(Int_t iter = 0; iter < (Int_t)(inConst->size()); iter++){
+    phiSum += inConst->at(iter).phi_std()*pow(inConst->at(iter).perp(), 2.0);
+    ptSum += pow(inConst->at(iter).perp(), 2.0);
   }
 
   return phiSum/ptSum;
@@ -55,11 +58,11 @@ void calcSigma(fastjet::PseudoJet* inJt)
   Float_t eigen1 = 0.0;
   Float_t eigen2 = 0.0;
 
-  for(Int_t iter = 0; iter < jtConst.size(); iter++){
-    matElement[0] += pow(jtConst.perp(), 2.0)*pow(jtConst.eta() - aveEta, 2.0);
-    matElement[1] -= pow(jtConst.perp(), 2.0)*TMath::Abs(jtConst.eta() - aveEta)*TMath::Abs(getDPHI(jtConst.phi_std(), avePhi));
-    matElement[2] -= pow(jtConst.perp(), 2.0)*TMath::Abs(jtConst.eta() - aveEta)*TMath::Abs(getDPHI(jtConst.phi_std(), avePhi));
-    matElement[3] += pow(jtConst.perp(), 2.0)*pow(getDPHI(jtConst.phi_std(), avePhi), 2.0);
+  for(Int_t iter = 0; iter < (Int_t)(jtConst.size()); iter++){
+    matElement[0] += pow(jtConst[iter].perp(), 2.0)*pow(jtConst[iter].eta() - aveEta, 2.0);
+    matElement[1] -= pow(jtConst[iter].perp(), 2.0)*TMath::Abs(jtConst[iter].eta() - aveEta)*TMath::Abs(getDPHI(jtConst[iter].phi_std(), avePhi));
+    matElement[2] -= pow(jtConst[iter].perp(), 2.0)*TMath::Abs(jtConst[iter].eta() - aveEta)*TMath::Abs(getDPHI(jtConst[iter].phi_std(), avePhi));
+    matElement[3] += pow(jtConst[iter].perp(), 2.0)*pow(getDPHI(jtConst[iter].phi_std(), avePhi), 2.0);
   }
 
   getEigenN2(matElement, eigen1, eigen2);
@@ -76,3 +79,5 @@ Float_t getSigma(Int_t sigPos)
   if(sigPos > 2 || sigPos < 0) return -1;
   else return internalSig[sigPos];
 }
+
+#endif

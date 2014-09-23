@@ -1,3 +1,6 @@
+#ifndef softKiller_h
+#define softKiller_h
+
 #include <algorithm>
 #include <iostream>
 #include "TMath.h"
@@ -105,3 +108,5 @@ Use:
     eventSKPtCut = getSKPtCut(nPart, partPt, partPhi, partEta);
   }
 */
+
+#endif

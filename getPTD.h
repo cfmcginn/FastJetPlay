@@ -1,4 +1,5 @@
-#include <iostream>
+#ifndef getPTD_h
+#define getPTD_h
 
 #include "fastjet/contrib/Nsubjettiness.hh"
 #include "fastjet/contrib/Njettiness.hh"
@@ -18,3 +19,5 @@ Float_t getPTD(fastjet::PseudoJet inJt)
 
   return TMath::Sqrt(numPTD)/denomPTD;
 }
+
+#endif

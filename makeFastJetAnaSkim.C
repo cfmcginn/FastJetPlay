@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-#include "etaPhiFunc.h"
 #include "getPTD.h"
 #include "getTau.h"
 #include "getAvgDelR.h"
@@ -80,9 +79,9 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
 
       outPTD[breakIter] = getPTD(algSortVect[iter]);
       outR2[breakIter] = getAvgDelR(algSortVect[iter], 30.0, 2.0);
-      calcSigma(algSortVect[iter]);
+      calcSigma(&algSortVect[iter]);
       for(Int_t sigIter = 0; sigIter < 3; sigIter++){
-	outSig[breakIter][sigIter] = getSigma(sigIter);
+	outSigma[breakIter][sigIter] = getSigma(sigIter);
       }
 
       getSubJt(algSortVect[iter], subPt[breakIter], subPhi[breakIter], subEta[breakIter]);

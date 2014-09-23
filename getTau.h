@@ -1,3 +1,6 @@
+#ifndef getTau_h
+#define getTau_h
+
 #include "fastjet/JetDefinition.hh"
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/PseudoJet.hh"
@@ -33,3 +36,5 @@ Float_t getTauRatio(fastjet::PseudoJet inJt, Float_t ptCut, Int_t tauNum, Int_t 
 
   return tauR;
 }
+
+#endif

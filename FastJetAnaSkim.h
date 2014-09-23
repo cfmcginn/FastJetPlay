@@ -650,15 +650,15 @@ void InitJtVar(){
     }
 
     for(Int_t iter2 = 0; iter2 < 3; iter2++){
-      rechitRawSigma_[iter][iter2] = -10;
-      rechitVsSigma_[iter][iter2] = -10;
-      pfRawSigma_[iter][iter2] = -10;
-      pfVsSigma_[iter][iter2] = -10;
-      pfSKSigma_[iter][iter2] = -10;
-      trkRawSigma_[iter][iter2] = -10;
-      trkSKSigma_[iter][iter2] = -10;
-      genRawSigma_[iter][iter2] = -10;
-      genSKSigma_[iter][iter2] = -10;
+      rechitJtRawSigma_[iter][iter2] = -10;
+      rechitJtVsSigma_[iter][iter2] = -10;
+      pfJtRawSigma_[iter][iter2] = -10;
+      pfJtVsSigma_[iter][iter2] = -10;
+      pfJtSKSigma_[iter][iter2] = -10;
+      trkJtRawSigma_[iter][iter2] = -10;
+      trkJtSKSigma_[iter][iter2] = -10;
+      genJtRawSigma_[iter][iter2] = -10;
+      genJtSKSigma_[iter][iter2] = -10;
 
     }
 
