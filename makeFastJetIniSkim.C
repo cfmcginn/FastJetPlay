@@ -134,7 +134,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   InitFastJetIniSkim(sType, isGen);
 
-  HiForest *c = new HiForest(listOfFiles[0].data(), "Forest", cType, montecarlo);
+  HiForest *c = new HiForest(listOfFiles[num].data(), "Forest", cType, montecarlo);
 
   c->InitTree();
 
