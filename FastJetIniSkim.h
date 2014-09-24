@@ -102,6 +102,7 @@ Float_t genSKPtCut_;
 Float_t genPt_[maxEntrySim];
 Float_t genPhi_[maxEntrySim];
 Float_t genEta_[maxEntrySim];
+Int_t genSube_[maxEntrySim];
 
 //Jet TreeIni Variables
 
@@ -166,6 +167,7 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeIni_p->Branch("genPt", genPt_, "genPt[nGen]/F");
     genTreeIni_p->Branch("genPhi", genPhi_, "genPhi[nGen]/F");
     genTreeIni_p->Branch("genEta", genEta_, "genEta[nGen]/F");
+    genTreeIni_p->Branch("genSube", genSube_, "genSube[nGen]/I");
   }    
 
   //Jet TreeIni Branches
@@ -241,6 +243,7 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeIni_p->SetBranchAddress("genPt", genPt_);
     genTreeIni_p->SetBranchAddress("genPhi", genPhi_);
     genTreeIni_p->SetBranchAddress("genEta", genEta_);
+    genTreeIni_p->SetBranchAddress("genSube", genSube_);
   }    
 
   //Jet TreeIni Branches

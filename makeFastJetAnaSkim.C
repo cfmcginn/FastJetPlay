@@ -32,6 +32,9 @@ const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::antikt_algorithm;
 fastjet::JetDefinition subJtDef(subJtAlg, subJtR, fastjet::E_scheme, fastjet::Best);
 
+const Int_t pthatCuts_PYTH_HYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 10000000};
+const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .000241009, .0000273228, .00000147976, .000000618337, .000000157267};
+
 void getSubJt(fastjet::PseudoJet inJt, Float_t subPt[2], Float_t subPhi[2], Float_t subEta[2])
 {
   fastjet::ClusterSequence subCS(inJt.constituents(), subJtDef);
@@ -126,7 +129,7 @@ void getJtFlavor(Float_t realJtPhi[5], Float_t realJtEta[5], Int_t realJtRefPart
 }
 
  
-int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root", Bool_t isGen = false)
+int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root", Int_t num = 0, Bool_t isGen = false)
 {
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
@@ -161,12 +164,12 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     std::cout << listOfFiles.at(iter) << std::endl;
   }
 
-  TFile* iniSkim_p = new TFile(listOfFiles[0].data(), "READ");
+  TFile* iniSkim_p = new TFile(listOfFiles[num].data(), "READ");
   GetFastJetIniSkim(iniSkim_p, sType, isGen);
 
   std::cout << "FastJet Skim Loaded" << std::endl;
 
-  TFile *outFile_p = new TFile(Form("%s.root", outName), "RECREATE");
+  TFile *outFile_p = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
   InitFastJetAnaSkim(sType, isGen);
 
   Long64_t nentries = jetTreeIni_p->GetEntries();
@@ -209,7 +212,17 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
       if(montecarlo) b_ = bIni_;
     }
 
-    if(montecarlo) pthat_ = pthatIni_;
+    if(montecarlo){
+      pthat_ = pthatIni_;
+      if(hi){
+        for(Int_t hatIter = 0; hatIter < 8; hatIter++){
+          if(pthat_ >= pthatCuts_PYTH_HYD[hatIter] && pthat_ < pthatCuts_PYTH_HYD[hatIter + 1]){
+            pthatWeight_ = pthatWeights_PYTH_HYD[hatIter];
+            break;
+          }
+        }
+      }
+    }
 
     if(hi){
       hiEvtPlane_ = hiEvtPlaneIni_;
@@ -280,14 +293,14 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
 int main(int argc, char* argv[])
 {
-  if(argc!=5){
-    std::cout << "Usage: jetTestScript <inputFile> <sType> <outputFile> <isGenBool>" << std::endl;
+  if(argc!=6){
+    std::cout << "Usage: jetTestScript <inputFile> <sType> <outputFile> <#> <isGenBool>" << std::endl;
     return 1;
   }
 
   int rStatus = -1;
 
-  rStatus = makeFastJetAnaSkim(argv[1], sampleType(atoi(argv[2])), argv[3], Bool_t(atoi(argv[4])));
+  rStatus = makeFastJetAnaSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]), Bool_t(atoi(argv[5])));
 
   return rStatus;
 }

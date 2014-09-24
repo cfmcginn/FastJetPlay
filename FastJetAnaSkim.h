@@ -163,6 +163,7 @@ Int_t hiBin_;
 Float_t b_;
 
 Float_t pthat_;
+Float_t pthatWeight_;
 
 Float_t hiEvtPlane_;
 Float_t psin_;
@@ -317,8 +318,10 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     if(montecarlo) jetTreeAna_p->Branch("b", &b_, "b/F");
   }
    
-  if(montecarlo)
+  if(montecarlo){
     jetTreeAna_p->Branch("pthat", &pthat_, "pthat/F");
+    jetTreeAna_p->Branch("pthatWeight", &pthatWeight_, "pthatWeight/F");
+  }
 
   if(hi){
     jetTreeAna_p->Branch("hiEvtPlane", &hiEvtPlane_, "hiEvtPlane/F");
@@ -477,8 +480,10 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     if(montecarlo) jetTreeAna_p->SetBranchAddress("b", &b_);
   }
 
-  if(montecarlo)
+  if(montecarlo){
     jetTreeAna_p->SetBranchAddress("pthat", &pthat_);
+    jetTreeAna_p->SetBranchAddress("pthatWeight", &pthatWeight_);
+  }
 
   if(hi){
     jetTreeAna_p->SetBranchAddress("hiEvtPlane", &hiEvtPlane_);

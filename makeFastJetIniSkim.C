@@ -197,7 +197,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Grid Init" << std::endl;
 
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+  for(Long64_t jentry = 0; jentry < 1000; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
@@ -222,7 +222,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(hi){
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->akVs3Calo;
-      
+      AlgIniJtCollection[2] = c->akPu3PF;
       AlgIniJtCollection[3] = c->akPu3PF;
       AlgIniJtCollection[4] = c->akVs3PF;
     }
@@ -286,7 +286,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	  }
 	  else if(jtIndex[2][nIndex] < 0 && nIndex < 5){
 	    if(c->akPu3PF.genpt[jtEntry] > sLJtPtCut && TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut){
-	      jtIndex[2][nIndex] = true;
+	      jtIndex[2][nIndex] = jtEntry;
 	      nIndex++;
 	    }
 	  }
@@ -439,6 +439,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	genPt_[nGen_] = c->genparticle.pt[genIter];
 	genPhi_[nGen_] = c->genparticle.phi[genIter];
 	genEta_[nGen_] = c->genparticle.eta[genIter];
+	genSube_[nGen_] = c->genparticle.sube[genIter];
 	
 	nGen_++;
 
