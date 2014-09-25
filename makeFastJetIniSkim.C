@@ -197,7 +197,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Grid Init" << std::endl;
 
-  for(Long64_t jentry = 0; jentry < 1000; jentry++){
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
     c->GetEntry(jentry);
 
     totEv++;
@@ -451,11 +451,11 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     }
  
     if(!isGen){
-      trkSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
-      rechitSKPtCut_ = -10;
-      pfSKPtCut_ = getSKPtCut(nPF_, pfPt_, pfPhi_, pfEta_);
+      trkIniSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
+      rechitIniSKPtCut_ = -10;
+      pfIniSKPtCut_ = getSKPtCut(nPF_, pfPt_, pfPhi_, pfEta_);
     }
-    if(montecarlo) genSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
+    if(montecarlo) genIniSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
     
     if(!isGen){
       rechitTreeIni_p->Fill();

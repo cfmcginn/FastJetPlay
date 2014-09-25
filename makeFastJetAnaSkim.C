@@ -229,6 +229,12 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
       psin_ = psinIni_;
     }
 
+    rechitSKPtCut_ = rechitIniSKPtCut_;
+    pfSKPtCut_ = pfIniSKPtCut_;
+    trkSKPtCut_ = trkIniSKPtCut_;
+    genSKPtCut_ = genIniSKPtCut_;
+
+
     for(Int_t algIter = 0; algIter < 5; algIter++){
       if(!montecarlo && algIter == 2) continue;
 
