@@ -57,12 +57,14 @@ void getSubJt(fastjet::PseudoJet inJt, Float_t subPt[2], Float_t subPhi[2], Floa
 }
 
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t outPTD[5], Float_t outR2[5], Float_t outSigma[5][3], Float_t tau[5][nTau][nBeta], Float_t subPt[5][nSubjet], Float_t subPhi[5][nSubjet], Float_t subEta[5][nSubjet], Float_t ptCut)
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t outPTD[5], Float_t outR2[5], Float_t outSigma[5][3], Float_t tau[5][nTau][nBeta], Float_t subPt[5][nSubjet], Float_t subPhi[5][nSubjet], Float_t subEta[5][nSubjet], Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
 {
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
 
   for(Int_t iter = 0; iter < nMax; iter++){
+    if(IDBool && inID[iter] != 0) continue;
+
     if(pt[iter] > ptCut){
        tempTL.SetPtEtaPhiM(pt[iter], eta[iter], phi[iter], 0);
        algVect_p->push_back(tempTL);
@@ -176,6 +178,8 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   std::cout << nentries << std::endl;
 
+  Int_t dummyArr[2] = {0,0};
+
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
     if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
 
@@ -190,17 +194,18 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     InitJtVar();
 
     if(!isGen){
-      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitJtRawPTD_ , rechitJtRawR2_, rechitJtRawSigma_, rechitRawTau_, rechitSubJtRawPt_, rechitSubJtRawPhi_, rechitSubJtRawEta_, 0.010);
-      getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitJtVsPTD_, rechitJtVsR2_, rechitJtVsSigma_, rechitVsTau_, rechitSubJtVsPt_, rechitSubJtVsPhi_, rechitSubJtVsEta_, 0.010);
-      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfJtRawPTD_, pfJtRawR2_, pfJtRawSigma_, pfRawTau_, pfSubJtRawPt_, pfSubJtRawPhi_, pfSubJtRawEta_, 0.010);
-      getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfJtVsPTD_, pfJtVsR2_, pfJtVsSigma_, pfVsTau_, pfSubJtVsPt_, pfSubJtVsPhi_, pfSubJtVsEta_, 0.010);
-      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtSKPt_, pfJtSKPhi_, pfJtSKEta_, pfJtSKPTD_, pfJtSKR2_, pfJtSKSigma_, pfSKTau_, pfSubJtSKPt_, pfSubJtSKPhi_, pfSubJtSKEta_, pfSKPtCut_);
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkJtRawPTD_, trkJtRawR2_, trkJtRawSigma_, trkRawTau_, trkSubJtRawPt_, trkSubJtRawPhi_, trkSubJtRawEta_, 0.010);
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtSKPt_, trkJtSKPhi_, trkJtSKEta_, trkJtSKPTD_, trkJtSKR2_, trkJtSKSigma_, trkSKTau_, trkSubJtSKPt_, trkSubJtSKPhi_, trkSubJtSKEta_, trkSKPtCut_);
+      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitJtRawPTD_ , rechitJtRawR2_, rechitJtRawSigma_, rechitRawTau_, rechitSubJtRawPt_, rechitSubJtRawPhi_, rechitSubJtRawEta_, 0.010, dummyArr);
+      getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitJtVsPTD_, rechitJtVsR2_, rechitJtVsSigma_, rechitVsTau_, rechitSubJtVsPt_, rechitSubJtVsPhi_, rechitSubJtVsEta_, 0.010, dummyArr);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfJtRawPTD_, pfJtRawR2_, pfJtRawSigma_, pfRawTau_, pfSubJtRawPt_, pfSubJtRawPhi_, pfSubJtRawEta_, 0.010, dummyArr);
+      getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfJtVsPTD_, pfJtVsR2_, pfJtVsSigma_, pfVsTau_, pfSubJtVsPt_, pfSubJtVsPhi_, pfSubJtVsEta_, 0.010, dummyArr);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtSKPt_, pfJtSKPhi_, pfJtSKEta_, pfJtSKPTD_, pfJtSKR2_, pfJtSKSigma_, pfSKTau_, pfSubJtSKPt_, pfSubJtSKPhi_, pfSubJtSKEta_, pfIniSKPtCut_, dummyArr);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkJtRawPTD_, trkJtRawR2_, trkJtRawSigma_, trkRawTau_, trkSubJtRawPt_, trkSubJtRawPhi_, trkSubJtRawEta_, 0.010, dummyArr);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtSKPt_, trkJtSKPhi_, trkJtSKEta_, trkJtSKPTD_, trkJtSKR2_, trkJtSKSigma_, trkSKTau_, trkSubJtSKPt_, trkSubJtSKPhi_, trkSubJtSKEta_, trkIniSKPtCut_, dummyArr);
     }
     if(montecarlo){
-      getJt(nGen_, genPt_, genPhi_, genEta_, genJtRawPt_, genJtRawPhi_, genJtRawEta_, genJtRawPTD_, genJtRawR2_, genJtRawSigma_, genRawTau_, genSubJtRawPt_, genSubJtRawPhi_, genSubJtRawEta_, 0.010);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genJtSKPt_, genJtSKPhi_, genJtSKEta_, genJtSKPTD_, genJtSKR2_, genJtSKSigma_, genSKTau_, genSubJtSKPt_, genSubJtSKPhi_, genSubJtSKEta_, genSKPtCut_);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genJtRawPt_, genJtRawPhi_, genJtRawEta_, genJtRawPTD_, genJtRawR2_, genJtRawSigma_, genRawTau_, genSubJtRawPt_, genSubJtRawPhi_, genSubJtRawEta_, 0.010, dummyArr);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genJtSKPt_, genJtSKPhi_, genJtSKEta_, genJtSKPTD_, genJtSKR2_, genJtSKSigma_, genSKTau_, genSubJtSKPt_, genSubJtSKPhi_, genSubJtSKEta_, genIniSKPtCut_, dummyArr);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genJtSUBEPt_, genJtSUBEPhi_, genJtSUBEEta_, genJtSUBEPTD_, genJtSUBER2_, genJtSUBESigma_, genSUBETau_, genSubJtSUBEPt_, genSubJtSUBEPhi_, genSubJtSUBEEta_, 0.010, genSube_, true);
     }
 
     run_ = runIni_;
@@ -268,6 +273,12 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
     getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], pfJtVsPhi_, pfJtVsEta_, pfJtVsRefPart_);
     getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], pfJtRawPhi_, pfJtRawEta_, pfJtRawRefPart_);
+
+    if(montecarlo){
+      getJtFlavor(AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genJtSUBEPhi_, genJtSUBEEta_, genJtSUBERefPart_);
+      getJtFlavor(AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genJtSKPhi_, genJtSKEta_, genJtSKRefPart_);
+      getJtFlavor(AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genJtRawPhi_, genJtRawEta_, genJtRawRefPart_);
+    }
 
     if(!isGen){
       rechitTreeAna_p->Fill();
