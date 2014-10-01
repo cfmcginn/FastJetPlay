@@ -13,20 +13,40 @@
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 
-#include "fastjet/contrib/Nsubjettiness.hh"
-#include "fastjet/contrib/Njettiness.hh"
-#include "fastjet/contrib/NjettinessPlugin.hh"
+//JetFFMoment specific
+#include "fastjet/Selector.hh"
+#include "fastjet/tools/JetMedianBackgroundEstimator.hh"
+#include "fastjet/tools/Subtractor.hh"
+#include "fastjet/contrib/JetFFMoments.hh"
+
+//Dijet cuts
 
 const Float_t lJtPtCut = 120.;
 const Float_t sLJtPtCut = 50.;
 const Float_t jtEtaCut = 2.0; 
 
+//Nsubjettiness var, taus and betas
+
 const Int_t tauArr[nTau] = {1, 2, 3};
 const Double_t betaArr[nBeta] = {0.2, 0.5, 1.0, 1.5, 2.0, 3.0};
+
+//Def. set for jet clustering
 
 const Double_t jtR = 0.4;
 fastjet::JetAlgorithm jtAlg = fastjet::antikt_algorithm;
 fastjet::JetDefinition jtDef(jtAlg, jtR, fastjet::E_scheme, fastjet::Best);
+
+//Def. set for rho eval (FF)
+
+const Double_t jtRForRho = 0.4;
+fastjet::JetAlgorithm jtAlgForRho = fastjet::kt_algorithm;
+fastjet::JetDefinition jtDefForRho(jtAlgForRho, jtRForRho);
+fastjet::AreaDefinition areaDef(fastjet::active_area, fastjet::GhostedAreaSpec(fastjet::SelectorAbsRapMax(2.0)));
+fastjet::Selector rhoRange = fastjet::SelectorDoughnut(0.4, 1.2);
+fastjet::JetMedianBackgroundEstimator bge(rhoRange, jtDefForRho, areaDef);
+fastjet::Subtractor subtractor(&bge);
+
+//Def. set for subjet clustering
 
 const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::antikt_algorithm;
@@ -34,6 +54,10 @@ fastjet::JetDefinition subJtDef(subJtAlg, subJtR, fastjet::E_scheme, fastjet::Be
 
 const Int_t pthatCuts_PYTH_HYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 10000000};
 const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .000241009, .0000273228, .00000147976, .000000618337, .000000157267};
+
+//Def Jet FF moments
+
+fastjet::contrib::JetFFMoments FFMSUnsub(-0.5, 6.0, 14);
 
 void getSubJt(fastjet::PseudoJet inJt, Float_t subPt[2], Float_t subPhi[2], Float_t subEta[2])
 {

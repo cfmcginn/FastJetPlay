@@ -15,6 +15,12 @@
 
 const std::string bBins[5] = {"0.0", "8.5", "11.6", "14.0", "20.0"};
 
+
+void claverCanvasSaving(TCanvas* c, TString s,TString format="gif") {
+  TDatime* date = new TDatime();
+  c->SaveAs(Form("%s_%d.%s",s.Data(),date->GetDate(), format.Data()));
+}
+
 void handsomeTH1( TH1 *a=0, Int_t col =1, Float_t size=1, Int_t markerstyle=20)
 {
   a->SetMarkerColor(col);
@@ -114,7 +120,9 @@ void makeFastJetPlots_Jet(const std::string inName, const std::string outName)
 
   TFile* outFile_p = new TFile(outName.c_str(), "UPDATE");
   c1->Write("", TObject::kOverwrite);
+  claverCanvasSaving(c1, Form("../FastJetHists/pdfDir/impactCanv"), "pdf");
   c2->Write("", TObject::kOverwrite);
+  claverCanvasSaving(c2, Form("../FastJetHists/pdfDir/genSubeCanv"), "pdf");
   outFile_p->Close();
   delete outFile_p;
   delete c1;

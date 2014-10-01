@@ -348,6 +348,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	      AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].genpt[jtIndex[algIter][jtIter]];
 	      AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].genphi[jtIndex[algIter][jtIter]];
 	      AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].geneta[jtIndex[algIter][jtIter]];
+
+	      AlgIniRefPartFlav_[algIter][jtIter] = AlgIniJtCollection[algIter].refparton_flavor[AlgIniJtCollection[algIter].genmatchindex[jtIndex[algIter][jtIter]]];
 	    }
 	  }
 	}
