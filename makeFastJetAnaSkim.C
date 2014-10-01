@@ -1,17 +1,25 @@
-#include "FastJetAnaSkim.h"
-#include <fstream>
-#include "TLorentzVector.h"
 #include <vector>
 #include <string>
+#include <fstream>
+
+#include "FastJetAnaSkim.h"
+#include "TLorentzVector.h"
+
+//Substructure headers
 
 #include "getPTD.h"
 #include "getTau.h"
 #include "getAvgDelR.h"
 #include "getSigma.h"
+#include "getSubJt.h"
 
-#include "fastjet/PseudoJet.hh"
+
+//Fastjet headers
+
+#include "fastjet/JetDefinition.hh"
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
+#include "fastjet/PseudoJet.hh"
 
 //JetFFMoment specific
 #include "fastjet/Selector.hh"
@@ -48,9 +56,9 @@ fastjet::Subtractor subtractor(&bge);
 
 //Def. set for subjet clustering
 
+const Int_t nSubJt = 2;
 const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::antikt_algorithm;
-fastjet::JetDefinition subJtDef(subJtAlg, subJtR, fastjet::E_scheme, fastjet::Best);
 
 const Int_t pthatCuts_PYTH_HYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 10000000};
 const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .000241009, .0000273228, .00000147976, .000000618337, .000000157267};
@@ -58,28 +66,6 @@ const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .0002410
 //Def Jet FF moments
 
 fastjet::contrib::JetFFMoments FFMSUnsub(-0.5, 6.0, 14);
-
-void getSubJt(fastjet::PseudoJet inJt, Float_t subPt[2], Float_t subPhi[2], Float_t subEta[2])
-{
-  fastjet::ClusterSequence subCS(inJt.constituents(), subJtDef);
-  std::vector<fastjet::PseudoJet> subJets = subCS.inclusive_jets();
-
-  if(subJets.size() != 0){
-    subPt[0] = subJets[0].perp();
-    subPhi[0] = subJets[0].phi_std();
-    subEta[0] = subJets[0].eta();
-
-    if(subJets.size() != 1){
-      subPt[1] = subJets[1].perp();
-      subPhi[1] = subJets[1].phi_std();
-      subEta[1] = subJets[1].eta();
-    }
-  }    
-
-  subJets.clear();
-  return;
-}
-
 
 void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t outPTD[5], Float_t outR2[5], Float_t outSigma[5][3], Float_t tau[5][nTau][nBeta], Float_t subPt[5][nSubjet], Float_t subPhi[5][nSubjet], Float_t subEta[5][nSubjet], Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
 {
@@ -113,7 +99,7 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
 	outSigma[breakIter][sigIter] = getSigma(sigIter);
       }
 
-      getSubJt(algSortVect[iter], subPt[breakIter], subPhi[breakIter], subEta[breakIter]);
+      getSubJt(algSortVect[iter], subJtR, subJtAlg, nSubJt, subPt[breakIter], subPhi[breakIter], subEta[breakIter]);
 
       for(Int_t tauIter = 0; tauIter < nTau; tauIter++){
 	for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
