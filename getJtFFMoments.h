@@ -10,10 +10,9 @@
 #include "fastjet/tools/Subtractor.hh"
 #include "fastjet/contrib/JetFFMoments.hh"
 
-void getJtFFMoments(fastjet::PseudoJet inJt, const Double_t rhoJtR, fastjet::JetAlgorithm rhoJtAlg, std::vector<fastjet::PseudoJet>* inEvt, Int_t nFF, Float_t FFLow, Float_t FFHi, Float_t outFFMUnsub[], Float_t outFFMSub[], Float_t outFFMSubBetter[])
+void getJtFFMoments(fastjet::PseudoJet inJt, const Double_t rhoJtR, fastjet::JetAlgorithm rhoJtAlg, fastjet::AreaDefinition areaDef, std::vector<fastjet::PseudoJet>* inEvt, Int_t nFF, Float_t FFLow, Float_t FFHi, Float_t outFFMUnsub[], Float_t outFFMSub[], Float_t outFFMSubBetter[])
 {
   fastjet::JetDefinition rhoJtDef(rhoJtAlg, rhoJtR);
-  fastjet::AreaDefinition areaDef(fastjet::active_area, fastjet::GhostedAreaSpec(fastjet::SelectorAbsRapMax(2.0)));
   fastjet::Selector rhoRange = fastjet::SelectorDoughnut(0.4, 1.2);
   fastjet::JetMedianBackgroundEstimator bge(rhoRange, rhoJtDef, areaDef);
   fastjet::Subtractor subtractor(&bge);
