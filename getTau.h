@@ -1,8 +1,6 @@
 #ifndef getTau_h
 #define getTau_h
 
-#include "fastjet/JetDefinition.hh"
-#include "fastjet/ClusterSequence.hh"
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/contrib/Nsubjettiness.hh"
 #include "fastjet/contrib/Njettiness.hh"
