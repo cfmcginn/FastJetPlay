@@ -243,206 +243,205 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   //Rechit TreeAna Branches
 
   if(!isGen){
-    rechitTreeAna_p->Branch("rechitSKPtCut", &rechitSKPtCut_, "rechitSKPtCut/F");
+    rechitTreeAna_p->Branch("rechitSKPtCut", &rechitSKPtCut_, Form("rechitSKPtCut/F"));
 
-    rechitTreeAna_p->Branch("rechitJtRawPt", rechitJtRawPt_, "rechitJtRawPt[5]/F");
-    rechitTreeAna_p->Branch("rechitJtRawPhi", rechitJtRawPhi_, "rechitJtRawPhi[5]/F");
-    rechitTreeAna_p->Branch("rechitJtRawEta", rechitJtRawEta_, "rechitJtRawEta[5]/F");
-    rechitTreeAna_p->Branch("rechitJtRawPTD", rechitJtRawPTD_, "rechitJtRawPTD[5]/F");
-    rechitTreeAna_p->Branch("rechitJtRawR2", rechitJtRawR2_, "rechitJtRawR2[5]/F");
-    rechitTreeAna_p->Branch("rechitJtRawSigma", rechitJtRawSigma_, "rechitJtRawSigma[5][nSigma]/F");
-    rechitTreeAna_p->Branch("rechitJtRawRefPart", rechitJtRawRefPart_, "rechitJtRawRefPart[5]/I");
-    rechitTreeAna_p->Branch("rechitJtRawFFMUnsub", rechitJtRawFFMUnsub_, "rechitJtRawFFMUnsub[5][nFFM]/F");
-    rechitTreeAna_p->Branch("rechitJtRawFFMSub", rechitJtRawFFMSub_, "rechitJtRawFFMSub[5][nFFM]/F");
-    rechitTreeAna_p->Branch("rechitJtRawFFMSubBetter", rechitJtRawFFMSubBetter_, "rechitJtRawFFMSubBetter[5][nFFM]/F");
-    rechitTreeAna_p->Branch("rechitRawTau", rechitRawTau_, "rechitRawTau[5][nTau][nBeta]/F");
-    rechitTreeAna_p->Branch("rechitSubJtRawPt", rechitSubJtRawPt_, "rechitSubJtRawPt[5][nSubjet]/F");
-    rechitTreeAna_p->Branch("rechitSubJtRawPhi", rechitSubJtRawPhi_, "rechitSubJtRawPhi[5][nSubjet]/F");
-    rechitTreeAna_p->Branch("rechitSubJtRawEta", rechitSubJtRawEta_, "rechitSubJtRawEta[5][nSubjet]/F");
+    rechitTreeAna_p->Branch("rechitJtRawPt", rechitJtRawPt_, Form("rechitJtRawPt[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtRawPhi", rechitJtRawPhi_, Form("rechitJtRawPhi[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtRawEta", rechitJtRawEta_, Form("rechitJtRawEta[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtRawPTD", rechitJtRawPTD_, Form("rechitJtRawPTD[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtRawR2", rechitJtRawR2_, Form("rechitJtRawR2[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtRawSigma", rechitJtRawSigma_, Form("rechitJtRawSigma[5][%d]/F", nSigma));
+    rechitTreeAna_p->Branch("rechitJtRawRefPart", rechitJtRawRefPart_, Form("rechitJtRawRefPart[5]/I"));
+    rechitTreeAna_p->Branch("rechitJtRawFFMUnsub", rechitJtRawFFMUnsub_, Form("rechitJtRawFFMUnsub[5][%d]/F", nFFM));
+    rechitTreeAna_p->Branch("rechitJtRawFFMSub", rechitJtRawFFMSub_, Form("rechitJtRawFFMSub[5][%d]/F", nFFM));
+    rechitTreeAna_p->Branch("rechitJtRawFFMSubBetter", rechitJtRawFFMSubBetter_, Form("rechitJtRawFFMSubBetter[5][%d]/F", nFFM));
+    rechitTreeAna_p->Branch("rechitRawTau", rechitRawTau_, Form("rechitRawTau[5][%d][%d]/F", nTau, nBeta));
+    rechitTreeAna_p->Branch("rechitSubJtRawPt", rechitSubJtRawPt_, Form("rechitSubJtRawPt[5][%d]/F", nSubjet));
+    rechitTreeAna_p->Branch("rechitSubJtRawPhi", rechitSubJtRawPhi_, Form("rechitSubJtRawPhi[5][%d]/F", nSubjet));
+    rechitTreeAna_p->Branch("rechitSubJtRawEta", rechitSubJtRawEta_, Form("rechitSubJtRawEta[5][%d]/F", nSubjet));
     
-    rechitTreeAna_p->Branch("rechitJtVsPt", rechitJtVsPt_, "rechitJtVsPt[5]/F");
-    rechitTreeAna_p->Branch("rechitJtVsPhi", rechitJtVsPhi_, "rechitJtVsPhi[5]/F");
-    rechitTreeAna_p->Branch("rechitJtVsEta", rechitJtVsEta_, "rechitJtVsEta[5]/F");
-    rechitTreeAna_p->Branch("rechitJtVsPTD", rechitJtVsPTD_, "rechitJtVsPTD[5]/F");
-    rechitTreeAna_p->Branch("rechitJtVsR2", rechitJtVsR2_, "rechitJtVsR2[5]/F");
-    rechitTreeAna_p->Branch("rechitJtVsSigma", rechitJtVsSigma_, "rechitJtVsSigma[5][nSigma]/F");
-    rechitTreeAna_p->Branch("rechitJtVsRefPart", rechitJtVsRefPart_, "rechitJtVsRefPart[5]/I");
-    rechitTreeAna_p->Branch("rechitJtVsFFMUnsub", rechitJtVsFFMUnsub_, "rechitJtVsFFMUnsub[5][nFFM]/F");
-    rechitTreeAna_p->Branch("rechitJtVsFFMSub", rechitJtVsFFMSub_, "rechitJtVsFFMSub[5][nFFM]/F");
-    rechitTreeAna_p->Branch("rechitJtVsFFMSubBetter", rechitJtVsFFMSubBetter_, "rechitJtVsFFMSubBetter[5][nFFM]/F");
-    rechitTreeAna_p->Branch("rechitVsTau", rechitVsTau_, "rechitVsTau[5][nTau][nBeta]/F");
-    rechitTreeAna_p->Branch("rechitSubJtVsPt", rechitSubJtVsPt_, "rechitSubJtVsPt[5][nSubjet]/F");
-    rechitTreeAna_p->Branch("rechitSubJtVsPhi", rechitSubJtVsPhi_, "rechitSubJtVsPhi[5][nSubjet]/F");
-    rechitTreeAna_p->Branch("rechitSubJtVsEta", rechitSubJtVsEta_, "rechitSubJtVsEta[5][nSubjet]/F");
+    rechitTreeAna_p->Branch("rechitJtVsPt", rechitJtVsPt_, Form("rechitJtVsPt[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtVsPhi", rechitJtVsPhi_, Form("rechitJtVsPhi[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtVsEta", rechitJtVsEta_, Form("rechitJtVsEta[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtVsPTD", rechitJtVsPTD_, Form("rechitJtVsPTD[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtVsR2", rechitJtVsR2_, Form("rechitJtVsR2[5]/F"));
+    rechitTreeAna_p->Branch("rechitJtVsSigma", rechitJtVsSigma_, Form("rechitJtVsSigma[5][%d]/F", nSigma));
+    rechitTreeAna_p->Branch("rechitJtVsRefPart", rechitJtVsRefPart_, Form("rechitJtVsRefPart[5]/I"));
+    rechitTreeAna_p->Branch("rechitJtVsFFMUnsub", rechitJtVsFFMUnsub_, Form("rechitJtVsFFMUnsub[5][%d]/F", nFFM));
+    rechitTreeAna_p->Branch("rechitJtVsFFMSub", rechitJtVsFFMSub_, Form("rechitJtVsFFMSub[5][%d]/F", nFFM));
+    rechitTreeAna_p->Branch("rechitJtVsFFMSubBetter", rechitJtVsFFMSubBetter_, Form("rechitJtVsFFMSubBetter[5][%d]/F", nFFM));
+    rechitTreeAna_p->Branch("rechitVsTau", rechitVsTau_, Form("rechitVsTau[5][%d][%d]/F", nTau, nBeta));
+    rechitTreeAna_p->Branch("rechitSubJtVsPt", rechitSubJtVsPt_, Form("rechitSubJtVsPt[5][%d]/F", nSubjet));
+    rechitTreeAna_p->Branch("rechitSubJtVsPhi", rechitSubJtVsPhi_, Form("rechitSubJtVsPhi[5][%d]/F", nSubjet));
+    rechitTreeAna_p->Branch("rechitSubJtVsEta", rechitSubJtVsEta_, Form("rechitSubJtVsEta[5][%d]/F", nSubjet));
     
     //PF TreeAna Branches
-    pfcandTreeAna_p->Branch("pfSKPtCut", &pfSKPtCut_, "pfSKPtCut/F");    
-
-    pfcandTreeAna_p->Branch("pfJtRawPt", pfJtRawPt_, "pfJtRawPt[5]/F");
-    pfcandTreeAna_p->Branch("pfJtRawPhi", pfJtRawPhi_, "pfJtRawPhi[5]/F");
-    pfcandTreeAna_p->Branch("pfJtRawEta", pfJtRawEta_, "pfJtRawEta[5]/F");
-    pfcandTreeAna_p->Branch("pfJtRawPTD", pfJtRawPTD_, "pfJtRawPTD[5]/F");
-    pfcandTreeAna_p->Branch("pfJtRawR2", pfJtRawR2_, "pfJtRawR2[5]/F");
-    pfcandTreeAna_p->Branch("pfJtRawSigma", pfJtRawSigma_, "pfJtRawSigma[5][nSigma]/F");
-    pfcandTreeAna_p->Branch("pfJtRawRefPart", pfJtRawRefPart_, "pfJtRawRefPart[5]/I");
-    pfcandTreeAna_p->Branch("pfJtRawFFMUnsub", pfJtRawFFMUnsub_, "pfJtRawFFMUnsub[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtRawFFMSub", pfJtRawFFMSub_, "pfJtRawFFMSub[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtRawFFMSubBetter", pfJtRawFFMSubBetter_, "pfJtRawFFMSubBetter[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfRawTau", pfRawTau_, "pfRawTau[5][nTau][nBeta]/F");
-    pfcandTreeAna_p->Branch("pfSubJtRawPt", pfSubJtRawPt_, "pfSubJtRawPt[5][nSubjet]/F");
-    pfcandTreeAna_p->Branch("pfSubJtRawPhi", pfSubJtRawPhi_, "pfSubJtRawPhi[5][nSubjet]/F");
-    pfcandTreeAna_p->Branch("pfSubJtRawEta", pfSubJtRawEta_, "pfSubJtRawEta[5][nSubjet]/F");
+    pfcandTreeAna_p->Branch("pfSKPtCut", &pfSKPtCut_, Form("pfSKPtCut/F")); 
+    pfcandTreeAna_p->Branch("pfJtRawPt", pfJtRawPt_, Form("pfJtRawPt[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtRawPhi", pfJtRawPhi_, Form("pfJtRawPhi[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtRawEta", pfJtRawEta_, Form("pfJtRawEta[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtRawPTD", pfJtRawPTD_, Form("pfJtRawPTD[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtRawR2", pfJtRawR2_, Form("pfJtRawR2[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtRawSigma", pfJtRawSigma_, Form("pfJtRawSigma[5][%d]/F", nSigma));
+    pfcandTreeAna_p->Branch("pfJtRawRefPart", pfJtRawRefPart_, Form("pfJtRawRefPart[5]/I"));
+    pfcandTreeAna_p->Branch("pfJtRawFFMUnsub", pfJtRawFFMUnsub_, Form("pfJtRawFFMUnsub[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfJtRawFFMSub", pfJtRawFFMSub_, Form("pfJtRawFFMSub[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfJtRawFFMSubBetter", pfJtRawFFMSubBetter_, Form("pfJtRawFFMSubBetter[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfRawTau", pfRawTau_, Form("pfRawTau[5][%d][%d]/F", nTau, nBeta));
+    pfcandTreeAna_p->Branch("pfSubJtRawPt", pfSubJtRawPt_, Form("pfSubJtRawPt[5][%d]/F", nSubjet));
+    pfcandTreeAna_p->Branch("pfSubJtRawPhi", pfSubJtRawPhi_, Form("pfSubJtRawPhi[5][%d]/F", nSubjet));
+    pfcandTreeAna_p->Branch("pfSubJtRawEta", pfSubJtRawEta_, Form("pfSubJtRawEta[5][%d]/F", nSubjet));
     
-    pfcandTreeAna_p->Branch("pfJtVsPt", pfJtVsPt_, "pfJtVsPt[5]/F");
-    pfcandTreeAna_p->Branch("pfJtVsPhi", pfJtVsPhi_, "pfJtVsPhi[5]/F");
-    pfcandTreeAna_p->Branch("pfJtVsEta", pfJtVsEta_, "pfJtVsEta[5]/F");
-    pfcandTreeAna_p->Branch("pfJtVsPTD", pfJtVsPTD_, "pfJtVsPTD[5]/F");
-    pfcandTreeAna_p->Branch("pfJtVsR2", pfJtVsR2_, "pfJtVsR2[5]/F");
-    pfcandTreeAna_p->Branch("pfJtVsSigma", pfJtVsSigma_, "pfJtVsSigma[5][nSigma]/F");
-    pfcandTreeAna_p->Branch("pfJtVsRefPart", pfJtVsRefPart_, "pfJtVsRefPart[5]/I");
-    pfcandTreeAna_p->Branch("pfJtVsFFMUnsub", pfJtVsFFMUnsub_, "pfJtVsFFMUnsub[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtVsFFMSub", pfJtVsFFMSub_, "pfJtVsFFMSub[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtVsFFMSubBetter", pfJtVsFFMSubBetter_, "pfJtVsFFMSubBetter[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfVsTau", pfVsTau_, "pfVsTau[5][nTau][nBeta]/F");
-    pfcandTreeAna_p->Branch("pfSubJtVsPt", pfSubJtVsPt_, "pfSubJtVsPt[5][nSubjet]/F");
-    pfcandTreeAna_p->Branch("pfSubJtVsPhi", pfSubJtVsPhi_, "pfSubJtVsPhi[5][nSubjet]/F");
-    pfcandTreeAna_p->Branch("pfSubJtVsEta", pfSubJtVsEta_, "pfSubJtVsEta[5][nSubjet]/F");
+    pfcandTreeAna_p->Branch("pfJtVsPt", pfJtVsPt_, Form("pfJtVsPt[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtVsPhi", pfJtVsPhi_, Form("pfJtVsPhi[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtVsEta", pfJtVsEta_, Form("pfJtVsEta[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtVsPTD", pfJtVsPTD_, Form("pfJtVsPTD[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtVsR2", pfJtVsR2_, Form("pfJtVsR2[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtVsSigma", pfJtVsSigma_, Form("pfJtVsSigma[5][%d]/F", nSigma));
+    pfcandTreeAna_p->Branch("pfJtVsRefPart", pfJtVsRefPart_, Form("pfJtVsRefPart[5]/I"));
+    pfcandTreeAna_p->Branch("pfJtVsFFMUnsub", pfJtVsFFMUnsub_, Form("pfJtVsFFMUnsub[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfJtVsFFMSub", pfJtVsFFMSub_, Form("pfJtVsFFMSub[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfJtVsFFMSubBetter", pfJtVsFFMSubBetter_, Form("pfJtVsFFMSubBetter[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfVsTau", pfVsTau_, Form("pfVsTau[5][%d][%d]/F", nTau, nBeta));
+    pfcandTreeAna_p->Branch("pfSubJtVsPt", pfSubJtVsPt_, Form("pfSubJtVsPt[5][%d]/F", nSubjet));
+    pfcandTreeAna_p->Branch("pfSubJtVsPhi", pfSubJtVsPhi_, Form("pfSubJtVsPhi[5][%d]/F", nSubjet));
+    pfcandTreeAna_p->Branch("pfSubJtVsEta", pfSubJtVsEta_, Form("pfSubJtVsEta[5][%d]/F", nSubjet));
     
-    pfcandTreeAna_p->Branch("pfJtSKPt", pfJtSKPt_, "pfJtSKPt[5]/F");
-    pfcandTreeAna_p->Branch("pfJtSKPhi", pfJtSKPhi_, "pfJtSKPhi[5]/F");
-    pfcandTreeAna_p->Branch("pfJtSKEta", pfJtSKEta_, "pfJtSKEta[5]/F");
-    pfcandTreeAna_p->Branch("pfJtSKPTD", pfJtSKPTD_, "pfJtSKPTD[5]/F");
-    pfcandTreeAna_p->Branch("pfJtSKR2", pfJtSKR2_, "pfJtSKR2[5]/F");
-    pfcandTreeAna_p->Branch("pfJtSKSigma", pfJtSKSigma_, "pfJtSKSigma[5][nSigma]/F");
-    pfcandTreeAna_p->Branch("pfJtSKFFMUnsub", pfJtSKFFMUnsub_, "pfJtSKFFMUnsub[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtSKFFMSub", pfJtSKFFMSub_, "pfJtSKFFMSub[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtSKFFMSubBetter", pfJtSKFFMSubBetter_, "pfJtSKFFMSubBetter[5][nFFM]/F");
-    pfcandTreeAna_p->Branch("pfJtSKRefPart", pfJtSKRefPart_, "pfJtSKRefPart[5]/I");
-    pfcandTreeAna_p->Branch("pfSKTau", pfSKTau_, "pfSKTau[5][nTau][nBeta]/F");
-    pfcandTreeAna_p->Branch("pfSubJtSKPt", pfSubJtSKPt_, "pfSubJtSKPt[5][nSubjet]/F");
-    pfcandTreeAna_p->Branch("pfSubJtSKPhi", pfSubJtSKPhi_, "pfSubJtSKPhi[5][nSubjet]/F");
-    pfcandTreeAna_p->Branch("pfSubJtSKEta", pfSubJtSKEta_, "pfSubJtSKEta[5][nSubjet]/F");
+    pfcandTreeAna_p->Branch("pfJtSKPt", pfJtSKPt_, Form("pfJtSKPt[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtSKPhi", pfJtSKPhi_, Form("pfJtSKPhi[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtSKEta", pfJtSKEta_, Form("pfJtSKEta[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtSKPTD", pfJtSKPTD_, Form("pfJtSKPTD[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtSKR2", pfJtSKR2_, Form("pfJtSKR2[5]/F"));
+    pfcandTreeAna_p->Branch("pfJtSKSigma", pfJtSKSigma_, Form("pfJtSKSigma[5][%d]/F", nSigma));
+    pfcandTreeAna_p->Branch("pfJtSKRefPart", pfJtSKRefPart_, Form("pfJtSKRefPart[5]/I"));
+    pfcandTreeAna_p->Branch("pfJtSKFFMUnsub", pfJtSKFFMUnsub_, Form("pfJtSKFFMUnsub[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfJtSKFFMSub", pfJtSKFFMSub_, Form("pfJtSKFFMSub[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfJtSKFFMSubBetter", pfJtSKFFMSubBetter_, Form("pfJtSKFFMSubBetter[5][%d]/F", nFFM));
+    pfcandTreeAna_p->Branch("pfSKTau", pfSKTau_, Form("pfSKTau[5][%d][%d]/F", nTau, nBeta));
+    pfcandTreeAna_p->Branch("pfSubJtSKPt", pfSubJtSKPt_, Form("pfSubJtSKPt[5][%d]/F", nSubjet));
+    pfcandTreeAna_p->Branch("pfSubJtSKPhi", pfSubJtSKPhi_, Form("pfSubJtSKPhi[5][%d]/F", nSubjet));
+    pfcandTreeAna_p->Branch("pfSubJtSKEta", pfSubJtSKEta_, Form("pfSubJtSKEta[5][%d]/F", nSubjet));
     
     //Trk TreeAna Branches
-    trkTreeAna_p->Branch("trkSKPtCut", &trkSKPtCut_, "trkSKPtCut/F");    
+    trkTreeAna_p->Branch("trkSKPtCut", &trkSKPtCut_, Form("trkSKPtCut/F"));    
 
-    trkTreeAna_p->Branch("trkJtRawPt", trkJtRawPt_, "trkJtRawPt[5]/F");
-    trkTreeAna_p->Branch("trkJtRawPhi", trkJtRawPhi_, "trkJtRawPhi[5]/F");
-    trkTreeAna_p->Branch("trkJtRawEta", trkJtRawEta_, "trkJtRawEta[5]/F");
-    trkTreeAna_p->Branch("trkJtRawPTD", trkJtRawPTD_, "trkJtRawPTD[5]/F");
-    trkTreeAna_p->Branch("trkJtRawR2", trkJtRawR2_, "trkJtRawR2[5]/F");
-    trkTreeAna_p->Branch("trkJtRawSigma", trkJtRawSigma_, "trkJtRawSigma[5][nSigma]/F");
-    trkTreeAna_p->Branch("trkJtRawRefPart", trkJtRawRefPart_, "trkJtRawRefPart[5]/I");
-    trkTreeAna_p->Branch("trkJtRawFFMUnsub", trkJtRawFFMUnsub_, "trkJtRawFFMUnsub[5][nFFM]/F");
-    trkTreeAna_p->Branch("trkJtRawFFMSub", trkJtRawFFMSub_, "trkJtRawFFMSub[5][nFFM]/F");
-    trkTreeAna_p->Branch("trkJtRawFFMSubBetter", trkJtRawFFMSubBetter_, "trkJtRawFFMSubBetter[5][nFFM]/F");
-    trkTreeAna_p->Branch("trkRawTau", trkRawTau_, "trkRawTau[5][nTau][nBeta]/F");
-    trkTreeAna_p->Branch("trkSubJtRawPt", trkSubJtRawPt_, "trkSubJtRawPt[5][nSubjet]/F");
-    trkTreeAna_p->Branch("trkSubJtRawPhi", trkSubJtRawPhi_, "trkSubJtRawPhi[5][nSubjet]/F");
-    trkTreeAna_p->Branch("trkSubJtRawEta", trkSubJtRawEta_, "trkSubJtRawEta[5][nSubjet]/F");
+    trkTreeAna_p->Branch("trkJtRawPt", trkJtRawPt_, Form("trkJtRawPt[5]/F"));
+    trkTreeAna_p->Branch("trkJtRawPhi", trkJtRawPhi_, Form("trkJtRawPhi[5]/F"));
+    trkTreeAna_p->Branch("trkJtRawEta", trkJtRawEta_, Form("trkJtRawEta[5]/F"));
+    trkTreeAna_p->Branch("trkJtRawPTD", trkJtRawPTD_, Form("trkJtRawPTD[5]/F"));
+    trkTreeAna_p->Branch("trkJtRawR2", trkJtRawR2_, Form("trkJtRawR2[5]/F"));
+    trkTreeAna_p->Branch("trkJtRawSigma", trkJtRawSigma_, Form("trkJtRawSigma[5][%d]/F", nSigma));
+    trkTreeAna_p->Branch("trkJtRawRefPart", trkJtRawRefPart_, Form("trkJtRawRefPart[5]/I"));
+    trkTreeAna_p->Branch("trkJtRawFFMUnsub", trkJtRawFFMUnsub_, Form("trkJtRawFFMUnsub[5][%d]/F", nFFM));
+    trkTreeAna_p->Branch("trkJtRawFFMSub", trkJtRawFFMSub_, Form("trkJtRawFFMSub[5][%d]/F", nFFM));
+    trkTreeAna_p->Branch("trkJtRawFFMSubBetter", trkJtRawFFMSubBetter_, Form("trkJtRawFFMSubBetter[5][%d]/F", nFFM));
+    trkTreeAna_p->Branch("trkRawTau", trkRawTau_, Form("trkRawTau[5][%d][%d]/F", nTau, nBeta));
+    trkTreeAna_p->Branch("trkSubJtRawPt", trkSubJtRawPt_, Form("trkSubJtRawPt[5][%d]/F", nSubjet));
+    trkTreeAna_p->Branch("trkSubJtRawPhi", trkSubJtRawPhi_, Form("trkSubJtRawPhi[5][%d]/F", nSubjet));
+    trkTreeAna_p->Branch("trkSubJtRawEta", trkSubJtRawEta_, Form("trkSubJtRawEta[5][%d]/F", nSubjet));
     
-    trkTreeAna_p->Branch("trkJtSKPt", trkJtSKPt_, "trkJtSKPt[5]/F");
-    trkTreeAna_p->Branch("trkJtSKPhi", trkJtSKPhi_, "trkJtSKPhi[5]/F");
-    trkTreeAna_p->Branch("trkJtSKEta", trkJtSKEta_, "trkJtSKEta[5]/F");
-    trkTreeAna_p->Branch("trkJtSKPTD", trkJtSKPTD_, "trkJtSKPTD[5]/F");
-    trkTreeAna_p->Branch("trkJtSKR2", trkJtSKR2_, "trkJtSKR2[5]/F");
-    trkTreeAna_p->Branch("trkJtSKSigma", trkJtSKSigma_, "trkJtSKSigma[5][nSigma]/F");
-    trkTreeAna_p->Branch("trkJtSKRefPart", trkJtSKRefPart_, "trkJtSKRefPart[5]/I");
-    trkTreeAna_p->Branch("trkJtSKFFMUnsub", trkJtSKFFMUnsub_, "trkJtSKFFMUnsub[5][nFFM]/F");
-    trkTreeAna_p->Branch("trkJtSKFFMSub", trkJtSKFFMSub_, "trkJtSKFFMSub[5][nFFM]/F");
-    trkTreeAna_p->Branch("trkJtSKFFMSubBetter", trkJtSKFFMSubBetter_, "trkJtSKFFMSubBetter[5][nFFM]/F");
-    trkTreeAna_p->Branch("trkSKTau", trkSKTau_, "trkSKTau[5][nTau][nBeta]/F");
-    trkTreeAna_p->Branch("trkSubJtSKPt", trkSubJtSKPt_, "trkSubJtSKPt[5][nSubjet]/F");
-    trkTreeAna_p->Branch("trkSubJtSKPhi", trkSubJtSKPhi_, "trkSubJtSKPhi[5][nSubjet]/F");
-    trkTreeAna_p->Branch("trkSubJtSKEta", trkSubJtSKEta_, "trkSubJtSKEta[5][nSubjet]/F");
+    trkTreeAna_p->Branch("trkJtSKPt", trkJtSKPt_, Form("trkJtSKPt[5]/F"));
+    trkTreeAna_p->Branch("trkJtSKPhi", trkJtSKPhi_, Form("trkJtSKPhi[5]/F"));
+    trkTreeAna_p->Branch("trkJtSKEta", trkJtSKEta_, Form("trkJtSKEta[5]/F"));
+    trkTreeAna_p->Branch("trkJtSKPTD", trkJtSKPTD_, Form("trkJtSKPTD[5]/F"));
+    trkTreeAna_p->Branch("trkJtSKR2", trkJtSKR2_, Form("trkJtSKR2[5]/F"));
+    trkTreeAna_p->Branch("trkJtSKSigma", trkJtSKSigma_, Form("trkJtSKSigma[5][%d]/F", nSigma));
+    trkTreeAna_p->Branch("trkJtSKRefPart", trkJtSKRefPart_, Form("trkJtSKRefPart[5]/I"));
+    trkTreeAna_p->Branch("trkJtSKFFMUnsub", trkJtSKFFMUnsub_, Form("trkJtSKFFMUnsub[5][%d]/F", nFFM));
+    trkTreeAna_p->Branch("trkJtSKFFMSub", trkJtSKFFMSub_, Form("trkJtSKFFMSub[5][%d]/F", nFFM));
+    trkTreeAna_p->Branch("trkJtSKFFMSubBetter", trkJtSKFFMSubBetter_, Form("trkJtSKFFMSubBetter[5][%d]/F", nFFM));
+    trkTreeAna_p->Branch("trkSKTau", trkSKTau_, Form("trkSKTau[5][%d][%d]/F", nTau, nBeta));
+    trkTreeAna_p->Branch("trkSubJtSKPt", trkSubJtSKPt_, Form("trkSubJtSKPt[5][%d]/F", nSubjet));
+    trkTreeAna_p->Branch("trkSubJtSKPhi", trkSubJtSKPhi_, Form("trkSubJtSKPhi[5][%d]/F", nSubjet));
+    trkTreeAna_p->Branch("trkSubJtSKEta", trkSubJtSKEta_, Form("trkSubJtSKEta[5][%d]/F", nSubjet));
   }    
 
   //Gen TreeAna Branches
   if(montecarlo){
-    genTreeAna_p->Branch("genSKPtCut", &genSKPtCut_, "genSKPtCut/F");
+    genTreeAna_p->Branch("genSKPtCut", &genSKPtCut_, Form("genSKPtCut/F"));
 
-    genTreeAna_p->Branch("genJtRawPt", genJtRawPt_, "genJtRawPt[5]/F");
-    genTreeAna_p->Branch("genJtRawPhi", genJtRawPhi_, "genJtRawPhi[5]/F");
-    genTreeAna_p->Branch("genJtRawEta", genJtRawEta_, "genJtRawEta[5]/F");
-    genTreeAna_p->Branch("genJtRawPTD", genJtRawPTD_, "genJtRawPTD[5]/F");
-    genTreeAna_p->Branch("genJtRawR2", genJtRawR2_, "genJtRawR2[5]/F");
-    genTreeAna_p->Branch("genJtRawSigma", genJtRawSigma_, "genJtRawSigma[5][nSigma]/F");
-    genTreeAna_p->Branch("genJtRawRefPart", genJtRawRefPart_, "genJtRawRefPart[5]/I");
-    genTreeAna_p->Branch("genJtRawFFMUnsub", genJtRawFFMUnsub_, "genJtRawFFMUnsub[5][nFFM]/F");
-    genTreeAna_p->Branch("genJtRawFFMSub", genJtRawFFMSub_, "genJtRawFFMSub[5][nFFM]/F");
-    genTreeAna_p->Branch("genJtRawFFMSubBetter", genJtRawFFMSubBetter_, "genJtRawFFMSubBetter[5][nFFM]/F");
-    genTreeAna_p->Branch("genRawTau", genRawTau_, "genRawTau[5][nTau][nBeta]/F");
-    genTreeAna_p->Branch("genSubJtRawPt", genSubJtRawPt_, "genSubJtRawPt[5][nSubjet]/F");
-    genTreeAna_p->Branch("genSubJtRawPhi", genSubJtRawPhi_, "genSubJtRawPhi[5][nSubjet]/F");
-    genTreeAna_p->Branch("genSubJtRawEta", genSubJtRawEta_, "genSubJtRawEta[5][nSubjet]/F");
+    genTreeAna_p->Branch("genJtRawPt", genJtRawPt_, Form("genJtRawPt[5]/F"));
+    genTreeAna_p->Branch("genJtRawPhi", genJtRawPhi_, Form("genJtRawPhi[5]/F"));
+    genTreeAna_p->Branch("genJtRawEta", genJtRawEta_, Form("genJtRawEta[5]/F"));
+    genTreeAna_p->Branch("genJtRawPTD", genJtRawPTD_, Form("genJtRawPTD[5]/F"));
+    genTreeAna_p->Branch("genJtRawR2", genJtRawR2_, Form("genJtRawR2[5]/F"));
+    genTreeAna_p->Branch("genJtRawSigma", genJtRawSigma_, Form("genJtRawSigma[5][%d]/F", nSigma));
+    genTreeAna_p->Branch("genJtRawRefPart", genJtRawRefPart_, Form("genJtRawRefPart[5]/I"));
+    genTreeAna_p->Branch("genJtRawFFMUnsub", genJtRawFFMUnsub_, Form("genJtRawFFMUnsub[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genJtRawFFMSub", genJtRawFFMSub_, Form("genJtRawFFMSub[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genJtRawFFMSubBetter", genJtRawFFMSubBetter_, Form("genJtRawFFMSubBetter[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genRawTau", genRawTau_, Form("genRawTau[5][%d][%d]/F", nTau, nBeta));
+    genTreeAna_p->Branch("genSubJtRawPt", genSubJtRawPt_, Form("genSubJtRawPt[5][%d]/F", nSubjet));
+    genTreeAna_p->Branch("genSubJtRawPhi", genSubJtRawPhi_, Form("genSubJtRawPhi[5][%d]/F", nSubjet));
+    genTreeAna_p->Branch("genSubJtRawEta", genSubJtRawEta_, Form("genSubJtRawEta[5][%d]/F", nSubjet));
 
-    genTreeAna_p->Branch("genJtSKPt", genJtSKPt_, "genJtSKPt[5]/F");
-    genTreeAna_p->Branch("genJtSKPhi", genJtSKPhi_, "genJtSKPhi[5]/F");
-    genTreeAna_p->Branch("genJtSKEta", genJtSKEta_, "genJtSKEta[5]/F");
-    genTreeAna_p->Branch("genJtSKPTD", genJtSKPTD_, "genJtSKPTD[5]/F");
-    genTreeAna_p->Branch("genJtSKR2", genJtSKR2_, "genJtSKR2[5]/F");
-    genTreeAna_p->Branch("genJtSKSigma", genJtSKSigma_, "genJtSKSigma[5][nSigma]/F");
-    genTreeAna_p->Branch("genJtSKRefPart", genJtSKRefPart_, "genJtSKRefPart[5]/I");
-    genTreeAna_p->Branch("genJtSKFFMUnsub", genJtSKFFMUnsub_, "genJtSKFFMUnsub[5][nFFM]/F");
-    genTreeAna_p->Branch("genJtSKFFMSub", genJtSKFFMSub_, "genJtSKFFMSub[5][nFFM]/F");
-    genTreeAna_p->Branch("genJtSKFFMSubBetter", genJtSKFFMSubBetter_, "genJtSKFFMSubBetter[5][nFFM]/F");
-    genTreeAna_p->Branch("genSKTau", genSKTau_, "genSKTau[5][nTau][nBeta]/F");
-    genTreeAna_p->Branch("genSubJtSKPt", genSubJtSKPt_, "genSubJtSKPt[5][nSubjet]/F");
-    genTreeAna_p->Branch("genSubJtSKPhi", genSubJtSKPhi_, "genSubJtSKPhi[5][nSubjet]/F");
-    genTreeAna_p->Branch("genSubJtSKEta", genSubJtSKEta_, "genSubJtSKEta[5][nSubjet]/F");
+    genTreeAna_p->Branch("genJtSKPt", genJtSKPt_, Form("genJtSKPt[5]/F"));
+    genTreeAna_p->Branch("genJtSKPhi", genJtSKPhi_, Form("genJtSKPhi[5]/F"));
+    genTreeAna_p->Branch("genJtSKEta", genJtSKEta_, Form("genJtSKEta[5]/F"));
+    genTreeAna_p->Branch("genJtSKPTD", genJtSKPTD_, Form("genJtSKPTD[5]/F"));
+    genTreeAna_p->Branch("genJtSKR2", genJtSKR2_, Form("genJtSKR2[5]/F"));
+    genTreeAna_p->Branch("genJtSKSigma", genJtSKSigma_, Form("genJtSKSigma[5][%d]/F", nSigma));
+    genTreeAna_p->Branch("genJtSKRefPart", genJtSKRefPart_, Form("genJtSKRefPart[5]/I"));
+    genTreeAna_p->Branch("genJtSKFFMUnsub", genJtSKFFMUnsub_, Form("genJtSKFFMUnsub[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genJtSKFFMSub", genJtSKFFMSub_, Form("genJtSKFFMSub[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genJtSKFFMSubBetter", genJtSKFFMSubBetter_, Form("genJtSKFFMSubBetter[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genSKTau", genSKTau_, Form("genSKTau[5][%d][%d]/F", nTau, nBeta));
+    genTreeAna_p->Branch("genSubJtSKPt", genSubJtSKPt_, Form("genSubJtSKPt[5][%d]/F", nSubjet));
+    genTreeAna_p->Branch("genSubJtSKPhi", genSubJtSKPhi_, Form("genSubJtSKPhi[5][%d]/F", nSubjet));
+    genTreeAna_p->Branch("genSubJtSKEta", genSubJtSKEta_, Form("genSubJtSKEta[5][%d]/F", nSubjet));
 
-    genTreeAna_p->Branch("genJtSUBEPt", genJtSUBEPt_, "genJtSUBEPt[5]/F");
-    genTreeAna_p->Branch("genJtSUBEPhi", genJtSUBEPhi_, "genJtSUBEPhi[5]/F");
-    genTreeAna_p->Branch("genJtSUBEEta", genJtSUBEEta_, "genJtSUBEEta[5]/F");
-    genTreeAna_p->Branch("genJtSUBEPTD", genJtSUBEPTD_, "genJtSUBEPTD[5]/F");
-    genTreeAna_p->Branch("genJtSUBER2", genJtSUBER2_, "genJtSUBER2[5]/F");
-    genTreeAna_p->Branch("genJtSUBESigma", genJtSUBESigma_, "genJtSUBESigma[5][nSigma]/F");
-    genTreeAna_p->Branch("genJtSUBERefPart", genJtSUBERefPart_, "genJtSUBERefPart[5]/I");
-    genTreeAna_p->Branch("genJtSUBEFFMUnsub", genJtSUBEFFMUnsub_, "genJtSUBEFFMUnsub[5][nFFM]/F");
-    genTreeAna_p->Branch("genJtSUBEFFMSub", genJtSUBEFFMSub_, "genJtSUBEFFMSub[5][nFFM]/F");
-    genTreeAna_p->Branch("genJtSUBEFFMSubBetter", genJtSUBEFFMSubBetter_, "genJtSUBEFFMSubBetter[5][nFFM]/F");
-    genTreeAna_p->Branch("genSUBETau", genSUBETau_, "genSUBETau[5][nTau][nBeta]/F");
-    genTreeAna_p->Branch("genSubJtSUBEPt", genSubJtSUBEPt_, "genSubJtSUBEPt[5][nSubjet]/F");
-    genTreeAna_p->Branch("genSubJtSUBEPhi", genSubJtSUBEPhi_, "genSubJtSUBEPhi[5][nSubjet]/F");
-    genTreeAna_p->Branch("genSubJtSUBEEta", genSubJtSUBEEta_, "genSubJtSUBEEta[5][nSubjet]/F");
+    genTreeAna_p->Branch("genJtSUBEPt", genJtSUBEPt_, Form("genJtSUBEPt[5]/F"));
+    genTreeAna_p->Branch("genJtSUBEPhi", genJtSUBEPhi_, Form("genJtSUBEPhi[5]/F"));
+    genTreeAna_p->Branch("genJtSUBEEta", genJtSUBEEta_, Form("genJtSUBEEta[5]/F"));
+    genTreeAna_p->Branch("genJtSUBEPTD", genJtSUBEPTD_, Form("genJtSUBEPTD[5]/F"));
+    genTreeAna_p->Branch("genJtSUBER2", genJtSUBER2_, Form("genJtSUBER2[5]/F"));
+    genTreeAna_p->Branch("genJtSUBESigma", genJtSUBESigma_, Form("genJtSUBESigma[5][%d]/F", nSigma));
+    genTreeAna_p->Branch("genJtSUBERefPart", genJtSUBERefPart_, Form("genJtSUBERefPart[5]/I"));
+    genTreeAna_p->Branch("genJtSUBEFFMUnsub", genJtSUBEFFMUnsub_, Form("genJtSUBEFFMUnsub[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genJtSUBEFFMSub", genJtSUBEFFMSub_, Form("genJtSUBEFFMSub[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genJtSUBEFFMSubBetter", genJtSUBEFFMSubBetter_, Form("genJtSUBEFFMSubBetter[5][%d]/F", nFFM));
+    genTreeAna_p->Branch("genSUBETau", genSUBETau_, Form("genSUBETau[5][%d][%d]/F", nTau, nBeta));
+    genTreeAna_p->Branch("genSubJtSUBEPt", genSubJtSUBEPt_, Form("genSubJtSUBEPt[5][%d]/F", nSubjet));
+    genTreeAna_p->Branch("genSubJtSUBEPhi", genSubJtSUBEPhi_, Form("genSubJtSUBEPhi[5][%d]/F", nSubjet));
+    genTreeAna_p->Branch("genSubJtSUBEEta", genSubJtSUBEEta_, Form("genSubJtSUBEEta[5][%d]/F", nSubjet));
   }
 
   //Jet TreeAna Branches
 
-  jetTreeAna_p->Branch("run", &run_, "run/I");
-  jetTreeAna_p->Branch("evt", &evt_, "evt/I");
-  jetTreeAna_p->Branch("lumi", &lumi_, "lumi/I");
+  jetTreeAna_p->Branch("run", &run_, Form("run/I"));
+  jetTreeAna_p->Branch("evt", &evt_, Form("evt/I"));
+  jetTreeAna_p->Branch("lumi", &lumi_, Form("lumi/I"));
 
   if(hi){
-    jetTreeAna_p->Branch("hiBin", &hiBin_, "hiBin/I");
-    if(montecarlo) jetTreeAna_p->Branch("b", &b_, "b/F");
+    jetTreeAna_p->Branch("hiBin", &hiBin_, Form("hiBin/I"));
+    if(montecarlo) jetTreeAna_p->Branch("b", &b_, Form("b/F"));
   }
    
   if(montecarlo){
-    jetTreeAna_p->Branch("pthat", &pthat_, "pthat/F");
-    jetTreeAna_p->Branch("pthatWeight", &pthatWeight_, "pthatWeight/F");
+    jetTreeAna_p->Branch("pthat", &pthat_, Form("pthat/F"));
+    jetTreeAna_p->Branch("pthatWeight", &pthatWeight_, Form("pthatWeight/F"));
   }
 
   if(hi){
-    jetTreeAna_p->Branch("hiEvtPlane", &hiEvtPlane_, "hiEvtPlane/F");
-    jetTreeAna_p->Branch("psin", &psin_, "psin/F");
+    jetTreeAna_p->Branch("hiEvtPlane", &hiEvtPlane_, Form("hiEvtPlane/F"));
+    jetTreeAna_p->Branch("psin", &psin_, Form("psin/F"));
   }    
 
-  jetTreeAna_p->Branch("eventSet", eventSet_, "eventSet[5]/O");
+  jetTreeAna_p->Branch("eventSet", eventSet_, Form("eventSet[5]/O"));
 
-  jetTreeAna_p->Branch("AlgJtPt", AlgJtPt_, "AlgJtPt[5][5]/F");
-  jetTreeAna_p->Branch("AlgJtPhi", AlgJtPhi_, "AlgJtPhi[5][5]/F");
-  jetTreeAna_p->Branch("AlgJtEta", AlgJtEta_, "AlgJtEta[5][5]/F");
-  jetTreeAna_p->Branch("AlgJtRawPt", AlgJtRawPt_, "AlgJtRawPt[5][5]/F");
+  jetTreeAna_p->Branch("AlgJtPt", AlgJtPt_, Form("AlgJtPt[5][5]/F"));
+  jetTreeAna_p->Branch("AlgJtPhi", AlgJtPhi_, Form("AlgJtPhi[5][5]/F"));
+  jetTreeAna_p->Branch("AlgJtEta", AlgJtEta_, Form("AlgJtEta[5][5]/F"));
+  jetTreeAna_p->Branch("AlgJtRawPt", AlgJtRawPt_, Form("AlgJtRawPt[5][5]/F"));
 
-  jetTreeAna_p->Branch("AlgJtDelPhi", AlgJtDelPhi_, "AlgJtDelPhi[5]/F");
-  jetTreeAna_p->Branch("AlgJtAsymm", AlgJtAsymm_, "AlgJtAsymm[5]/F");
+  jetTreeAna_p->Branch("AlgJtDelPhi", AlgJtDelPhi_, Form("AlgJtDelPhi[5]/F"));
+  jetTreeAna_p->Branch("AlgJtAsymm", AlgJtAsymm_, Form("AlgJtAsymm[5]/F"));
 
   if(montecarlo){
-    jetTreeAna_p->Branch("AlgRefPartFlav", AlgRefPartFlav_, "AlgRefPartFlav[5][5]/I");
-    jetTreeAna_p->Branch("AlgRefPt", AlgRefPt_, "AlgRefPt[5][5]/F");
-    jetTreeAna_p->Branch("AlgRefPhi", AlgRefPhi_, "AlgRefPhi[5][5]/F");
-    jetTreeAna_p->Branch("AlgRefEta", AlgRefEta_, "AlgRefEta[5][5]/F");
+    jetTreeAna_p->Branch("AlgRefPartFlav", AlgRefPartFlav_, Form("AlgRefPartFlav[5][5]/I"));
+    jetTreeAna_p->Branch("AlgRefPt", AlgRefPt_, Form("AlgRefPt[5][5]/F"));
+    jetTreeAna_p->Branch("AlgRefPhi", AlgRefPhi_, Form("AlgRefPhi[5][5]/F"));
+    jetTreeAna_p->Branch("AlgRefEta", AlgRefEta_, Form("AlgRefEta[5][5]/F"));
   }    
 
   return;
