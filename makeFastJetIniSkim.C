@@ -143,12 +143,6 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   c->hasSkimTree = true;
   c->hasEvtTree = true;
 
-  if(!isGen){
-    c->hasTowerTree = true;
-    c->hasPFTree = true;
-    c->hasTrackTree = true;
-  }    
-
   if(hi){
     c->hasAkPu3JetTree = true;
     c->hasAkPu3CaloJetTree = true;
@@ -164,12 +158,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   Float_t meanVz = 0;
   
   if(sType == kHIMC){
-    c->hasGenParticleTree = true;
     //mean mc .16458, mean data -.337
     meanVz = .16458 + .337;
   }
   else if(sType == kPPMC){
-    c->hasGenParticleTree = true;
     //MC vz = .4205,  Data vz = .6953
     meanVz = .4205 - .6953;
   }
@@ -201,6 +193,11 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     c->GetEntry(jentry);
 
     totEv++;
+
+    if(jentry%1000 == 0)
+      std::cout << jentry << std::endl;
+
+    if(c->evt.evt != 294427) continue;
 
     if(jentry%1000 == 0)
       std::cout << jentry << std::endl;
@@ -312,6 +309,14 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(algPasses[0] == false && algPasses[1] == false && algPasses[2] == false && algPasses[3] == false && algPasses[4] == false)
       continue;
 
+    if(!isGen){
+      c->hasTowerTree = true;
+      c->hasPFTree = true;
+      c->hasTrackTree = true;
+    }    
+    if(montecarlo) c->hasGenParticleTree = true;
+
+
     InitIniJtVar();
 
     if(kHIMC == sType) pthatIni_ = c->akPu3PF.pthat;
@@ -345,7 +350,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	else{
 	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	    if(jtIndex[algIter][jtIter] >= 0){
+	      std::cout << "algIter, jtIter, jtIndex: " << algIter << ", " << jtIter << ", " << jtIndex[algIter][jtIter] << std::endl;
+	      std::cout << "    jtpt first: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	      AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].genpt[jtIndex[algIter][jtIter]];
+	      std::cout << "    jtpt second: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	      AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].genphi[jtIndex[algIter][jtIter]];
 	      AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].geneta[jtIndex[algIter][jtIter]];
 
@@ -357,7 +365,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       else{
 	for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	  if(jtIndex[algIter][jtIter] >= 0){
+	    std::cout << "algIter, jtIter, jtIndex: " << algIter << ", " << jtIter << ", " << jtIndex[algIter][jtIter] << std::endl;
+	    std::cout << "    jtpt first: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	    AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].jtpt[jtIndex[algIter][jtIter]];
+	    std::cout << "    jtpt second: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	    AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
 	    AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
 	    
@@ -469,6 +480,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(montecarlo) genTreeIni_p->Fill();
 
     jetTreeIni_p->Fill();
+
+    if(c->evt.evt == 294427) break;
   }
 
   std::cout << "totEv: " << totEv << std::endl;

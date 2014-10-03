@@ -444,6 +444,8 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     jetTreeAna_p->Branch("AlgRefPhi", AlgRefPhi_, "AlgRefPhi[5][5]/F");
     jetTreeAna_p->Branch("AlgRefEta", AlgRefEta_, "AlgRefEta[5][5]/F");
   }    
+
+  return;
 }
 
 
@@ -656,6 +658,8 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     jetTreeAna_p->SetBranchAddress("AlgRefPhi", AlgRefPhi_);
     jetTreeAna_p->SetBranchAddress("AlgRefEta", AlgRefEta_);
   }
+
+  return;
 }
 
 
@@ -672,6 +676,8 @@ void InitFastJetAnaSkim(sampleType sType = kHIDATA, Bool_t isGen = false)
   jetTreeAna_p = new TTree("jetTreeAna", "jetTreeAna");
 
   SetAnaBranches(sType);
+
+  return;
 }
 
 
@@ -682,6 +688,8 @@ void CleanupFastJetAnaSkim()
   if(trkTreeAna_p != 0) delete trkTreeAna_p;
   if(genTreeAna_p != 0) delete genTreeAna_p;
   if(jetTreeAna_p != 0) delete jetTreeAna_p;
+
+  return;
 }
 
 
@@ -701,161 +709,160 @@ void GetFastJetAnaSkim(TFile* iniSkimFile_p, sampleType sType = kHIDATA, Bool_t 
   jetTreeAna_p = (TTree*)iniSkimFile_p->Get("jetTreeAna");
 
   GetAnaBranches(sType);
+
+  return;
 }
 
 
 void InitJtVar(){
-  rechitSKPtCut_ = -10;
-  pfSKPtCut_ = -10;
-  trkSKPtCut_ = -10;
-  genSKPtCut_ = -10;
+  rechitSKPtCut_ = 0.010;
+  pfSKPtCut_ = 0.010;
+  trkSKPtCut_ = 0.010;
+  genSKPtCut_ = 0.010;
 
   for(Int_t iter = 0; iter < 5; iter++){
-    rechitJtRawPt_[iter] = -10;
-    rechitJtRawPhi_[iter] = -10;
-    rechitJtRawEta_[iter] = -10;
-    rechitJtRawPTD_[iter] = -10;
-    rechitJtRawR2_[iter] = -10;
+    rechitJtRawPt_[iter] = -999;
+    rechitJtRawPhi_[iter] = -999;
+    rechitJtRawEta_[iter] = -999;
+    rechitJtRawPTD_[iter] = -999;
+    rechitJtRawR2_[iter] = -999;
     rechitJtRawRefPart_[iter] = -999;
 
-    rechitJtVsPt_[iter] = -10;
-    rechitJtVsPhi_[iter] = -10;
-    rechitJtVsEta_[iter] = -10;
-    rechitJtVsPTD_[iter] = -10;
-    rechitJtVsR2_[iter] = -10;
+    rechitJtVsPt_[iter] = -999;
+    rechitJtVsPhi_[iter] = -999;
+    rechitJtVsEta_[iter] = -999;
+    rechitJtVsPTD_[iter] = -999;
+    rechitJtVsR2_[iter] = -999;
     rechitJtVsRefPart_[iter] = -999;
 
-    pfJtRawPt_[iter] = -10;
-    pfJtRawPhi_[iter] = -10;
-    pfJtRawEta_[iter] = -10;
-    pfJtRawPTD_[iter] = -10;
-    pfJtRawR2_[iter] = -10;
+    pfJtRawPt_[iter] = -999;
+    pfJtRawPhi_[iter] = -999;
+    pfJtRawEta_[iter] = -999;
+    pfJtRawPTD_[iter] = -999;
+    pfJtRawR2_[iter] = -999;
     pfJtRawRefPart_[iter] = -999;
 
-    pfJtVsPt_[iter] = -10;
-    pfJtVsPhi_[iter] = -10;
-    pfJtVsEta_[iter] = -10;
-    pfJtVsPTD_[iter] = -10;
-    pfJtVsR2_[iter] = -10;
+    pfJtVsPt_[iter] = -999;
+    pfJtVsPhi_[iter] = -999;
+    pfJtVsEta_[iter] = -999;
+    pfJtVsPTD_[iter] = -999;
+    pfJtVsR2_[iter] = -999;
     pfJtVsRefPart_[iter] = -999;
 
-    pfJtSKPt_[iter] = -10;
-    pfJtSKPhi_[iter] = -10;
-    pfJtSKEta_[iter] = -10;
-    pfJtSKPTD_[iter] = -10;
-    pfJtSKR2_[iter] = -10;
+    pfJtSKPt_[iter] = -999;
+    pfJtSKPhi_[iter] = -999;
+    pfJtSKEta_[iter] = -999;
+    pfJtSKPTD_[iter] = -999;
+    pfJtSKR2_[iter] = -999;
     pfJtSKRefPart_[iter] = -999;
 
-    trkJtRawPt_[iter] = -10;
-    trkJtRawPhi_[iter] = -10;
-    trkJtRawEta_[iter] = -10;
-    trkJtRawPTD_[iter] = -10;
-    trkJtRawR2_[iter] = -10;
+    trkJtRawPt_[iter] = -999;
+    trkJtRawPhi_[iter] = -999;
+    trkJtRawEta_[iter] = -999;
+    trkJtRawPTD_[iter] = -999;
+    trkJtRawR2_[iter] = -999;
     trkJtRawRefPart_[iter] = -999;
 
-    trkJtSKPt_[iter] = -10;
-    trkJtSKPhi_[iter] = -10;
-    trkJtSKEta_[iter] = -10;
-    trkJtSKPTD_[iter] = -10;
-    trkJtSKR2_[iter] = -10;
+    trkJtSKPt_[iter] = -999;
+    trkJtSKPhi_[iter] = -999;
+    trkJtSKEta_[iter] = -999;
+    trkJtSKPTD_[iter] = -999;
+    trkJtSKR2_[iter] = -999;
     trkJtSKRefPart_[iter] = -999;
 
-    genJtRawPt_[iter] = -10;
-    genJtRawPhi_[iter] = -10;
-    genJtRawEta_[iter] = -10;
-    genJtRawPTD_[iter] = -10;
-    genJtRawR2_[iter] = -10;
+    genJtRawPt_[iter] = -999;
+    genJtRawPhi_[iter] = -999;
+    genJtRawEta_[iter] = -999;
+    genJtRawPTD_[iter] = -999;
+    genJtRawR2_[iter] = -999;
     genJtRawRefPart_[iter] = -999;
 
-    genJtSKPt_[iter] = -10;
-    genJtSKPhi_[iter] = -10;
-    genJtSKEta_[iter] = -10;
-    genJtSKPTD_[iter] = -10;
-    genJtSKR2_[iter] = -10;
+    genJtSKPt_[iter] = -999;
+    genJtSKPhi_[iter] = -999;
+    genJtSKEta_[iter] = -999;
+    genJtSKPTD_[iter] = -999;
+    genJtSKR2_[iter] = -999;
     genJtSKRefPart_[iter] = -999;
 
-    genJtSUBEPt_[iter] = -10;
-    genJtSUBEPhi_[iter] = -10;
-    genJtSUBEEta_[iter] = -10;
-    genJtSUBEPTD_[iter] = -10;
-    genJtSUBER2_[iter] = -10;
+    genJtSUBEPt_[iter] = -999;
+    genJtSUBEPhi_[iter] = -999;
+    genJtSUBEEta_[iter] = -999;
+    genJtSUBEPTD_[iter] = -999;
+    genJtSUBER2_[iter] = -999;
     genJtSUBERefPart_[iter] = -999;
 
     for(Int_t iter2 = 0; iter2 < nSubjet; iter2++){
-      rechitSubJtRawPt_[iter][iter2] = -10;
-      rechitSubJtRawPhi_[iter][iter2] = -10;
-      rechitSubJtRawEta_[iter][iter2] = -10;
+      rechitSubJtRawPt_[iter][iter2] = -999;
+      rechitSubJtRawPhi_[iter][iter2] = -999;
+      rechitSubJtRawEta_[iter][iter2] = -999;
 
-      rechitSubJtVsPt_[iter][iter2] = -10;
-      rechitSubJtVsPhi_[iter][iter2] = -10;
-      rechitSubJtVsEta_[iter][iter2] = -10;
+      rechitSubJtVsPt_[iter][iter2] = -999;
+      rechitSubJtVsPhi_[iter][iter2] = -999;
+      rechitSubJtVsEta_[iter][iter2] = -999;
 
-      pfSubJtRawPt_[iter][iter2] = -10;
-      pfSubJtRawPhi_[iter][iter2] = -10;
-      pfSubJtRawEta_[iter][iter2] = -10;
+      pfSubJtRawPt_[iter][iter2] = -999;
+      pfSubJtRawPhi_[iter][iter2] = -999;
+      pfSubJtRawEta_[iter][iter2] = -999;
 
-      pfSubJtVsPt_[iter][iter2] = -10;
-      pfSubJtVsPhi_[iter][iter2] = -10;
-      pfSubJtVsEta_[iter][iter2] = -10;
+      pfSubJtVsPt_[iter][iter2] = -999;
+      pfSubJtVsPhi_[iter][iter2] = -999;
+      pfSubJtVsEta_[iter][iter2] = -999;
 
-      pfSubJtSKPt_[iter][iter2] = -10;
-      pfSubJtSKPhi_[iter][iter2] = -10;
-      pfSubJtSKEta_[iter][iter2] = -10;
+      pfSubJtSKPt_[iter][iter2] = -999;
+      pfSubJtSKPhi_[iter][iter2] = -999;
+      pfSubJtSKEta_[iter][iter2] = -999;
 
-      trkSubJtRawPt_[iter][iter2] = -10;
-      trkSubJtRawPhi_[iter][iter2] = -10;
-      trkSubJtRawEta_[iter][iter2] = -10;
+      trkSubJtRawPt_[iter][iter2] = -999;
+      trkSubJtRawPhi_[iter][iter2] = -999;
+      trkSubJtRawEta_[iter][iter2] = -999;
 
-      trkSubJtSKPt_[iter][iter2] = -10;
-      trkSubJtSKPhi_[iter][iter2] = -10;
-      trkSubJtSKEta_[iter][iter2] = -10;
+      trkSubJtSKPt_[iter][iter2] = -999;
+      trkSubJtSKPhi_[iter][iter2] = -999;
+      trkSubJtSKEta_[iter][iter2] = -999;
 
-      genSubJtRawPt_[iter][iter2] = -10;
-      genSubJtRawPhi_[iter][iter2] = -10;
-      genSubJtRawEta_[iter][iter2] = -10;
+      genSubJtRawPt_[iter][iter2] = -999;
+      genSubJtRawPhi_[iter][iter2] = -999;
+      genSubJtRawEta_[iter][iter2] = -999;
 
-      genSubJtSKPt_[iter][iter2] = -10;
-      genSubJtSKPhi_[iter][iter2] = -10;
-      genSubJtSKEta_[iter][iter2] = -10;
+      genSubJtSKPt_[iter][iter2] = -999;
+      genSubJtSKPhi_[iter][iter2] = -999;
+      genSubJtSKEta_[iter][iter2] = -999;
 
-      genSubJtSUBEPt_[iter][iter2] = -10;
-      genSubJtSUBEPhi_[iter][iter2] = -10;
-      genSubJtSUBEEta_[iter][iter2] = -10;
+      genSubJtSUBEPt_[iter][iter2] = -999;
+      genSubJtSUBEPhi_[iter][iter2] = -999;
+      genSubJtSUBEEta_[iter][iter2] = -999;
     }
 
     for(Int_t iter2 = 0; iter2 < nSigma; iter2++){
-      rechitJtRawSigma_[iter][iter2] = -10;
-      rechitJtVsSigma_[iter][iter2] = -10;
-      pfJtRawSigma_[iter][iter2] = -10;
-      pfJtVsSigma_[iter][iter2] = -10;
-      pfJtSKSigma_[iter][iter2] = -10;
-      trkJtRawSigma_[iter][iter2] = -10;
-      trkJtSKSigma_[iter][iter2] = -10;
-      genJtRawSigma_[iter][iter2] = -10;
-      genJtSKSigma_[iter][iter2] = -10;
-      genJtSUBESigma_[iter][iter2] = -10;
-    }
-
-    for(Int_t iter2 = 0; iter2 < nFFM; iter2++){
-
+      rechitJtRawSigma_[iter][iter2] = -999;
+      rechitJtVsSigma_[iter][iter2] = -999;
+      pfJtRawSigma_[iter][iter2] = -999;
+      pfJtVsSigma_[iter][iter2] = -999;
+      pfJtSKSigma_[iter][iter2] = -999;
+      trkJtRawSigma_[iter][iter2] = -999;
+      trkJtSKSigma_[iter][iter2] = -999;
+      genJtRawSigma_[iter][iter2] = -999;
+      genJtSKSigma_[iter][iter2] = -999;
+      genJtSUBESigma_[iter][iter2] = -999;
     }
 
     for(Int_t iter2 = 0; iter2 < nTau; iter2++){
       for(Int_t iter3 = 0; iter3 < nBeta; iter3++){
-	rechitRawTau_[iter][iter2][iter3] = -10;
-	rechitVsTau_[iter][iter2][iter3] = -10;
-	pfRawTau_[iter][iter2][iter3] = -10;
-	pfVsTau_[iter][iter2][iter3] = -10;
-	pfSKTau_[iter][iter2][iter3] = -10;
-	trkRawTau_[iter][iter2][iter3] = -10;
-	trkSKTau_[iter][iter2][iter3] = -10;
-	genRawTau_[iter][iter2][iter3] = -10;
-	genSKTau_[iter][iter2][iter3] = -10;
-	genSUBETau_[iter][iter2][iter3] = -10;
+	rechitRawTau_[iter][iter2][iter3] = -999;
+	rechitVsTau_[iter][iter2][iter3] = -999;
+	pfRawTau_[iter][iter2][iter3] = -999;
+	pfVsTau_[iter][iter2][iter3] = -999;
+	pfSKTau_[iter][iter2][iter3] = -999;
+	trkRawTau_[iter][iter2][iter3] = -999;
+	trkSKTau_[iter][iter2][iter3] = -999;
+	genRawTau_[iter][iter2][iter3] = -999;
+	genSKTau_[iter][iter2][iter3] = -999;
+	genSUBETau_[iter][iter2][iter3] = -999;
       }
     }
-
   }
+
+  return;
 }
 
 

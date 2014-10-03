@@ -13,8 +13,8 @@ Float_t crossSections_PYTH[6] = {.01075, .001025, .00009865, .00001129, .0000014
 Float_t ptHatCuts_PYTHPawan[7] = {15, 30, 50, 80, 120, 170, 10000000};
 Float_t crossSections_PYTHPawan[7] = {.20340, .01075, .001025, .00009865, .00001129, .000001465, 0.000000000};
 
-Float_t ptHatCuts_PYTHHYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 1000000};
-Float_t crossSections_PYTHHYD[9] = {.20340, .01075, .001025, .00009865, .00001129, .0000002837, .00000005323, .000000005934, .0000000000};
+Float_t ptHatCuts_PYTHHYD[10] = {15, 30, 50, 80, 120, 170, 220, 280, 370, 1000000};
+Float_t crossSections_PYTHHYD[10] = {.20340, .01075, .001025, .00009865, .00001129, .000001465, .0000002837, .00000005323, .000000005934, .0000000000};
 
 Float_t ptHatCuts_FastJet[4] = {80, 100, 120, 1000000};
 Float_t crossSections_FastJet[4] = {.00009865, .00003069, .00001129, 0.0000000};
@@ -81,7 +81,7 @@ void derivePtHatWeights(const Int_t numCut,Float_t ptHatCuts[], Float_t crossSec
   }
   
   for(Int_t hatIter = 0; hatIter < numCut; hatIter++){
-    std::cout << hatIter << std::endl;
+    std::cout << hatIter << ", " << ptHatCuts_PYTHHYD[hatIter] << std::endl;
     std::cout << "  hatEntries: " << hatEntries[hatIter] << std::endl;
     hatWeight[hatIter] = (crossSect[hatIter] - crossSect[hatIter+1])/hatEntries[hatIter];
     std::cout << "  hatWeight: " << hatWeight[hatIter] << std::endl;    

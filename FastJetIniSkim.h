@@ -201,6 +201,8 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     jetTreeIni_p->Branch("AlgIniRefPhi", AlgIniRefPhi_, "AlgIniRefPhi[5][5]/F");
     jetTreeIni_p->Branch("AlgIniRefEta", AlgIniRefEta_, "AlgIniRefEta[5][5]/F");
   }    
+
+  return;
 }
 
 
@@ -277,6 +279,8 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     jetTreeIni_p->SetBranchAddress("AlgIniRefPhi", AlgIniRefPhi_);
     jetTreeIni_p->SetBranchAddress("AlgIniRefEta", AlgIniRefEta_);
   }
+
+  return;
 }
 
 
@@ -294,6 +298,8 @@ void InitFastJetIniSkim(sampleType sType = kHIDATA, Bool_t isGen = false)
   if(isMonteCarlo(sType)) genTreeIni_p = new TTree("genTreeIni", "genTreeIni");
 
   SetIniBranches(sType, isGen);
+
+  return;
 }
 
 
@@ -304,6 +310,8 @@ void CleanupFastJetIniSkim()
   if(trkTreeIni_p != 0) delete trkTreeIni_p;
   if(jetTreeIni_p != 0) delete jetTreeIni_p;
   if(genTreeIni_p != 0) delete genTreeIni_p;
+
+  return;
 }
 
 
@@ -321,6 +329,8 @@ void GetFastJetIniSkim(TFile* iniSkimFile_p, sampleType sType = kHIDATA, Bool_t 
   if(isMonteCarlo(sType)) genTreeIni_p = (TTree*)iniSkimFile_p->Get("genTreeIni");
 
   GetIniBranches(sType);
+
+  return;
 }
 
 
@@ -328,19 +338,20 @@ void InitIniJtVar()
 {
   for(Int_t iter = 0; iter < 5; iter++){
     for(Int_t iter2 = 0; iter2 < 2; iter2++){
-      AlgIniJtPt_[iter][iter2] = -10;
-      AlgIniJtPhi_[iter][iter2] = -10;
-      AlgIniJtEta_[iter][iter2] = -10;
-      AlgIniJtRawPt_[iter][iter2] = -10;
+      AlgIniJtPt_[iter][iter2] = -999;
+      AlgIniJtPhi_[iter][iter2] = -999;
+      AlgIniJtEta_[iter][iter2] = -999;
+      AlgIniJtRawPt_[iter][iter2] = -999;
 
       AlgIniRefPartFlav_[iter][iter2] = -999;
 
-      AlgIniRefPt_[iter][iter2] = -10;
-      AlgIniRefPhi_[iter][iter2] = -10;
-      AlgIniRefEta_[iter][iter2] = -10;
+      AlgIniRefPt_[iter][iter2] = -999;
+      AlgIniRefPhi_[iter][iter2] = -999;
+      AlgIniRefEta_[iter][iter2] = -999;
     }
   }
 
+  return;
 }
 
 

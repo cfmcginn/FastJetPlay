@@ -59,8 +59,6 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
 
-  if(ptCut < 1) std::cout << "PtCut: " << ptCut << std::endl;
-
   for(Int_t iter = 0; iter < nMax; iter++){
     if(IDBool && inID[iter] != 0) continue;
 
@@ -88,7 +86,7 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
 	outSigma[breakIter][sigIter] = getSigma(sigIter);
       }
 
-      getJtFFMoments(algSortVect[iter], rhoJtR, rhoJtAlg, jtAreaDef, algVect_p, 14, -0.5, 6.0, outFFMUnsub[breakIter], outFFMSub[breakIter], outFFMSubBetter[breakIter]);
+      getJtFFMoments(&algSortVect[iter], rhoJtR, rhoJtAlg, jtAreaDef, algVect_p, 14, -0.5, 6.0, outFFMUnsub[breakIter], outFFMSub[breakIter], outFFMSubBetter[breakIter]);
 
       getSubJt(algSortVect[iter], subJtR, subJtAlg, nSubJt, subPt[breakIter], subPhi[breakIter], subEta[breakIter]);
 
@@ -181,8 +179,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   Int_t dummyArr[2] = {0,0};
 
-  for(Long64_t jentry = 0; jentry < 1000; jentry++){
-    if(true/*jentry%1000 == 0*/) std::cout << "Entry: " << jentry << std::endl;
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+    //if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
+    std::cout << "Entry: " << jentry << std::endl;
 
     if(!isGen){
       rechitTreeIni_p->GetEntry(jentry);

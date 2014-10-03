@@ -10,31 +10,31 @@
 #include "fastjet/tools/Subtractor.hh"
 #include "fastjet/contrib/JetFFMoments.hh"
 
-void getJtFFMoments(fastjet::PseudoJet inJt, const Double_t rhoJtR, fastjet::JetAlgorithm rhoJtAlg, fastjet::AreaDefinition areaDef, std::vector<fastjet::PseudoJet>* inEvt, Int_t nFF, Float_t FFLow, Float_t FFHi, Float_t outFFMUnsub[], Float_t outFFMSub[], Float_t outFFMSubBetter[])
+void getJtFFMoments(fastjet::PseudoJet *inJt, const Double_t rhoJtR, fastjet::JetAlgorithm rhoJtAlg, fastjet::AreaDefinition areaDef, std::vector<fastjet::PseudoJet>* inEvt, Int_t nFF, Float_t FFLow, Float_t FFHi, Float_t outFFMUnsub[], Float_t outFFMSub[], Float_t outFFMSubBetter[])
 {
-  if(inJt.perp() > 30){
-    fastjet::JetDefinition rhoJtDef(rhoJtAlg, rhoJtR);
-    fastjet::Selector rhoRange = fastjet::SelectorDoughnut(0.4, 1.2);
-    fastjet::JetMedianBackgroundEstimator bge(rhoRange, rhoJtDef, areaDef);
-    fastjet::Subtractor subtractor(&bge);
+  if(inJt->perp() > 30){
+    //    fastjet::JetDefinition rhoJtDef(rhoJtAlg, rhoJtR);
+    //    fastjet::Selector rhoRange = fastjet::SelectorDoughnut(0.4, 1.2);
+    //    fastjet::JetMedianBackgroundEstimator bge(rhoRange, rhoJtDef, areaDef);
+    //    fastjet::Subtractor subtractor(&bge);
     
     fastjet::contrib::JetFFMoments FFMUnsub(FFLow, FFHi, nFF);
-    fastjet::contrib::JetFFMoments FFMSub(FFLow, FFHi, nFF, &bge);
-    fastjet::contrib::JetFFMoments FFMSubBetter(FFLow, FFHi, nFF, &bge);
+    //    fastjet::contrib::JetFFMoments FFMSub(FFLow, FFHi, nFF, &bge);
+    //    fastjet::contrib::JetFFMoments FFMSubBetter(FFLow, FFHi, nFF, &bge);
 
-    Double_t mu = 25.0;
-    FFMSubBetter.set_improved_subtraction(mu, rhoRange, *inEvt, rhoJtDef, areaDef);
+    //    Double_t mu = 25.0;
+    //    FFMSubBetter.set_improved_subtraction(mu, rhoRange, *inEvt, rhoJtDef, areaDef);
     
-    bge.set_particles(*inEvt);
+    //    bge.set_particles(*inEvt);
     
-    std::vector<Double_t> FFMUnsub_Vect = FFMUnsub(inJt);
-    std::vector<Double_t> FFMSub_Vect = FFMSub(inJt);
-    std::vector<Double_t> FFMSubBetter_Vect = FFMSubBetter(inJt);
+    std::vector<Double_t> FFMUnsub_Vect = FFMUnsub(*inJt);
+    //    std::vector<Double_t> FFMSub_Vect = FFMSub(*inJt);
+    //    std::vector<Double_t> FFMSubBetter_Vect = FFMSubBetter(*inJt);
     
     for(Int_t FFIter = 0; FFIter < nFF; FFIter++){
       outFFMUnsub[FFIter] = FFMUnsub_Vect[FFIter];
-      outFFMSub[FFIter] = FFMSub_Vect[FFIter];
-      outFFMSubBetter[FFIter] = FFMSubBetter_Vect[FFIter];
+      //      outFFMSub[FFIter] = FFMSub_Vect[FFIter];
+      //      outFFMSubBetter[FFIter] = FFMSubBetter_Vect[FFIter];
     }
   }
   else{
