@@ -43,168 +43,178 @@ TTree* jetTreeAna_p = 0;
 
 Float_t rechitSKPtCut_;
 
-Float_t rechitJtRawPt_[5];
-Float_t rechitJtRawPhi_[5];
-Float_t rechitJtRawEta_[5];
-Float_t rechitJtRawPTD_[5];
-Float_t rechitJtRawR2_[5];
-Float_t rechitJtRawSigma_[5][nSigma];
-Int_t rechitJtRawRefPart_[5];
-Float_t rechitJtRawFFMUnsub_[5][nFFM];
-Float_t rechitJtRawFFMSub_[5][nFFM];
-Float_t rechitJtRawFFMSubBetter_[5][nFFM];
-Float_t rechitRawTau_[5][nTau][nBeta];
-Float_t rechitSubJtRawPt_[5][nSubjet];
-Float_t rechitSubJtRawPhi_[5][nSubjet];
-Float_t rechitSubJtRawEta_[5][nSubjet];
+Int_t nRechitJtRaw_;
+Float_t rechitJtRawPt_[maxJets];
+Float_t rechitJtRawPhi_[maxJets];
+Float_t rechitJtRawEta_[maxJets];
+Float_t rechitJtRawPTD_[maxJets];
+Float_t rechitJtRawR2_[maxJets];
+Float_t rechitJtRawSigma_[maxJets][nSigma];
+Int_t rechitJtRawRefPart_[maxJets];
+Float_t rechitJtRawFFMUnsub_[maxJets][nFFM];
+Float_t rechitJtRawFFMSub_[maxJets][nFFM];
+Float_t rechitJtRawFFMSubBetter_[maxJets][nFFM];
+Float_t rechitRawTau_[maxJets][nTau][nBeta];
+Float_t rechitSubJtRawPt_[maxJets][nSubjet];
+Float_t rechitSubJtRawPhi_[maxJets][nSubjet];
+Float_t rechitSubJtRawEta_[maxJets][nSubjet];
 
-Float_t rechitJtVsPt_[5];
-Float_t rechitJtVsPhi_[5];
-Float_t rechitJtVsEta_[5];
-Float_t rechitJtVsPTD_[5];
-Float_t rechitJtVsR2_[5];
-Float_t rechitJtVsSigma_[5][nSigma];
-Int_t rechitJtVsRefPart_[5];
-Float_t rechitJtVsFFMUnsub_[5][nFFM];
-Float_t rechitJtVsFFMSub_[5][nFFM];
-Float_t rechitJtVsFFMSubBetter_[5][nFFM];
-Float_t rechitVsTau_[5][nTau][nBeta];
-Float_t rechitSubJtVsPt_[5][nSubjet];
-Float_t rechitSubJtVsPhi_[5][nSubjet];
-Float_t rechitSubJtVsEta_[5][nSubjet];
+Int_t nRechitJtVs_;
+Float_t rechitJtVsPt_[maxJets];
+Float_t rechitJtVsPhi_[maxJets];
+Float_t rechitJtVsEta_[maxJets];
+Float_t rechitJtVsPTD_[maxJets];
+Float_t rechitJtVsR2_[maxJets];
+Float_t rechitJtVsSigma_[maxJets][nSigma];
+Int_t rechitJtVsRefPart_[maxJets];
+Float_t rechitJtVsFFMUnsub_[maxJets][nFFM];
+Float_t rechitJtVsFFMSub_[maxJets][nFFM];
+Float_t rechitJtVsFFMSubBetter_[maxJets][nFFM];
+Float_t rechitVsTau_[maxJets][nTau][nBeta];
+Float_t rechitSubJtVsPt_[maxJets][nSubjet];
+Float_t rechitSubJtVsPhi_[maxJets][nSubjet];
+Float_t rechitSubJtVsEta_[maxJets][nSubjet];
 
 //pfcand TreeAna Variables
 
 Float_t pfSKPtCut_;
 
-Float_t pfJtRawPt_[5];
-Float_t pfJtRawPhi_[5];
-Float_t pfJtRawEta_[5];
-Float_t pfJtRawPTD_[5];
-Float_t pfJtRawR2_[5];
-Float_t pfJtRawSigma_[5][nSigma];
-Int_t pfJtRawRefPart_[5];
-Float_t pfJtRawFFMUnsub_[5][nFFM];
-Float_t pfJtRawFFMSub_[5][nFFM];
-Float_t pfJtRawFFMSubBetter_[5][nFFM];
-Float_t pfRawTau_[5][nTau][nBeta];
-Float_t pfSubJtRawPt_[5][nSubjet];
-Float_t pfSubJtRawPhi_[5][nSubjet];
-Float_t pfSubJtRawEta_[5][nSubjet];
+Int_t nPFJtRaw_;
+Float_t pfJtRawPt_[maxJets];
+Float_t pfJtRawPhi_[maxJets];
+Float_t pfJtRawEta_[maxJets];
+Float_t pfJtRawPTD_[maxJets];
+Float_t pfJtRawR2_[maxJets];
+Float_t pfJtRawSigma_[maxJets][nSigma];
+Int_t pfJtRawRefPart_[maxJets];
+Float_t pfJtRawFFMUnsub_[maxJets][nFFM];
+Float_t pfJtRawFFMSub_[maxJets][nFFM];
+Float_t pfJtRawFFMSubBetter_[maxJets][nFFM];
+Float_t pfRawTau_[maxJets][nTau][nBeta];
+Float_t pfSubJtRawPt_[maxJets][nSubjet];
+Float_t pfSubJtRawPhi_[maxJets][nSubjet];
+Float_t pfSubJtRawEta_[maxJets][nSubjet];
 
-Float_t pfJtVsPt_[5];
-Float_t pfJtVsPhi_[5];
-Float_t pfJtVsEta_[5];
-Float_t pfJtVsPTD_[5];
-Float_t pfJtVsR2_[5];
-Float_t pfJtVsSigma_[5][nSigma];
-Int_t pfJtVsRefPart_[5];
-Float_t pfJtVsFFMUnsub_[5][nFFM];
-Float_t pfJtVsFFMSub_[5][nFFM];
-Float_t pfJtVsFFMSubBetter_[5][nFFM];
-Float_t pfVsTau_[5][nTau][nBeta];
-Float_t pfSubJtVsPt_[5][nSubjet];
-Float_t pfSubJtVsPhi_[5][nSubjet];
-Float_t pfSubJtVsEta_[5][nSubjet];
+Int_t nPFJtVs_;
+Float_t pfJtVsPt_[maxJets];
+Float_t pfJtVsPhi_[maxJets];
+Float_t pfJtVsEta_[maxJets];
+Float_t pfJtVsPTD_[maxJets];
+Float_t pfJtVsR2_[maxJets];
+Float_t pfJtVsSigma_[maxJets][nSigma];
+Int_t pfJtVsRefPart_[maxJets];
+Float_t pfJtVsFFMUnsub_[maxJets][nFFM];
+Float_t pfJtVsFFMSub_[maxJets][nFFM];
+Float_t pfJtVsFFMSubBetter_[maxJets][nFFM];
+Float_t pfVsTau_[maxJets][nTau][nBeta];
+Float_t pfSubJtVsPt_[maxJets][nSubjet];
+Float_t pfSubJtVsPhi_[maxJets][nSubjet];
+Float_t pfSubJtVsEta_[maxJets][nSubjet];
 
-Float_t pfJtSKPt_[5];
-Float_t pfJtSKPhi_[5];
-Float_t pfJtSKEta_[5];
-Float_t pfJtSKPTD_[5];
-Float_t pfJtSKR2_[5];
-Float_t pfJtSKSigma_[5][nSigma];
-Int_t pfJtSKRefPart_[5];
-Float_t pfJtSKFFMUnsub_[5][nFFM];
-Float_t pfJtSKFFMSub_[5][nFFM];
-Float_t pfJtSKFFMSubBetter_[5][nFFM];
-Float_t pfSKTau_[5][nTau][nBeta];
-Float_t pfSubJtSKPt_[5][nSubjet];
-Float_t pfSubJtSKPhi_[5][nSubjet];
-Float_t pfSubJtSKEta_[5][nSubjet];
+Int_t nPFJtSK_;
+Float_t pfJtSKPt_[maxJets];
+Float_t pfJtSKPhi_[maxJets];
+Float_t pfJtSKEta_[maxJets];
+Float_t pfJtSKPTD_[maxJets];
+Float_t pfJtSKR2_[maxJets];
+Float_t pfJtSKSigma_[maxJets][nSigma];
+Int_t pfJtSKRefPart_[maxJets];
+Float_t pfJtSKFFMUnsub_[maxJets][nFFM];
+Float_t pfJtSKFFMSub_[maxJets][nFFM];
+Float_t pfJtSKFFMSubBetter_[maxJets][nFFM];
+Float_t pfSKTau_[maxJets][nTau][nBeta];
+Float_t pfSubJtSKPt_[maxJets][nSubjet];
+Float_t pfSubJtSKPhi_[maxJets][nSubjet];
+Float_t pfSubJtSKEta_[maxJets][nSubjet];
 
 
 //track TreeAna Variables
 
 Float_t trkSKPtCut_;
 
-Float_t trkJtRawPt_[5];
-Float_t trkJtRawPhi_[5];
-Float_t trkJtRawEta_[5];
-Float_t trkJtRawPTD_[5];
-Float_t trkJtRawR2_[5];
-Float_t trkJtRawSigma_[5][nSigma];
-Int_t trkJtRawRefPart_[5];
-Float_t trkJtRawFFMUnsub_[5][nFFM];
-Float_t trkJtRawFFMSub_[5][nFFM];
-Float_t trkJtRawFFMSubBetter_[5][nFFM];
-Float_t trkRawTau_[5][nTau][nBeta];
-Float_t trkSubJtRawPt_[5][nSubjet];
-Float_t trkSubJtRawPhi_[5][nSubjet];
-Float_t trkSubJtRawEta_[5][nSubjet];
+Int_t nTrkJtRaw_;
+Float_t trkJtRawPt_[maxJets];
+Float_t trkJtRawPhi_[maxJets];
+Float_t trkJtRawEta_[maxJets];
+Float_t trkJtRawPTD_[maxJets];
+Float_t trkJtRawR2_[maxJets];
+Float_t trkJtRawSigma_[maxJets][nSigma];
+Int_t trkJtRawRefPart_[maxJets];
+Float_t trkJtRawFFMUnsub_[maxJets][nFFM];
+Float_t trkJtRawFFMSub_[maxJets][nFFM];
+Float_t trkJtRawFFMSubBetter_[maxJets][nFFM];
+Float_t trkRawTau_[maxJets][nTau][nBeta];
+Float_t trkSubJtRawPt_[maxJets][nSubjet];
+Float_t trkSubJtRawPhi_[maxJets][nSubjet];
+Float_t trkSubJtRawEta_[maxJets][nSubjet];
 
-Float_t trkJtSKPt_[5];
-Float_t trkJtSKPhi_[5];
-Float_t trkJtSKEta_[5];
-Float_t trkJtSKPTD_[5];
-Float_t trkJtSKR2_[5];
-Float_t trkJtSKSigma_[5][nSigma];
-Int_t trkJtSKRefPart_[5];
-Float_t trkJtSKFFMUnsub_[5][nFFM];
-Float_t trkJtSKFFMSub_[5][nFFM];
-Float_t trkJtSKFFMSubBetter_[5][nFFM];
-Float_t trkSKTau_[5][nTau][nBeta];
-Float_t trkSubJtSKPt_[5][nSubjet];
-Float_t trkSubJtSKPhi_[5][nSubjet];
-Float_t trkSubJtSKEta_[5][nSubjet];
+Int_t nTrkJtSK_;
+Float_t trkJtSKPt_[maxJets];
+Float_t trkJtSKPhi_[maxJets];
+Float_t trkJtSKEta_[maxJets];
+Float_t trkJtSKPTD_[maxJets];
+Float_t trkJtSKR2_[maxJets];
+Float_t trkJtSKSigma_[maxJets][nSigma];
+Int_t trkJtSKRefPart_[maxJets];
+Float_t trkJtSKFFMUnsub_[maxJets][nFFM];
+Float_t trkJtSKFFMSub_[maxJets][nFFM];
+Float_t trkJtSKFFMSubBetter_[maxJets][nFFM];
+Float_t trkSKTau_[maxJets][nTau][nBeta];
+Float_t trkSubJtSKPt_[maxJets][nSubjet];
+Float_t trkSubJtSKPhi_[maxJets][nSubjet];
+Float_t trkSubJtSKEta_[maxJets][nSubjet];
 
 //Gen TreeAna Variables
 
 Float_t genSKPtCut_;
 
-Float_t genJtRawPt_[5];
-Float_t genJtRawPhi_[5];
-Float_t genJtRawEta_[5];
-Float_t genJtRawPTD_[5];
-Float_t genJtRawR2_[5];
-Float_t genJtRawSigma_[5][nSigma];
-Int_t genJtRawRefPart_[5];
-Float_t genJtRawFFMUnsub_[5][nFFM];
-Float_t genJtRawFFMSub_[5][nFFM];
-Float_t genJtRawFFMSubBetter_[5][nFFM];
-Float_t genRawTau_[5][nTau][nBeta];
-Float_t genSubJtRawPt_[5][nSubjet];
-Float_t genSubJtRawPhi_[5][nSubjet];
-Float_t genSubJtRawEta_[5][nSubjet];
+Int_t nGenJtRaw_;
+Float_t genJtRawPt_[maxJets];
+Float_t genJtRawPhi_[maxJets];
+Float_t genJtRawEta_[maxJets];
+Float_t genJtRawPTD_[maxJets];
+Float_t genJtRawR2_[maxJets];
+Float_t genJtRawSigma_[maxJets][nSigma];
+Int_t genJtRawRefPart_[maxJets];
+Float_t genJtRawFFMUnsub_[maxJets][nFFM];
+Float_t genJtRawFFMSub_[maxJets][nFFM];
+Float_t genJtRawFFMSubBetter_[maxJets][nFFM];
+Float_t genRawTau_[maxJets][nTau][nBeta];
+Float_t genSubJtRawPt_[maxJets][nSubjet];
+Float_t genSubJtRawPhi_[maxJets][nSubjet];
+Float_t genSubJtRawEta_[maxJets][nSubjet];
 
-Float_t genJtSKPt_[5];
-Float_t genJtSKPhi_[5];
-Float_t genJtSKEta_[5];
-Float_t genJtSKPTD_[5];
-Float_t genJtSKR2_[5];
-Float_t genJtSKSigma_[5][nSigma];
-Int_t genJtSKRefPart_[5];
-Float_t genJtSKFFMUnsub_[5][nFFM];
-Float_t genJtSKFFMSub_[5][nFFM];
-Float_t genJtSKFFMSubBetter_[5][nFFM];
-Float_t genSKTau_[5][nTau][nBeta];
-Float_t genSubJtSKPt_[5][nSubjet];
-Float_t genSubJtSKPhi_[5][nSubjet];
-Float_t genSubJtSKEta_[5][nSubjet];
+Int_t nGenJtSK_;
+Float_t genJtSKPt_[maxJets];
+Float_t genJtSKPhi_[maxJets];
+Float_t genJtSKEta_[maxJets];
+Float_t genJtSKPTD_[maxJets];
+Float_t genJtSKR2_[maxJets];
+Float_t genJtSKSigma_[maxJets][nSigma];
+Int_t genJtSKRefPart_[maxJets];
+Float_t genJtSKFFMUnsub_[maxJets][nFFM];
+Float_t genJtSKFFMSub_[maxJets][nFFM];
+Float_t genJtSKFFMSubBetter_[maxJets][nFFM];
+Float_t genSKTau_[maxJets][nTau][nBeta];
+Float_t genSubJtSKPt_[maxJets][nSubjet];
+Float_t genSubJtSKPhi_[maxJets][nSubjet];
+Float_t genSubJtSKEta_[maxJets][nSubjet];
 
-Float_t genJtSUBEPt_[5];
-Float_t genJtSUBEPhi_[5];
-Float_t genJtSUBEEta_[5];
-Float_t genJtSUBEPTD_[5];
-Float_t genJtSUBER2_[5];
-Float_t genJtSUBESigma_[5][nSigma];
-Int_t genJtSUBERefPart_[5];
-Float_t genJtSUBEFFMUnsub_[5][nFFM];
-Float_t genJtSUBEFFMSub_[5][nFFM];
-Float_t genJtSUBEFFMSubBetter_[5][nFFM];
-Float_t genSUBETau_[5][nTau][nBeta];
-Float_t genSubJtSUBEPt_[5][nSubjet];
-Float_t genSubJtSUBEPhi_[5][nSubjet];
-Float_t genSubJtSUBEEta_[5][nSubjet];
+Int_t nGenJtSUBE_;
+Float_t genJtSUBEPt_[maxJets];
+Float_t genJtSUBEPhi_[maxJets];
+Float_t genJtSUBEEta_[maxJets];
+Float_t genJtSUBEPTD_[maxJets];
+Float_t genJtSUBER2_[maxJets];
+Float_t genJtSUBESigma_[maxJets][nSigma];
+Int_t genJtSUBERefPart_[maxJets];
+Float_t genJtSUBEFFMUnsub_[maxJets][nFFM];
+Float_t genJtSUBEFFMSub_[maxJets][nFFM];
+Float_t genJtSUBEFFMSubBetter_[maxJets][nFFM];
+Float_t genSUBETau_[maxJets][nTau][nBeta];
+Float_t genSubJtSUBEPt_[maxJets][nSubjet];
+Float_t genSubJtSUBEPhi_[maxJets][nSubjet];
+Float_t genSubJtSUBEEta_[maxJets][nSubjet];
 
 //Jet TreeAna Variables
 
@@ -245,6 +255,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   if(!isGen){
     rechitTreeAna_p->Branch("rechitSKPtCut", &rechitSKPtCut_, Form("rechitSKPtCut/F"));
 
+    rechitTreeAna_p->Branch("nRechitJtRaw", &nRechitJtRaw_, Form("nRechitJtRaw/I"));
     rechitTreeAna_p->Branch("rechitJtRawPt", rechitJtRawPt_, Form("rechitJtRawPt[5]/F"));
     rechitTreeAna_p->Branch("rechitJtRawPhi", rechitJtRawPhi_, Form("rechitJtRawPhi[5]/F"));
     rechitTreeAna_p->Branch("rechitJtRawEta", rechitJtRawEta_, Form("rechitJtRawEta[5]/F"));
@@ -260,6 +271,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     rechitTreeAna_p->Branch("rechitSubJtRawPhi", rechitSubJtRawPhi_, Form("rechitSubJtRawPhi[5][%d]/F", nSubjet));
     rechitTreeAna_p->Branch("rechitSubJtRawEta", rechitSubJtRawEta_, Form("rechitSubJtRawEta[5][%d]/F", nSubjet));
     
+    rechitTreeAna_p->Branch("nRechitJtVs", &nRechitJtVs_, Form("nRechitJtVs/I"));
     rechitTreeAna_p->Branch("rechitJtVsPt", rechitJtVsPt_, Form("rechitJtVsPt[5]/F"));
     rechitTreeAna_p->Branch("rechitJtVsPhi", rechitJtVsPhi_, Form("rechitJtVsPhi[5]/F"));
     rechitTreeAna_p->Branch("rechitJtVsEta", rechitJtVsEta_, Form("rechitJtVsEta[5]/F"));
@@ -276,7 +288,10 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     rechitTreeAna_p->Branch("rechitSubJtVsEta", rechitSubJtVsEta_, Form("rechitSubJtVsEta[5][%d]/F", nSubjet));
     
     //PF TreeAna Branches
+
     pfcandTreeAna_p->Branch("pfSKPtCut", &pfSKPtCut_, Form("pfSKPtCut/F")); 
+
+    pfcandTreeAna_p->Branch("nPFJtRaw", &nPFJtRaw_, Form("nPFJtRaw/I"));
     pfcandTreeAna_p->Branch("pfJtRawPt", pfJtRawPt_, Form("pfJtRawPt[5]/F"));
     pfcandTreeAna_p->Branch("pfJtRawPhi", pfJtRawPhi_, Form("pfJtRawPhi[5]/F"));
     pfcandTreeAna_p->Branch("pfJtRawEta", pfJtRawEta_, Form("pfJtRawEta[5]/F"));
@@ -291,7 +306,8 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfSubJtRawPt", pfSubJtRawPt_, Form("pfSubJtRawPt[5][%d]/F", nSubjet));
     pfcandTreeAna_p->Branch("pfSubJtRawPhi", pfSubJtRawPhi_, Form("pfSubJtRawPhi[5][%d]/F", nSubjet));
     pfcandTreeAna_p->Branch("pfSubJtRawEta", pfSubJtRawEta_, Form("pfSubJtRawEta[5][%d]/F", nSubjet));
-    
+
+    pfcandTreeAna_p->Branch("nPFJtVs", &nPFJtVs_, Form("nPFJtVs/I"));    
     pfcandTreeAna_p->Branch("pfJtVsPt", pfJtVsPt_, Form("pfJtVsPt[5]/F"));
     pfcandTreeAna_p->Branch("pfJtVsPhi", pfJtVsPhi_, Form("pfJtVsPhi[5]/F"));
     pfcandTreeAna_p->Branch("pfJtVsEta", pfJtVsEta_, Form("pfJtVsEta[5]/F"));
@@ -306,7 +322,8 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfSubJtVsPt", pfSubJtVsPt_, Form("pfSubJtVsPt[5][%d]/F", nSubjet));
     pfcandTreeAna_p->Branch("pfSubJtVsPhi", pfSubJtVsPhi_, Form("pfSubJtVsPhi[5][%d]/F", nSubjet));
     pfcandTreeAna_p->Branch("pfSubJtVsEta", pfSubJtVsEta_, Form("pfSubJtVsEta[5][%d]/F", nSubjet));
-    
+
+    pfcandTreeAna_p->Branch("nPFJtSK", &nPFJtSK_, Form("nPFJtSK/I"));
     pfcandTreeAna_p->Branch("pfJtSKPt", pfJtSKPt_, Form("pfJtSKPt[5]/F"));
     pfcandTreeAna_p->Branch("pfJtSKPhi", pfJtSKPhi_, Form("pfJtSKPhi[5]/F"));
     pfcandTreeAna_p->Branch("pfJtSKEta", pfJtSKEta_, Form("pfJtSKEta[5]/F"));
@@ -325,6 +342,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     //Trk TreeAna Branches
     trkTreeAna_p->Branch("trkSKPtCut", &trkSKPtCut_, Form("trkSKPtCut/F"));    
 
+    trkTreeAna_p->Branch("nTrkJtRaw", &nTrkJtRaw_, Form("nTrkJtRaw/I"));
     trkTreeAna_p->Branch("trkJtRawPt", trkJtRawPt_, Form("trkJtRawPt[5]/F"));
     trkTreeAna_p->Branch("trkJtRawPhi", trkJtRawPhi_, Form("trkJtRawPhi[5]/F"));
     trkTreeAna_p->Branch("trkJtRawEta", trkJtRawEta_, Form("trkJtRawEta[5]/F"));
@@ -340,6 +358,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     trkTreeAna_p->Branch("trkSubJtRawPhi", trkSubJtRawPhi_, Form("trkSubJtRawPhi[5][%d]/F", nSubjet));
     trkTreeAna_p->Branch("trkSubJtRawEta", trkSubJtRawEta_, Form("trkSubJtRawEta[5][%d]/F", nSubjet));
     
+    trkTreeAna_p->Branch("nTrkJtSK", &nTrkJtSK_, Form("nTrkJtSK/I"));
     trkTreeAna_p->Branch("trkJtSKPt", trkJtSKPt_, Form("trkJtSKPt[5]/F"));
     trkTreeAna_p->Branch("trkJtSKPhi", trkJtSKPhi_, Form("trkJtSKPhi[5]/F"));
     trkTreeAna_p->Branch("trkJtSKEta", trkJtSKEta_, Form("trkJtSKEta[5]/F"));
@@ -360,6 +379,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   if(montecarlo){
     genTreeAna_p->Branch("genSKPtCut", &genSKPtCut_, Form("genSKPtCut/F"));
 
+    genTreeAna_p->Branch("nGenJtRaw", &nGenJtRaw_, Form("nGenJtRaw/I"));
     genTreeAna_p->Branch("genJtRawPt", genJtRawPt_, Form("genJtRawPt[5]/F"));
     genTreeAna_p->Branch("genJtRawPhi", genJtRawPhi_, Form("genJtRawPhi[5]/F"));
     genTreeAna_p->Branch("genJtRawEta", genJtRawEta_, Form("genJtRawEta[5]/F"));
@@ -375,6 +395,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeAna_p->Branch("genSubJtRawPhi", genSubJtRawPhi_, Form("genSubJtRawPhi[5][%d]/F", nSubjet));
     genTreeAna_p->Branch("genSubJtRawEta", genSubJtRawEta_, Form("genSubJtRawEta[5][%d]/F", nSubjet));
 
+    genTreeAna_p->Branch("nGenJtSK", &nGenJtSK_, Form("nGenJtSK/I"));
     genTreeAna_p->Branch("genJtSKPt", genJtSKPt_, Form("genJtSKPt[5]/F"));
     genTreeAna_p->Branch("genJtSKPhi", genJtSKPhi_, Form("genJtSKPhi[5]/F"));
     genTreeAna_p->Branch("genJtSKEta", genJtSKEta_, Form("genJtSKEta[5]/F"));
@@ -390,6 +411,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeAna_p->Branch("genSubJtSKPhi", genSubJtSKPhi_, Form("genSubJtSKPhi[5][%d]/F", nSubjet));
     genTreeAna_p->Branch("genSubJtSKEta", genSubJtSKEta_, Form("genSubJtSKEta[5][%d]/F", nSubjet));
 
+    genTreeAna_p->Branch("nGenJtSUBE", &nGenJtSUBE_, Form("nGenJtSUBE/I"));
     genTreeAna_p->Branch("genJtSUBEPt", genJtSUBEPt_, Form("genJtSUBEPt[5]/F"));
     genTreeAna_p->Branch("genJtSUBEPhi", genJtSUBEPhi_, Form("genJtSUBEPhi[5]/F"));
     genTreeAna_p->Branch("genJtSUBEEta", genJtSUBEEta_, Form("genJtSUBEEta[5]/F"));
@@ -457,6 +479,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   if(!isGen){
     rechitTreeAna_p->SetBranchAddress("rechitSKPtCut", &rechitSKPtCut_);
 
+    rechitTreeAna_p->SetBranchAddress("nRechitJtRaw", &nRechitJtRaw_);
     rechitTreeAna_p->SetBranchAddress("rechitJtRawPt", rechitJtRawPt_);
     rechitTreeAna_p->SetBranchAddress("rechitJtRawPhi", rechitJtRawPhi_);
     rechitTreeAna_p->SetBranchAddress("rechitJtRawEta", rechitJtRawEta_);
@@ -472,6 +495,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     rechitTreeAna_p->SetBranchAddress("rechitSubJtRawPhi", rechitSubJtRawPhi_);
     rechitTreeAna_p->SetBranchAddress("rechitSubJtRawEta", rechitSubJtRawEta_);
     
+    rechitTreeAna_p->SetBranchAddress("nRechitJtVs", &nRechitJtVs_);
     rechitTreeAna_p->SetBranchAddress("rechitJtVsPt", rechitJtVsPt_);
     rechitTreeAna_p->SetBranchAddress("rechitJtVsPhi", rechitJtVsPhi_);
     rechitTreeAna_p->SetBranchAddress("rechitJtVsEta", rechitJtVsEta_);
@@ -490,6 +514,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     //PF TreeAna Branches
     pfcandTreeAna_p->SetBranchAddress("pfSKPtCut", &pfSKPtCut_);    
 
+    pfcandTreeAna_p->SetBranchAddress("nPFJtRaw", &nPFJtRaw_);
     pfcandTreeAna_p->SetBranchAddress("pfJtRawPt", pfJtRawPt_);
     pfcandTreeAna_p->SetBranchAddress("pfJtRawPhi", pfJtRawPhi_);
     pfcandTreeAna_p->SetBranchAddress("pfJtRawEta", pfJtRawEta_);
@@ -504,7 +529,8 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->SetBranchAddress("pfSubJtRawPt", pfSubJtRawPt_);
     pfcandTreeAna_p->SetBranchAddress("pfSubJtRawPhi", pfSubJtRawPhi_);
     pfcandTreeAna_p->SetBranchAddress("pfSubJtRawEta", pfSubJtRawEta_);
-    
+
+    pfcandTreeAna_p->SetBranchAddress("nPFJtVs", &nPFJtVs_);    
     pfcandTreeAna_p->SetBranchAddress("pfJtVsPt", pfJtVsPt_);
     pfcandTreeAna_p->SetBranchAddress("pfJtVsPhi", pfJtVsPhi_);
     pfcandTreeAna_p->SetBranchAddress("pfJtVsEta", pfJtVsEta_);
@@ -520,6 +546,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->SetBranchAddress("pfSubJtVsPhi", pfSubJtVsPhi_);
     pfcandTreeAna_p->SetBranchAddress("pfSubJtVsEta", pfSubJtVsEta_);
     
+    pfcandTreeAna_p->SetBranchAddress("nPFJtSK", &nPFJtSK_);
     pfcandTreeAna_p->SetBranchAddress("pfJtSKPt", pfJtSKPt_);
     pfcandTreeAna_p->SetBranchAddress("pfJtSKPhi", pfJtSKPhi_);
     pfcandTreeAna_p->SetBranchAddress("pfJtSKEta", pfJtSKEta_);
@@ -538,6 +565,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     //Trk TreeAna Branches
     trkTreeAna_p->SetBranchAddress("trkSKPtCut", &trkSKPtCut_);    
 
+    trkTreeAna_p->SetBranchAddress("nTrkJtRaw", &nTrkJtRaw_);
     trkTreeAna_p->SetBranchAddress("trkJtRawPt", trkJtRawPt_);
     trkTreeAna_p->SetBranchAddress("trkJtRawPhi", trkJtRawPhi_);
     trkTreeAna_p->SetBranchAddress("trkJtRawEta", trkJtRawEta_);
@@ -553,6 +581,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     trkTreeAna_p->SetBranchAddress("trkSubJtRawPhi", trkSubJtRawPhi_);
     trkTreeAna_p->SetBranchAddress("trkSubJtRawEta", trkSubJtRawEta_);
     
+    trkTreeAna_p->SetBranchAddress("nTrkJtSK", &nTrkJtSK_);
     trkTreeAna_p->SetBranchAddress("trkJtSKPt", trkJtSKPt_);
     trkTreeAna_p->SetBranchAddress("trkJtSKPhi", trkJtSKPhi_);
     trkTreeAna_p->SetBranchAddress("trkJtSKEta", trkJtSKEta_);
@@ -573,6 +602,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   if(montecarlo){
     genTreeAna_p->SetBranchAddress("genSKPtCut", &genSKPtCut_);
 
+    genTreeAna_p->SetBranchAddress("nGenJtRaw", &nGenJtRaw_);
     genTreeAna_p->SetBranchAddress("genJtRawPt", genJtRawPt_);
     genTreeAna_p->SetBranchAddress("genJtRawPhi", genJtRawPhi_);
     genTreeAna_p->SetBranchAddress("genJtRawEta", genJtRawEta_);
@@ -588,6 +618,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeAna_p->SetBranchAddress("genSubJtRawPhi", genSubJtRawPhi_);
     genTreeAna_p->SetBranchAddress("genSubJtRawEta", genSubJtRawEta_);
 
+    genTreeAna_p->SetBranchAddress("nGenJtSK", &nGenJtSK_);
     genTreeAna_p->SetBranchAddress("genJtSKPt", genJtSKPt_);
     genTreeAna_p->SetBranchAddress("genJtSKPhi", genJtSKPhi_);
     genTreeAna_p->SetBranchAddress("genJtSKEta", genJtSKEta_);
@@ -603,6 +634,7 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     genTreeAna_p->SetBranchAddress("genSubJtSKPhi", genSubJtSKPhi_);
     genTreeAna_p->SetBranchAddress("genSubJtSKEta", genSubJtSKEta_);
 
+    genTreeAna_p->SetBranchAddress("nGenJtSUBE", &nGenJtSUBE_);
     genTreeAna_p->SetBranchAddress("genJtSUBEPt", genJtSUBEPt_);
     genTreeAna_p->SetBranchAddress("genJtSUBEPhi", genJtSUBEPhi_);
     genTreeAna_p->SetBranchAddress("genJtSUBEEta", genJtSUBEEta_);
@@ -719,182 +751,19 @@ void InitJtVar(){
   trkSKPtCut_ = 0.010;
   genSKPtCut_ = 0.010;
 
-  for(Int_t iter = 0; iter < 5; iter++){
-    rechitJtRawPt_[iter] = -999;
-    rechitJtRawPhi_[iter] = -999;
-    rechitJtRawEta_[iter] = -999;
-    rechitJtRawPTD_[iter] = -999;
-    rechitJtRawR2_[iter] = -999;
-    rechitJtRawRefPart_[iter] = -999;
+  nRechitJtRaw_ = 0;
+  nRechitJtVs_ = 0;
 
-    rechitJtVsPt_[iter] = -999;
-    rechitJtVsPhi_[iter] = -999;
-    rechitJtVsEta_[iter] = -999;
-    rechitJtVsPTD_[iter] = -999;
-    rechitJtVsR2_[iter] = -999;
-    rechitJtVsRefPart_[iter] = -999;
+  nPFJtRaw_ = 0;
+  nPFJtVs_ = 0;
+  nPFJtSK_ = 0;
 
-    pfJtRawPt_[iter] = -999;
-    pfJtRawPhi_[iter] = -999;
-    pfJtRawEta_[iter] = -999;
-    pfJtRawPTD_[iter] = -999;
-    pfJtRawR2_[iter] = -999;
-    pfJtRawRefPart_[iter] = -999;
+  nTrkJtRaw_ = 0;
+  nTrkJtSK_ = 0;
 
-    pfJtVsPt_[iter] = -999;
-    pfJtVsPhi_[iter] = -999;
-    pfJtVsEta_[iter] = -999;
-    pfJtVsPTD_[iter] = -999;
-    pfJtVsR2_[iter] = -999;
-    pfJtVsRefPart_[iter] = -999;
-
-    pfJtSKPt_[iter] = -999;
-    pfJtSKPhi_[iter] = -999;
-    pfJtSKEta_[iter] = -999;
-    pfJtSKPTD_[iter] = -999;
-    pfJtSKR2_[iter] = -999;
-    pfJtSKRefPart_[iter] = -999;
-
-    trkJtRawPt_[iter] = -999;
-    trkJtRawPhi_[iter] = -999;
-    trkJtRawEta_[iter] = -999;
-    trkJtRawPTD_[iter] = -999;
-    trkJtRawR2_[iter] = -999;
-    trkJtRawRefPart_[iter] = -999;
-
-    trkJtSKPt_[iter] = -999;
-    trkJtSKPhi_[iter] = -999;
-    trkJtSKEta_[iter] = -999;
-    trkJtSKPTD_[iter] = -999;
-    trkJtSKR2_[iter] = -999;
-    trkJtSKRefPart_[iter] = -999;
-
-    genJtRawPt_[iter] = -999;
-    genJtRawPhi_[iter] = -999;
-    genJtRawEta_[iter] = -999;
-    genJtRawPTD_[iter] = -999;
-    genJtRawR2_[iter] = -999;
-    genJtRawRefPart_[iter] = -999;
-
-    genJtSKPt_[iter] = -999;
-    genJtSKPhi_[iter] = -999;
-    genJtSKEta_[iter] = -999;
-    genJtSKPTD_[iter] = -999;
-    genJtSKR2_[iter] = -999;
-    genJtSKRefPart_[iter] = -999;
-
-    genJtSUBEPt_[iter] = -999;
-    genJtSUBEPhi_[iter] = -999;
-    genJtSUBEEta_[iter] = -999;
-    genJtSUBEPTD_[iter] = -999;
-    genJtSUBER2_[iter] = -999;
-    genJtSUBERefPart_[iter] = -999;
-
-    for(Int_t iter2 = 0; iter2 < nSubjet; iter2++){
-      rechitSubJtRawPt_[iter][iter2] = -999;
-      rechitSubJtRawPhi_[iter][iter2] = -999;
-      rechitSubJtRawEta_[iter][iter2] = -999;
-
-      rechitSubJtVsPt_[iter][iter2] = -999;
-      rechitSubJtVsPhi_[iter][iter2] = -999;
-      rechitSubJtVsEta_[iter][iter2] = -999;
-
-      pfSubJtRawPt_[iter][iter2] = -999;
-      pfSubJtRawPhi_[iter][iter2] = -999;
-      pfSubJtRawEta_[iter][iter2] = -999;
-
-      pfSubJtVsPt_[iter][iter2] = -999;
-      pfSubJtVsPhi_[iter][iter2] = -999;
-      pfSubJtVsEta_[iter][iter2] = -999;
-
-      pfSubJtSKPt_[iter][iter2] = -999;
-      pfSubJtSKPhi_[iter][iter2] = -999;
-      pfSubJtSKEta_[iter][iter2] = -999;
-
-      trkSubJtRawPt_[iter][iter2] = -999;
-      trkSubJtRawPhi_[iter][iter2] = -999;
-      trkSubJtRawEta_[iter][iter2] = -999;
-
-      trkSubJtSKPt_[iter][iter2] = -999;
-      trkSubJtSKPhi_[iter][iter2] = -999;
-      trkSubJtSKEta_[iter][iter2] = -999;
-
-      genSubJtRawPt_[iter][iter2] = -999;
-      genSubJtRawPhi_[iter][iter2] = -999;
-      genSubJtRawEta_[iter][iter2] = -999;
-
-      genSubJtSKPt_[iter][iter2] = -999;
-      genSubJtSKPhi_[iter][iter2] = -999;
-      genSubJtSKEta_[iter][iter2] = -999;
-
-      genSubJtSUBEPt_[iter][iter2] = -999;
-      genSubJtSUBEPhi_[iter][iter2] = -999;
-      genSubJtSUBEEta_[iter][iter2] = -999;
-    }
-
-    for(Int_t iter2 = 0; iter2 < nSigma; iter2++){
-      rechitJtRawSigma_[iter][iter2] = -999;
-      rechitJtVsSigma_[iter][iter2] = -999;
-      pfJtRawSigma_[iter][iter2] = -999;
-      pfJtVsSigma_[iter][iter2] = -999;
-      pfJtSKSigma_[iter][iter2] = -999;
-      trkJtRawSigma_[iter][iter2] = -999;
-      trkJtSKSigma_[iter][iter2] = -999;
-      genJtRawSigma_[iter][iter2] = -999;
-      genJtSKSigma_[iter][iter2] = -999;
-      genJtSUBESigma_[iter][iter2] = -999;
-    }
-
-    for(Int_t iter2 = 0; iter2 < nFFM; iter2++){
-      rechitJtRawFFMUnsub_[iter][iter2] = -999;
-      rechitJtVsFFMUnsub_[iter][iter2] = -999;
-      pfJtRawFFMUnsub_[iter][iter2] = -999;
-      pfJtVsFFMUnsub_[iter][iter2] = -999;
-      pfJtSKFFMUnsub_[iter][iter2] = -999;
-      trkJtRawFFMUnsub_[iter][iter2] = -999;
-      trkJtSKFFMUnsub_[iter][iter2] = -999;
-      genJtRawFFMUnsub_[iter][iter2] = -999;
-      genJtSKFFMUnsub_[iter][iter2] = -999;
-      genJtSUBEFFMUnsub_[iter][iter2] = -999;
-
-      rechitJtRawFFMSub_[iter][iter2] = -999;
-      rechitJtVsFFMSub_[iter][iter2] = -999;
-      pfJtRawFFMSub_[iter][iter2] = -999;
-      pfJtVsFFMSub_[iter][iter2] = -999;
-      pfJtSKFFMSub_[iter][iter2] = -999;
-      trkJtRawFFMSub_[iter][iter2] = -999;
-      trkJtSKFFMSub_[iter][iter2] = -999;
-      genJtRawFFMSub_[iter][iter2] = -999;
-      genJtSKFFMSub_[iter][iter2] = -999;
-      genJtSUBEFFMSub_[iter][iter2] = -999;
-
-      rechitJtRawFFMSubBetter_[iter][iter2] = -999;
-      rechitJtVsFFMSubBetter_[iter][iter2] = -999;
-      pfJtRawFFMSubBetter_[iter][iter2] = -999;
-      pfJtVsFFMSubBetter_[iter][iter2] = -999;
-      pfJtSKFFMSubBetter_[iter][iter2] = -999;
-      trkJtRawFFMSubBetter_[iter][iter2] = -999;
-      trkJtSKFFMSubBetter_[iter][iter2] = -999;
-      genJtRawFFMSubBetter_[iter][iter2] = -999;
-      genJtSKFFMSubBetter_[iter][iter2] = -999;
-      genJtSUBEFFMSubBetter_[iter][iter2] = -999;
-    }
-
-    for(Int_t iter2 = 0; iter2 < nTau; iter2++){
-      for(Int_t iter3 = 0; iter3 < nBeta; iter3++){
-	rechitRawTau_[iter][iter2][iter3] = -999;
-	rechitVsTau_[iter][iter2][iter3] = -999;
-	pfRawTau_[iter][iter2][iter3] = -999;
-	pfVsTau_[iter][iter2][iter3] = -999;
-	pfSKTau_[iter][iter2][iter3] = -999;
-	trkRawTau_[iter][iter2][iter3] = -999;
-	trkSKTau_[iter][iter2][iter3] = -999;
-	genRawTau_[iter][iter2][iter3] = -999;
-	genSKTau_[iter][iter2][iter3] = -999;
-	genSUBETau_[iter][iter2][iter3] = -999;
-      }
-    }
-  }
+  nGenJtRaw_ = 0;
+  nGenJtVs_ = 0;
+  nGenJtSK_ = 0;
 
   return;
 }

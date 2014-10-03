@@ -54,7 +54,17 @@ fastjet::JetAlgorithm subJtAlg = fastjet::antikt_algorithm;
 const Int_t pthatCuts_PYTH_HYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 10000000};
 const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .000241009, .0000273228, .00000147976, .000000618337, .000000157267};
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[5], Float_t outPhi[5], Float_t outEta[5], Float_t outPTD[5], Float_t outR2[5], Float_t outSigma[5][nSigma], Float_t outFFMUnsub[5][nFFM], Float_t outFFMSub[5][nFFM], Float_t outFFMSubBetter[5][nFFM], Float_t tau[5][nTau][nBeta], Float_t subPt[5][nSubjet], Float_t subPhi[5][nSubjet], Float_t subEta[5][nSubjet], Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
+
+void getJtSubstrct(fastjet::PseudoJet* inJt, Float_t& outPTD, Float_t& outR2, Float_t outSigma[nSigma], Float_t outFFMUnsub[nFFM], Float_t outFFMSub[nFFM], Float_t outFFMSubBetter[nFFM], Float_t tau[nTau][nBeta], Float_t subPt[nSubjet], Float_t subPhi[nSubjet], Float_t subEta[nSubjet])
+{
+  outPTD = getPTD(inJt);
+  outR2 = getAvgDelR(inJt);
+  calcSigma(inJt);
+
+}
+
+
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[maxJets], Float_t outPhi[maxJets], Float_t outEta[maxJets], Float_t outPTD[maxJets], Float_t outR2[maxJets], Float_t outSigma[maxJets][nSigma], Float_t outFFMUnsub[maxJets][nFFM], Float_t outFFMSub[maxJets][nFFM], Float_t outFFMSubBetter[maxJets][nFFM], Float_t tau[maxJets][nTau][nBeta], Float_t subPt[maxJets][nSubjet], Float_t subPhi[maxJets][nSubjet], Float_t subEta[maxJets][nSubjet], Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
 {
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
@@ -71,17 +81,14 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
   fastjet::ClusterSequenceArea cs(*algVect_p, jtDef, jtAreaDef);
   std::vector<fastjet::PseudoJet> algSortVect = fastjet::sorted_by_pt(cs.inclusive_jets());
 
-  Int_t breakIter = 0;
-
   for(Int_t iter = 0; iter < (Int_t)algSortVect.size(); iter++){
+    if(algSortVect[iter].perp() < 30.0) break; 
+    
     if(TMath::Abs(algSortVect[iter].eta()) < 2.0){
       outPt[breakIter] = algSortVect[iter].perp();
       outPhi[breakIter] = algSortVect[iter].phi_std();
       outEta[breakIter] = algSortVect[iter].eta();
 
-      outPTD[breakIter] = getPTD(algSortVect[iter]);
-      outR2[breakIter] = getAvgDelR(algSortVect[iter], 30.0, 2.0);
-      calcSigma(&algSortVect[iter]);
       for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
 	outSigma[breakIter][sigIter] = getSigma(sigIter);
       }
@@ -95,10 +102,6 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
 	  tau[breakIter][tauIter][betaIter] = getTau(algSortVect[iter], 0.0, tauArr[tauIter], betaArr[betaIter]);
 	}
       }
-
-      if(breakIter == 4) break;
-
-      breakIter++;
     }
   }
 
