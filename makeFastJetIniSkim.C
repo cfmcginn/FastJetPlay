@@ -197,11 +197,6 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(jentry%1000 == 0)
       std::cout << jentry << std::endl;
 
-    if(c->evt.evt != 294427) continue;
-
-    if(jentry%1000 == 0)
-      std::cout << jentry << std::endl;
-
     if(!c->selectEvent()){
       selectCut++;
       continue;
@@ -480,8 +475,6 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(montecarlo) genTreeIni_p->Fill();
 
     jetTreeIni_p->Fill();
-
-    if(c->evt.evt == 294427) break;
   }
 
   std::cout << "totEv: " << totEv << std::endl;
