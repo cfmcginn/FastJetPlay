@@ -59,6 +59,8 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
 
+  if(ptCut < 1) std::cout << "PtCut: " << ptCut << std::endl;
+
   for(Int_t iter = 0; iter < nMax; iter++){
     if(IDBool && inID[iter] != 0) continue;
 
@@ -180,7 +182,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   Int_t dummyArr[2] = {0,0};
 
   for(Long64_t jentry = 0; jentry < 1000; jentry++){
-    if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
+    if(true/*jentry%1000 == 0*/) std::cout << "Entry: " << jentry << std::endl;
 
     if(!isGen){
       rechitTreeIni_p->GetEntry(jentry);

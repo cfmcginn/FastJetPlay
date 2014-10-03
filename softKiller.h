@@ -94,7 +94,10 @@ Float_t getSKPtCut(Int_t nPart, Float_t partPt[], Float_t partPhi[], Float_t par
 {
   InitSKGrid();
   FillSKGrid(nPart, partPt, partPhi, partEta);
-  return getSKMedianPt();
+
+  Float_t skCut = getSKMedianPt();
+  if(skCut < 0.010) skCut = 0.010;
+  return skCut;
 }
 
 

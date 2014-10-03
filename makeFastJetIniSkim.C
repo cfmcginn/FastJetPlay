@@ -454,11 +454,13 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
  
     if(!isGen){
       trkIniSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
-      rechitIniSKPtCut_ = -10;
+      rechitIniSKPtCut_ = getSKPtCut(nRechits_, rechitPt_, rechitPhi_, rechitEta_);
       pfIniSKPtCut_ = getSKPtCut(nPF_, pfPt_, pfPhi_, pfEta_);
     }
     if(montecarlo) genIniSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
     
+
+
     if(!isGen){
       rechitTreeIni_p->Fill();
       pfcandTreeIni_p->Fill();
