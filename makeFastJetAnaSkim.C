@@ -28,6 +28,8 @@ const Float_t lJtPtCut = 120.;
 const Float_t sLJtPtCut = 50.;
 const Float_t jtEtaCut = 2.0; 
 
+const Float_t clustPtCut = 30.;
+
 //Nsubjettiness var, taus and betas
 
 const Int_t tauArr[nTau] = {1, 2, 3};
@@ -55,16 +57,30 @@ const Int_t pthatCuts_PYTH_HYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 1000000
 const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .000241009, .0000273228, .00000147976, .000000618337, .000000157267};
 
 
-void getJtSubstrct(fastjet::PseudoJet* inJt, Float_t& outPTD, Float_t& outR2, Float_t outSigma[nSigma], Float_t outFFMUnsub[nFFM], Float_t outFFMSub[nFFM], Float_t outFFMSubBetter[nFFM], Float_t tau[nTau][nBeta], Float_t subPt[nSubjet], Float_t subPhi[nSubjet], Float_t subEta[nSubjet])
+void getJtSubstrct(fastjet::PseudoJet* inJt, Float_t& outPTD, Float_t& outR2, Float_t outSigma[nSigma], std::vector<fastjet::PseudoJet>* inBG, Float_t outFFMUnsub[nFFM], Float_t outFFMSub[nFFM], Float_t outFFMSubBetter[nFFM], Float_t tau[nTau][nBeta], Float_t subPt[nSubjet], Float_t subPhi[nSubjet], Float_t subEta[nSubjet])
 {
   outPTD = getPTD(inJt);
-  outR2 = getAvgDelR(inJt);
-  calcSigma(inJt);
+  outR2 = getAvgDelR(inJt, 2.0);
 
+  calcSigma(inJt);
+  for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
+    outSigma[sigIter] = getSigma(sigIter);
+  }
+
+  getJtFFMoments(inJt, rhoJtR, rhoJtAlg, jtAreaDef, inBG, 14, -0.5, 6.0, outFFMUnsub, outFFMSub, outFFMSubBetter);
+  getSubJt(inJt, subJtR, subJtAlg, nSubJt, subPt, subPhi, subEta);
+  
+  for(Int_t tauIter = 0; tauIter < nTau; tauIter++){
+    for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
+      tau[tauIter][betaIter] = getTau(inJt, 0.0, tauArr[tauIter], betaArr[betaIter]);
+    }
+  }
+    
+  return;
 }
 
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt[maxJets], Float_t outPhi[maxJets], Float_t outEta[maxJets], Float_t outPTD[maxJets], Float_t outR2[maxJets], Float_t outSigma[maxJets][nSigma], Float_t outFFMUnsub[maxJets][nFFM], Float_t outFFMSub[maxJets][nFFM], Float_t outFFMSubBetter[maxJets][nFFM], Float_t tau[maxJets][nTau][nBeta], Float_t subPt[maxJets][nSubjet], Float_t subPhi[maxJets][nSubjet], Float_t subEta[maxJets][nSubjet], Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t& nOut, Float_t outPt[maxJets], Float_t outPhi[maxJets], Float_t outEta[maxJets], Float_t outPTD[maxJets], Float_t outR2[maxJets], Float_t outSigma[maxJets][nSigma], Float_t outFFMUnsub[maxJets][nFFM], Float_t outFFMSub[maxJets][nFFM], Float_t outFFMSubBetter[maxJets][nFFM], Float_t tau[maxJets][nTau][nBeta], Float_t subPt[maxJets][nSubjet], Float_t subPhi[maxJets][nSubjet], Float_t subEta[maxJets][nSubjet], Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
 {
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
@@ -81,27 +97,19 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Float_t outPt
   fastjet::ClusterSequenceArea cs(*algVect_p, jtDef, jtAreaDef);
   std::vector<fastjet::PseudoJet> algSortVect = fastjet::sorted_by_pt(cs.inclusive_jets());
 
+  nOut = 0;
+
   for(Int_t iter = 0; iter < (Int_t)algSortVect.size(); iter++){
-    if(algSortVect[iter].perp() < 30.0) break; 
+    if(algSortVect[iter].perp() < clustPtCut) break; 
     
     if(TMath::Abs(algSortVect[iter].eta()) < 2.0){
-      outPt[breakIter] = algSortVect[iter].perp();
-      outPhi[breakIter] = algSortVect[iter].phi_std();
-      outEta[breakIter] = algSortVect[iter].eta();
+      outPt[nOut] = algSortVect[iter].perp();
+      outPhi[nOut] = algSortVect[iter].phi_std();
+      outEta[nOut] = algSortVect[iter].eta();
 
-      for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	outSigma[breakIter][sigIter] = getSigma(sigIter);
-      }
-
-      getJtFFMoments(&algSortVect[iter], rhoJtR, rhoJtAlg, jtAreaDef, algVect_p, 14, -0.5, 6.0, outFFMUnsub[breakIter], outFFMSub[breakIter], outFFMSubBetter[breakIter]);
-
-      getSubJt(algSortVect[iter], subJtR, subJtAlg, nSubJt, subPt[breakIter], subPhi[breakIter], subEta[breakIter]);
-
-      for(Int_t tauIter = 0; tauIter < nTau; tauIter++){
-	for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	  tau[breakIter][tauIter][betaIter] = getTau(algSortVect[iter], 0.0, tauArr[tauIter], betaArr[betaIter]);
-	}
-      }
+      getJtSubstrct(&algSortVect[iter], outPTD[nOut], outR2[nOut], outSigma[nOut], algVect_p, outFFMUnsub[nOut], outFFMSub[nOut], outFFMSubBetter[nOut], tau[nOut], subPt[nOut], subPhi[nOut], subEta[nOut]);
+      nOut++;
+      if(nOut == 5) break;
     }
   }
 
@@ -182,9 +190,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   Int_t dummyArr[2] = {0,0};
 
-  for(Long64_t jentry = 0; jentry < 1000; jentry++){
-    if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
-    //std::cout << "Entry: " << jentry << std::endl;
+  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+    //if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
+    std::cout << "Entry: " << jentry << std::endl;
 
     if(!isGen){
       rechitTreeIni_p->GetEntry(jentry);
@@ -197,21 +205,21 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     InitJtVar();
 
     if(!isGen){
-      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitJtRawPTD_ , rechitJtRawR2_, rechitJtRawSigma_, rechitJtRawFFMUnsub_, rechitJtRawFFMSub_, rechitJtRawFFMSubBetter_, rechitRawTau_, rechitSubJtRawPt_, rechitSubJtRawPhi_, rechitSubJtRawEta_, 0.010, dummyArr);
-      getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitJtVsPTD_, rechitJtVsR2_, rechitJtVsSigma_, rechitJtVsFFMUnsub_, rechitJtVsFFMSub_, rechitJtVsFFMSubBetter_, rechitVsTau_, rechitSubJtVsPt_, rechitSubJtVsPhi_, rechitSubJtVsEta_, 0.010, dummyArr); 
+      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, nRechitJtRaw_, rechitJtRawPt_, rechitJtRawPhi_, rechitJtRawEta_, rechitJtRawPTD_ , rechitJtRawR2_, rechitJtRawSigma_, rechitJtRawFFMUnsub_, rechitJtRawFFMSub_, rechitJtRawFFMSubBetter_, rechitRawTau_, rechitSubJtRawPt_, rechitSubJtRawPhi_, rechitSubJtRawEta_, 0.010, dummyArr);
+      getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, nRechitJtVs_, rechitJtVsPt_, rechitJtVsPhi_, rechitJtVsEta_, rechitJtVsPTD_, rechitJtVsR2_, rechitJtVsSigma_, rechitJtVsFFMUnsub_, rechitJtVsFFMSub_, rechitJtVsFFMSubBetter_, rechitVsTau_, rechitSubJtVsPt_, rechitSubJtVsPhi_, rechitSubJtVsEta_, 0.010, dummyArr); 
  
-     getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfJtRawPTD_, pfJtRawR2_, pfJtRawSigma_, pfJtRawFFMUnsub_, pfJtRawFFMSub_, pfJtRawFFMSubBetter_, pfRawTau_, pfSubJtRawPt_, pfSubJtRawPhi_, pfSubJtRawEta_, 0.010, dummyArr);
-     getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfJtVsPTD_, pfJtVsR2_, pfJtVsSigma_, pfJtVsFFMUnsub_, pfJtVsFFMSub_, pfJtVsFFMSubBetter_, pfVsTau_, pfSubJtVsPt_, pfSubJtVsPhi_, pfSubJtVsEta_, 0.010, dummyArr);
-     getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfJtSKPt_, pfJtSKPhi_, pfJtSKEta_, pfJtSKPTD_, pfJtSKR2_, pfJtSKSigma_, pfJtSKFFMUnsub_, pfJtSKFFMSub_, pfJtSKFFMSubBetter_, pfSKTau_, pfSubJtSKPt_, pfSubJtSKPhi_, pfSubJtSKEta_, pfIniSKPtCut_, dummyArr);
+     getJt(nPF_, pfPt_, pfPhi_, pfEta_, nPFJtRaw_, pfJtRawPt_, pfJtRawPhi_, pfJtRawEta_, pfJtRawPTD_, pfJtRawR2_, pfJtRawSigma_, pfJtRawFFMUnsub_, pfJtRawFFMSub_, pfJtRawFFMSubBetter_, pfRawTau_, pfSubJtRawPt_, pfSubJtRawPhi_, pfSubJtRawEta_, 0.010, dummyArr);
+     getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, nPFJtVs_, pfJtVsPt_, pfJtVsPhi_, pfJtVsEta_, pfJtVsPTD_, pfJtVsR2_, pfJtVsSigma_, pfJtVsFFMUnsub_, pfJtVsFFMSub_, pfJtVsFFMSubBetter_, pfVsTau_, pfSubJtVsPt_, pfSubJtVsPhi_, pfSubJtVsEta_, 0.010, dummyArr);
+     getJt(nPF_, pfPt_, pfPhi_, pfEta_, nPFJtSK_, pfJtSKPt_, pfJtSKPhi_, pfJtSKEta_, pfJtSKPTD_, pfJtSKR2_, pfJtSKSigma_, pfJtSKFFMUnsub_, pfJtSKFFMSub_, pfJtSKFFMSubBetter_, pfSKTau_, pfSubJtSKPt_, pfSubJtSKPhi_, pfSubJtSKEta_, pfIniSKPtCut_, dummyArr);
 
-     getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkJtRawPTD_, trkJtRawR2_, trkJtRawSigma_, trkJtRawFFMUnsub_, trkJtRawFFMSub_, trkJtRawFFMSubBetter_, trkRawTau_, trkSubJtRawPt_, trkSubJtRawPhi_, trkSubJtRawEta_, 0.010, dummyArr);
-     getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkJtSKPt_, trkJtSKPhi_, trkJtSKEta_, trkJtSKPTD_, trkJtSKR2_, trkJtSKSigma_, trkJtSKFFMUnsub_, trkJtSKFFMSub_, trkJtSKFFMSubBetter_, trkSKTau_, trkSubJtSKPt_, trkSubJtSKPhi_, trkSubJtSKEta_, trkIniSKPtCut_, dummyArr);
+     getJt(nTrk_, trkPt_, trkPhi_, trkEta_, nTrkJtRaw_, trkJtRawPt_, trkJtRawPhi_, trkJtRawEta_, trkJtRawPTD_, trkJtRawR2_, trkJtRawSigma_, trkJtRawFFMUnsub_, trkJtRawFFMSub_, trkJtRawFFMSubBetter_, trkRawTau_, trkSubJtRawPt_, trkSubJtRawPhi_, trkSubJtRawEta_, 0.010, dummyArr);
+     getJt(nTrk_, trkPt_, trkPhi_, trkEta_, nTrkJtSK_, trkJtSKPt_, trkJtSKPhi_, trkJtSKEta_, trkJtSKPTD_, trkJtSKR2_, trkJtSKSigma_, trkJtSKFFMUnsub_, trkJtSKFFMSub_, trkJtSKFFMSubBetter_, trkSKTau_, trkSubJtSKPt_, trkSubJtSKPhi_, trkSubJtSKEta_, trkIniSKPtCut_, dummyArr);
 
     }
     if(montecarlo){
-      getJt(nGen_, genPt_, genPhi_, genEta_, genJtRawPt_, genJtRawPhi_, genJtRawEta_, genJtRawPTD_, genJtRawR2_, genJtRawSigma_, genJtRawFFMUnsub_, genJtRawFFMSub_, genJtRawFFMSubBetter_, genRawTau_, genSubJtRawPt_, genSubJtRawPhi_, genSubJtRawEta_, 0.010, dummyArr);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genJtSKPt_, genJtSKPhi_, genJtSKEta_, genJtSKPTD_, genJtSKR2_, genJtSKSigma_, genJtSKFFMUnsub_, genJtSKFFMSub_, genJtSKFFMSubBetter_, genSKTau_, genSubJtSKPt_, genSubJtSKPhi_, genSubJtSKEta_, genIniSKPtCut_, dummyArr);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genJtSUBEPt_, genJtSUBEPhi_, genJtSUBEEta_, genJtSUBEPTD_, genJtSUBER2_, genJtSUBESigma_, genJtSUBEFFMUnsub_, genJtSUBEFFMSub_, genJtSUBEFFMSubBetter_, genSUBETau_, genSubJtSUBEPt_, genSubJtSUBEPhi_, genSubJtSUBEEta_, 0.010, genSube_, true);
+      getJt(nGen_, genPt_, genPhi_, genEta_, nGenJtRaw_, genJtRawPt_, genJtRawPhi_, genJtRawEta_, genJtRawPTD_, genJtRawR2_, genJtRawSigma_, genJtRawFFMUnsub_, genJtRawFFMSub_, genJtRawFFMSubBetter_, genRawTau_, genSubJtRawPt_, genSubJtRawPhi_, genSubJtRawEta_, 0.010, dummyArr);
+      getJt(nGen_, genPt_, genPhi_, genEta_, nGenJtSK_, genJtSKPt_, genJtSKPhi_, genJtSKEta_, genJtSKPTD_, genJtSKR2_, genJtSKSigma_, genJtSKFFMUnsub_, genJtSKFFMSub_, genJtSKFFMSubBetter_, genSKTau_, genSubJtSKPt_, genSubJtSKPhi_, genSubJtSKEta_, genIniSKPtCut_, dummyArr);
+      getJt(nGen_, genPt_, genPhi_, genEta_, nGenJtSUBE_, genJtSUBEPt_, genJtSUBEPhi_, genJtSUBEEta_, genJtSUBEPTD_, genJtSUBER2_, genJtSUBESigma_, genJtSUBEFFMUnsub_, genJtSUBEFFMSub_, genJtSUBEFFMSubBetter_, genSUBETau_, genSubJtSUBEPt_, genSubJtSUBEPhi_, genSubJtSUBEEta_, 0.010, genSube_, true);
     }
 
     run_ = runIni_;
