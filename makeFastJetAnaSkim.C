@@ -191,8 +191,8 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
   Int_t dummyArr[2] = {0,0};
 
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
-    //if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
-    std::cout << "Entry: " << jentry << std::endl;
+    if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
+    //    std::cout << "Entry: " << jentry << std::endl;
 
     if(!isGen){
       rechitTreeIni_p->GetEntry(jentry);

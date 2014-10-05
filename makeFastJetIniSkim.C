@@ -24,6 +24,10 @@ const Float_t lJtPtCut = 120.;
 const Float_t sLJtPtCut = 50.;
 const Float_t jtEtaCut = 2.0; // Default Max at 2.4 to avoid transition junk, otherwise vary as needed
 
+const Int_t nEvtPerFile = 10000;
+Int_t nEvtsPassed = 0;
+Int_t outTag = 0;
+
 collisionType getCType(sampleType sType);
 
 Bool_t passesDijet(Jets jtCollection, Int_t jtIndex[5], Int_t &leadJtCut, Int_t &subLeadJtCut)
@@ -130,19 +134,48 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   //Setup correction tables
 
-  TFile *outFile = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
-
-  InitFastJetIniSkim(sType, isGen);
-
   HiForest *c = new HiForest(listOfFiles[num].data(), "Forest", cType, montecarlo);
 
-  c->InitTree();
+  c->pfTree->SetBranchStatus("*", 0);
+  c->pfTree->SetBranchStatus("nPFpart", 1);
+  c->pfTree->SetBranchStatus("pfPt", 1);
+  c->pfTree->SetBranchStatus("pfVsPt", 1);
+  c->pfTree->SetBranchStatus("pfPhi", 1);
+  c->pfTree->SetBranchStatus("vn", 1);
+  c->pfTree->SetBranchStatus("psin", 1);
+  c->pfTree->SetBranchStatus("sumpt", 1);
+
+  c->towerTree->SetBranchStatus("*", 0);
+  c->towerTree->SetBranchStatus("n", 1);
+  c->towerTree->SetBranchStatus("et", 1);
+  c->towerTree->SetBranchStatus("vsPt", 1);
+  c->towerTree->SetBranchStatus("phi", 1);
+  c->towerTree->SetBranchStatus("eta", 1);
+
+  c->trackTree->SetBranchStatus("*", 0);
+  c->trackTree->SetBranchStatus("nTrk", 1);
+  c->trackTree->SetBranchStatus("trkPt", 1);
+  c->trackTree->SetBranchStatus("trkPhi", 1);
+  c->trackTree->SetBranchStatus("trkEta", 1);
+  c->trackTree->SetBranchStatus("highPurity", 1);
+  c->trackTree->SetBranchStatus("trkDz1", 1);
+  c->trackTree->SetBranchStatus("trkDzError1", 1);
+  c->trackTree->SetBranchStatus("trkDxy1", 1);
+  c->trackTree->SetBranchStatus("trkDxyError1", 1);
+  c->trackTree->SetBranchStatus("trkPtError", 1);
+
+  c->genParticleTree->SetBranchStatus("*", 0);
+  c->genParticleTree->SetBranchStatus("b", 1);
+  c->genParticleTree->SetBranchStatus("mult", 1);
+  c->genParticleTree->SetBranchStatus("pt", 1);
+  c->genParticleTree->SetBranchStatus("phi", 1);
+  c->genParticleTree->SetBranchStatus("eta", 1);
+  c->genParticleTree->SetBranchStatus("sube", 1);
 
   c->LoadNoTrees();
-
+  
   c->hasSkimTree = true;
   c->hasEvtTree = true;
-
   if(hi){
     c->hasAkPu3JetTree = true;
     c->hasAkPu3CaloJetTree = true;
@@ -152,6 +185,15 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   else{
     c->hasAk3CaloJetTree = true;
   }
+
+  if(!isGen){
+    c->hasTowerTree = true;
+    c->hasPFTree = true;
+    c->hasTrackTree = true;
+  }
+  if(montecarlo) c->hasGenParticleTree = true;
+
+  c->InitTree();
 
   std::cout << "TreeTruth: " << c->hasAk3CaloJetTree << std::endl;
 
@@ -175,6 +217,9 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << nentries << std::endl;
 
+  TFile *outFile = new TFile(Form("%s_%d_%d.root", outName, num, outTag), "RECREATE");
+  InitFastJetIniSkim(sType, isGen);
+
   Int_t totEv = 0;
   Int_t selectCut = 0;
   Int_t vzCut = 0;
@@ -189,7 +234,14 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   std::cout << "Grid Init" << std::endl;
 
-  for(Long64_t jentry = 0; jentry < nentries; jentry++){
+  for(Long64_t jentry = 0; jentry < 10000; jentry++){
+    if(!isGen){
+      c->hasTowerTree = false;
+      c->hasPFTree = false;
+      c->hasTrackTree = false;
+    }
+    if(montecarlo) c->hasGenParticleTree = false;
+
     c->GetEntry(jentry);
 
     totEv++;
@@ -304,6 +356,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(algPasses[0] == false && algPasses[1] == false && algPasses[2] == false && algPasses[3] == false && algPasses[4] == false)
       continue;
 
+    nEvtsPassed++;
     if(!isGen){
       c->hasTowerTree = true;
       c->hasPFTree = true;
@@ -311,6 +364,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     }    
     if(montecarlo) c->hasGenParticleTree = true;
 
+    c->GetEntry(jentry);
 
     InitIniJtVar();
 
@@ -345,10 +399,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	else{
 	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	    if(jtIndex[algIter][jtIter] >= 0){
-	      std::cout << "algIter, jtIter, jtIndex: " << algIter << ", " << jtIter << ", " << jtIndex[algIter][jtIter] << std::endl;
-	      std::cout << "    jtpt first: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	      AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].genpt[jtIndex[algIter][jtIter]];
-	      std::cout << "    jtpt second: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	      AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].genphi[jtIndex[algIter][jtIter]];
 	      AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].geneta[jtIndex[algIter][jtIter]];
 
@@ -360,10 +411,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       else{
 	for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	  if(jtIndex[algIter][jtIter] >= 0){
-	    std::cout << "algIter, jtIter, jtIndex: " << algIter << ", " << jtIter << ", " << jtIndex[algIter][jtIter] << std::endl;
-	    std::cout << "    jtpt first: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	    AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].jtpt[jtIndex[algIter][jtIter]];
-	    std::cout << "    jtpt second: " << AlgIniJtPt_[algIter][jtIter] << std::endl;
 	    AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].jtphi[jtIndex[algIter][jtIter]];
 	    AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].jteta[jtIndex[algIter][jtIter]];
 	    
@@ -475,6 +523,25 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     if(montecarlo) genTreeIni_p->Fill();
 
     jetTreeIni_p->Fill();
+
+    if(nEvtsPassed%nEvtPerFile == 0){
+      outFile->cd();
+
+      if(!isGen){
+	rechitTreeIni_p->Write("", TObject::kOverwrite);
+	pfcandTreeIni_p->Write("", TObject::kOverwrite);
+	trkTreeIni_p->Write("", TObject::kOverwrite);
+      }
+      if(montecarlo) genTreeIni_p->Write("", TObject::kOverwrite);
+      jetTreeIni_p->Write("", TObject::kOverwrite);
+
+      CleanupFastJetIniSkim();
+      outFile->Close();
+      delete outFile;     
+      outTag++;
+      outFile = new TFile(Form("%s_%d_%d.root", outName, num, outTag), "RECREATE");
+      InitFastJetIniSkim(sType, isGen);
+    }
   }
 
   std::cout << "totEv: " << totEv << std::endl;
@@ -501,10 +568,11 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   if(montecarlo) genTreeIni_p->Write("", TObject::kOverwrite);
   jetTreeIni_p->Write("", TObject::kOverwrite);
     
-  delete c;
   CleanupFastJetIniSkim();
   outFile->Close();
   delete outFile;
+
+  delete c;
 
   printf("Done.\n");
   return(0);
