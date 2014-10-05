@@ -30,6 +30,35 @@ Int_t outTag = 0;
 
 collisionType getCType(sampleType sType);
 
+
+void setJtBranches(TTree* inJtTree, Bool_t montecarlo = false, Bool_t isGen = false)
+{
+  inJtTree->SetBranchStatus("*", 0);
+  inJtTree->SetBranchStatus("nref", 1);
+  inJtTree->SetBranchStatus("jtpt", 1);
+  inJtTree->SetBranchStatus("rawpt", 1);
+  inJtTree->SetBranchStatus("jteta", 1);
+  inJtTree->SetBranchStatus("jtphi", 1);
+
+  if(montecarlo){
+    inJtTree->SetBranchStatus("refparton_flavor", 1);
+    inJtTree->SetBranchStatus("refpt", 1);
+    inJtTree->SetBranchStatus("refeta", 1);
+    inJtTree->SetBranchStatus("refphi", 1);
+
+    if(isGen){
+      inJtTree->SetBranchStatus("ngen", 1);
+      inJtTree->SetBranchStatus("genpt", 1);
+      inJtTree->SetBranchStatus("geneta", 1);
+      inJtTree->SetBranchStatus("genphi", 1);
+      inJtTree->SetBranchStatus("genmatchindex", 1);
+    }
+  }
+
+  return;
+}
+
+
 Bool_t passesDijet(Jets jtCollection, Int_t jtIndex[5], Int_t &leadJtCut, Int_t &subLeadJtCut)
 {
   if(jtCollection.nref == 0){
@@ -136,6 +165,18 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   HiForest *c = new HiForest(listOfFiles[num].data(), "Forest", cType, montecarlo);
 
+  if(hi){
+    setJtBranches(c->akPu3Calo, montecarlo);
+    setJtBranches(c->akVs3Calo, montecarlo);
+    setJtBranches(c->akPu3PF, montecarlo, true);
+    setJtBranches(c->akVs3PF, montecarlo);
+  }
+  else{
+    setJtBranches(c->akPu3Calo, montecarlo);
+    setJtBranches(c->akPu3PF, montecarlo);
+    setJtBranches(c->ak3Calo, montecarlo);
+  }
+
   c->pfTree->SetBranchStatus("*", 0);
   c->pfTree->SetBranchStatus("nPFpart", 1);
   c->pfTree->SetBranchStatus("pfPt", 1);
@@ -183,6 +224,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     c->hasAkVs3PFJetTree = true;
   }
   else{
+    c->hasAkPu3JetTree = true;
+    c->hasAkPu3CaloJetTree = true;
     c->hasAk3CaloJetTree = true;
   }
 
@@ -273,6 +316,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     else{
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->ak3Calo;
+      AlgIniJtCollection[2] = c->akPu3PF;
     }
     
 
@@ -357,6 +401,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       continue;
 
     nEvtsPassed++;
+
     if(!isGen){
       c->hasTowerTree = true;
       c->hasPFTree = true;
@@ -391,6 +436,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     //Iterate over jets
 
     Int_t algMax = 5;
+    if(!hi) algMax = 3;
 
     for(Int_t algIter = 0; algIter < algMax; algIter++){
       if(algIter == 2){
