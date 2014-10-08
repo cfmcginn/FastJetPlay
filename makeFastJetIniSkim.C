@@ -218,10 +218,10 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
     c->evtTree->SetBranchStatus("hiBin", 1);
 
-    //    setJtBranches(c->akPu3CaloJetTree, montecarlo);
-    //    setJtBranches(c->akVs3CaloJetTree, montecarlo);
-    //    setJtBranches(c->akPu3PFJetTree, montecarlo, true);
-    //    setJtBranches(c->akVs3PFJetTree, montecarlo);
+    setJtBranches(c->akPu3CaloJetTree, montecarlo);
+    setJtBranches(c->akVs3CaloJetTree, montecarlo);
+    setJtBranches(c->akPu3PFJetTree, montecarlo, true);
+    setJtBranches(c->akVs3PFJetTree, montecarlo);
   }
   else{
     c->skimTree->SetBranchStatus("pPAcollisionEventSelectionPA", 1);

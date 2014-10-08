@@ -7,17 +7,20 @@
 #include "TChain.h"
 #include "TMath.h"
 
-Float_t ptHatCuts_PYTH[6] = {30, 50, 80, 120, 170, 1000000};
-Float_t crossSections_PYTH[6] = {.01075, .001025, .00009865, .00001129, .000001465, 0.000000000};
+#include "TH1F.h"
+#include "TCanvas.h"
 
-Float_t ptHatCuts_PYTHPawan[7] = {15, 30, 50, 80, 120, 170, 10000000};
-Float_t crossSections_PYTHPawan[7] = {.20340, .01075, .001025, .00009865, .00001129, .000001465, 0.000000000};
+const Float_t ptHatCuts_PYTH[6] = {30, 50, 80, 120, 170, 1000000};
+const Float_t crossSections_PYTH[6] = {.01075, .001025, .00009865, .00001129, .000001465, 0.000000000};
 
-Float_t ptHatCuts_PYTHHYD[10] = {15, 30, 50, 80, 120, 170, 220, 280, 370, 1000000};
-Float_t crossSections_PYTHHYD[10] = {.20340, .01075, .001025, .00009865, .00001129, .000001465, .0000002837, .00000005323, .000000005934, .0000000000};
+const Float_t ptHatCuts_PYTHPawan[7] = {15, 30, 50, 80, 120, 170, 10000000};
+const Float_t crossSections_PYTHPawan[7] = {.20340, .01075, .001025, .00009865, .00001129, .000001465, 0.000000000};
 
-Float_t ptHatCuts_FastJet[4] = {80, 100, 120, 1000000};
-Float_t crossSections_FastJet[4] = {.00009865, .00003069, .00001129, 0.0000000};
+const Float_t ptHatCuts_PYTHHYD[10] = {15, 30, 50, 80, 120, 170, 220, 280, 370, 1000000};
+const Float_t crossSections_PYTHHYD[10] = {.20340, .01075, .001025, .00009865, .00001129, .000001465, .0000002837, .00000005323, .000000005934, .0000000000};
+
+const Float_t ptHatCuts_FastJet[4] = {80, 100, 120, 1000000};
+const Float_t crossSections_FastJet[4] = {.00009865, .00003069, .00001129, 0.0000000};
 
 void derivePtHatWeights(const Int_t numCut,Float_t ptHatCuts[], Float_t crossSect[], std::string fList = "")
 {
@@ -79,7 +82,33 @@ void derivePtHatWeights(const Int_t numCut,Float_t ptHatCuts[], Float_t crossSec
       }
     }
   }
+
+  TH1F* pthatNoWeight_h = new TH1F("pthatNoWeight_h", "pthatNoWeight_h", 100, -0.5, 499.5);
+  TH1F* pthatWeight_h = new TH1F("pthatWeight_h", "pthatWeight_h", 100, -0.5, 499.5);
+
+  for(Int_t evtIter = 0; evtIter < nEntries; evtIter++){
+    ptHatChain_p->GetEntry(evtIter);
+
+    pthatNoWeight_h->Fill(ptHat_);
+
+    for(Int_t hatIter = 0; hatIter < numCut; hatIter++){
+      if(ptHat_ > ptHatCuts[hatIter] && ptHat_ < ptHatCuts[hatIter+1]){
+	pthatWeight_h->Fill(ptHat_, (crossSect[hatIter] - crossSect[hatIter + 1])/hatEntries[hatIter]);	
+      }
+    }
+  }
+
+  TCanvas* hatCanv_c = new TCanvas("hatCanv_c", "hatCanv_c", 2*300, 1*350);
+  hatCanv_c->Divide(2, 1, 0.0, 0.0);
   
+  hatCanv_c->cd(1);
+  gPad->SetLogy();
+  pthatNoWeight_h->Draw("HIST");
+
+  hatCanv_c->cd(2);
+  gPad->SetLogy();
+  pthatWeight_h->Draw("HIST");
+
   for(Int_t hatIter = 0; hatIter < numCut; hatIter++){
     std::cout << hatIter << ", " << ptHatCuts_PYTHHYD[hatIter] << std::endl;
     std::cout << "  hatEntries: " << hatEntries[hatIter] << std::endl;

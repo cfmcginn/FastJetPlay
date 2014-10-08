@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ $# -ne 4 ]
 then
   echo: "Usage: ./pJetTestScript.sh <inputList> <sType> <outName> <outDir>"

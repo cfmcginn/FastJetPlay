@@ -53,8 +53,8 @@ const Int_t nSubJt = 2;
 const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::antikt_algorithm;
 
-const Int_t pthatCuts_PYTH_HYD[9] = {15, 30, 50, 80, 120, 220, 280, 370, 10000000};
-const Float_t pthatWeights_PYTH_HYD[8] = {.611066, .0399951, .00243874, .000241009, .0000273228, .00000147976, .000000618337, .000000157267};
+const Int_t pthatCuts_PYTH_HYD[10] = {15, 30, 50, 80, 120, 170, 220, 280, 370, 10000000};
+const Float_t pthatWeights_PYTH_HYD[9] = {.611066, .0399951, .00243874, .000241009, .0000273235, .00000328804, .00000105782, .000000531469, .000000234991};
 
 
 void getJtSubstrct(fastjet::PseudoJet* inJt, Float_t& outPTD, Float_t& outR2, Float_t outSigma[nSigma], std::vector<fastjet::PseudoJet>* inBG, Float_t outFFMUnsub[nFFM], Float_t outFFMSub[nFFM], Float_t outFFMSubBetter[nFFM], Float_t tau[nTau][nBeta], Float_t subPt[nSubjet], Float_t subPhi[nSubjet], Float_t subEta[nSubjet])
@@ -234,7 +234,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
     if(montecarlo){
       pthat_ = pthatIni_;
       if(hi){
-        for(Int_t hatIter = 0; hatIter < 8; hatIter++){
+        for(Int_t hatIter = 0; hatIter < 9; hatIter++){
           if(pthat_ >= pthatCuts_PYTH_HYD[hatIter] && pthat_ < pthatCuts_PYTH_HYD[hatIter + 1]){
             pthatWeight_ = pthatWeights_PYTH_HYD[hatIter];
             break;

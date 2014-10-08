@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ $# -ne 4 ]
 then
   echo "Usage: ./jetTestScript.sh <inputList> <MCBool> <outputFile> <outDir>"

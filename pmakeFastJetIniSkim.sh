@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ $# -ne 5 ]
 then 
   echo "Usage: ./makeFastJetIniSkim.sh <inputList> <sampleType> <outName> <outDir> <isGenBool>"
