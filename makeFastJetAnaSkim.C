@@ -141,7 +141,7 @@ void getJtFlavor(Float_t realJtPhi[5], Float_t realJtEta[5], Int_t realJtRefPart
 }
 
  
-int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const char* outName = "defaultName_FASTJETSKIM.root", Int_t num = 0, Bool_t isGen = false)
+int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t num = 0, Bool_t isGen = false)
 {
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
@@ -181,7 +181,31 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
   std::cout << "FastJet Skim Loaded" << std::endl;
 
-  TFile *outFile_p = new TFile(Form("%s_%d.root", outName, num), "RECREATE");
+  std::string outName = listOfFiles[num];
+  const std::string cutString = "/";
+  const std::string iniString = "Ini";
+  std::size_t strIndex = 0;
+
+  std::cout << "Cull string" << std::endl;
+
+  while(true){
+    strIndex = outName.find(cutString);
+
+    if(strIndex == std::string::npos) break;
+
+    outName.replace(0, strIndex + 1, "");
+  }
+
+  std::cout << "Replace string" << std::endl;
+
+  strIndex = outName.find(iniString);
+  if(!(strIndex == std::string::npos)){
+    outName.replace(strIndex, iniString.length(), "Ana");
+  }
+
+  std::cout << "Output name: " << outName.c_str() << std::endl;
+
+  TFile *outFile_p = new TFile(outName.c_str(), "RECREATE");
   InitFastJetAnaSkim(sType, isGen);
 
   Long64_t nentries = jetTreeIni_p->GetEntries();
@@ -324,14 +348,14 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, const
 
 int main(int argc, char* argv[])
 {
-  if(argc!=6){
-    std::cout << "Usage: jetTestScript <inputFile> <sType> <outputFile> <#> <isGenBool>" << std::endl;
+  if(argc!=5){
+    std::cout << "Usage: jetTestScript <inputFile> <sType> <#> <isGenBool>" << std::endl;
     return 1;
   }
 
   int rStatus = -1;
 
-  rStatus = makeFastJetAnaSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]), Bool_t(atoi(argv[5])));
+  rStatus = makeFastJetAnaSkim(argv[1], sampleType(atoi(argv[2])), atoi(argv[3]), Bool_t(atoi(argv[4])));
 
   return rStatus;
 }

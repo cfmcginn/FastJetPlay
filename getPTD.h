@@ -1,9 +1,7 @@
 #ifndef getPTD_h
 #define getPTD_h
 
-#include "fastjet/contrib/Nsubjettiness.hh"
-#include "fastjet/contrib/Njettiness.hh"
-#include "fastjet/contrib/NjettinessPlugin.hh"
+#include "fastjet/PseudoJet.hh"
 
 Float_t getPTD(fastjet::PseudoJet *inJt)
 {
