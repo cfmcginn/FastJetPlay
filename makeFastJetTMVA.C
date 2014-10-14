@@ -117,10 +117,14 @@ void makeFastJetTMVA(const std::string inFileName, const std::string outFileName
   TTree* signalTree_p = (TTree*)inFile_p->Get("pfCandTreeAna");
   TTree* backgroundTree_p = (TTree*)inFile_p->Get("pfCandTreeAna");
 
+  std::cout << "1" << std::endl;
+
   TTree* friendTree_p = (TTree*)inFile_p->Get("jetTreeAna");
 
   signalTree_p->AddFriend(friendTree_p);
   backgroundTree_p->AddFriend(friendTree_p);
+
+  std::cout << "2" << std::endl;
 
   Double_t signalWeight = 1.0;
   Double_t backgroundWeight = 1.0;
@@ -128,11 +132,15 @@ void makeFastJetTMVA(const std::string inFileName, const std::string outFileName
   factory->AddSignalTree(signalTree_p, signalWeight);
   factory->AddBackgroundTree(backgroundTree_p, backgroundWeight);
 
+  std::cout << "3" << std::endl;
+
   TCut signalCuts = Form("pthatWeight*(pthat > 80 && pfJtVsPt > 100 && TMath::Abs(pfJtVsEta) < 2.0 && TMath::Abs(pfJtVsRefPart) < 9)");
   TCut backgroundCuts = Form("pthatWeight*(pthat > 80 && pfJtVsPt > 100 && TMath::Abs(pfJtVsEta) < 2.0 && TMath::Abs(pfJtVsRefPart) == 21)");
 
   factory->PrepareTrainingAndTestTree(signalCuts, backgroundCuts, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V" );
 
+
+  std::cout << "4" << std::endl;
 
   if(Use["Cuts"]) factory->BookMethod(TMVA::Types::kCuts, "Cuts", "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart");
   if(Use["CutsD"]) factory->BookMethod(TMVA::Types::kCuts, "CutsD", "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart:VarTransform=Decorrelate");
