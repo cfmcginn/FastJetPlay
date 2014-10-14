@@ -314,7 +314,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     }
     else{
       for(Int_t centIter = 0; centIter < centMax; centIter++){
-	if(b_ >= bLow[centIter] && b_ <= bHi[centIter]){
+	if(hiBin_ >= centLow[centIter] && hiBin_ <= centHi[centIter]){
 
 	  for(Int_t subIter = 0; subIter < 2; subIter++){
 	    if(TMath::Abs(pfJtVsEta_[subIter]) < totJtEtaCut && pfJtVsPt_[subIter] > totJtPtCut){

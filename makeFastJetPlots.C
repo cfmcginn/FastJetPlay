@@ -138,8 +138,8 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
       getHist_Q_p[iter]->SetBinContent(histIter+1, tempContent);
     }
 
-    //    getHist_Q_p[iter]->DrawCopy("SAME HIST");
-    //    getHist_G_p[iter]->DrawCopy("SAME HIST");
+    getHist_Q_p[iter]->DrawCopy("SAME HIST");
+    getHist_G_p[iter]->DrawCopy("SAME HIST");
     if(strcmp("", dataFileName.c_str()) != 0){
       getHist_Data_p[iter]->DrawCopy("SAME");
       drawMeanLine(getHist_Data_p[iter]->GetMean(), 1);
@@ -147,7 +147,7 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
 
     drawMeanLine(getHist_Tot_p[iter]->GetMean());
     label_p->DrawLatex(xPos[iter], .92, jetLabels[iter].c_str());
-    label_p->DrawLatex(xPos[iter], .84, bBins[3-iter].c_str());
+    label_p->DrawLatex(xPos[iter], .84, centString2[3-iter].c_str());
     label_p->DrawLatex(xPos[iter], .76, cutLabels[iter].c_str());
   }
 
@@ -166,7 +166,7 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
   plotCanvas_p->cd(1);
   leg_p->Draw("SAME");
 
-  /*
+  /*  
   for(Int_t iter = 0; iter < 4; iter++){
     plotCanvas_p->cd(iter+5);
 

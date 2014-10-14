@@ -794,6 +794,8 @@ void InitJtVar(){
   nGenJtSK_ = 0;
   nGenJtSUBE_ = 0;
 
+
+
   return;
 }
 
