@@ -94,16 +94,13 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
   TFile *f = new TFile(histFileName.c_str(), "UPDATE");
 
   TH1F* getHist_Tot_p[4];
-  TH1F* getHist_Sig_p[4];
   TH1F* getHist_Q_p[4];
   TH1F* getHist_G_p[4];
 
   for(Int_t iter = 0; iter < 4; iter++){
+    std::cout << Form("%s%s%s%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()) << std::endl;
     getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%s%s%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_Tot_p[iter], 0.4999, 0.0001, 505, 505);
-
-    getHist_Sig_p[iter] = (TH1F*)f->Get(Form("%sGENSUBE%s%s_Tot_%s_h", alg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
-    niceTH1(getHist_Sig_p[iter], 0.4999, 0.0001, 505, 505);
 
     getHist_Q_p[iter] = (TH1F*)f->Get(Form("%s%s%s%s_Q_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_Q_p[iter], 0.50, 0.00, 505, 505);
@@ -130,10 +127,6 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
     SetTitleLabel(getHist_Tot_p[iter], titleSize, labelSize, ptdTau, 1.0, "EventFraction", 1.5);
     getHist_Tot_p[iter]->DrawCopy("HIST");
 
-    SetTitleLabel(getHist_Sig_p[iter], titleSize, labelSize, ptdTau, 1.0, "EventFraction", 1.5);
-    getHist_Sig_p[iter]->SetMarkerColor(kRed);
-    getHist_Sig_p[iter]->DrawCopy("E1 SAME");
-
     getHist_Q_p[iter]->SetFillColor(kBlue-7);
     getHist_G_p[iter]->SetFillColor(kRed);
 
@@ -153,7 +146,6 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
     }
 
     drawMeanLine(getHist_Tot_p[iter]->GetMean());
-    drawMeanLine(getHist_Sig_p[iter]->GetMean(), 2, kRed);
     label_p->DrawLatex(xPos[iter], .92, jetLabels[iter].c_str());
     label_p->DrawLatex(xPos[iter], .84, bBins[3-iter].c_str());
     label_p->DrawLatex(xPos[iter], .76, cutLabels[iter].c_str());
@@ -166,15 +158,10 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
   leg_p->SetTextSizePixels(16);
   leg_p->SetBorderSize(0);
 
-  /*
   leg_p->AddEntry(getHist_Q_p[0], "Quark", "F");
   leg_p->AddEntry(getHist_G_p[0], "Gluon", "F");
   leg_p->AddEntry(getHist_Tot_p[0], "Untagged", "F");
   if(strcmp("", dataFileName.c_str()) != 0) leg_p->AddEntry(getHist_Data_p[0], "Data", "P");
-  */
-
-  leg_p->AddEntry(getHist_Sig_p[0], "Signal", "P");
-  leg_p->AddEntry(getHist_Tot_p[0], "Signal+Background", "F L");
 
   plotCanvas_p->cd(1);
   leg_p->Draw("SAME");
@@ -525,13 +512,13 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
   const std::string LeadSubLead[2] = {"Leading", "Subleading"};
   const std::string ptdTau[2] = {"PTD", "Tau21"};
 
-  for(Int_t iter = 2; iter < 3; iter++){
+  for(Int_t iter = 1; iter < 2; iter++){
     
     for(Int_t subIter = 0; subIter < 2; subIter++){
 
       for(Int_t ptdTauIter = 0; ptdTauIter < 2; ptdTauIter++){
-	plotFastJetPTDTau(histFileName, algType[iter], "GENSUBE", LeadSubLead[subIter], ptdTau[ptdTauIter], dataFileName);
-	plotFastJetPTDTau(histFileName, algType[iter], "GENRaw", LeadSubLead[subIter], ptdTau[ptdTauIter], dataFileName);
+	plotFastJetPTDTau(histFileName, algType[iter], "PFVs", LeadSubLead[subIter], ptdTau[ptdTauIter], dataFileName);
+	plotFastJetPTDTau(histFileName, algType[iter], "PFRaw", LeadSubLead[subIter], ptdTau[ptdTauIter], dataFileName);
 	//	plotFastJetPTDTauHiBin(histFileName, algType[iter], "GENRaw", LeadSubLead[subIter], ptdTau[ptdTauIter], dataFileName);
 	//	plotFastJetPTDTauHiBin(histFileName, algType[iter], "PFRaw", LeadSubLead[subIter], ptdTau[ptdTauIter], dataFileName);
       }      

@@ -96,6 +96,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   TH1F* pfVsPTDHist_G_p[4][2];                                                              
   TH1F* pfVsPTDHist_Else_p[4][2];                                                 
 
+  TH1F* pfRawTauHist_Tot_p[4][2];                                                                
+  TH1F* pfRawTauHist_Q_p[4][2];                                                                        
+  TH1F* pfRawTauHist_G_p[4][2];                                                              
+  TH1F* pfRawTauHist_Else_p[4][2];                                                 
+
   TH1F* pfVsTauHist_Tot_p[4][2];                                                                
   TH1F* pfVsTauHist_Q_p[4][2];                                                                        
   TH1F* pfVsTauHist_G_p[4][2];                                                              
@@ -158,6 +163,22 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       //Nsubjettiness beta = 0.5
 
+      //Raw
+
+      pfRawTauHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFRawTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfRawTauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
+      
+      pfRawTauHist_Q_p[iter][subIter] = new TH1F(Form("%sPFRawTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfRawTauHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);
+      
+      pfRawTauHist_G_p[iter][subIter] = new TH1F(Form("%sPFRawTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfRawTauHist_G_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);   
+      
+      pfRawTauHist_Else_p[iter][subIter] = new TH1F(Form("%sPFRawTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+      pfRawTauHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                           
+
+      //Vs
+
       pfVsTauHist_Tot_p[iter][subIter] = new TH1F(Form("%sPFVsTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFVsTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
       pfVsTauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
       
@@ -181,61 +202,62 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->GetXaxis()->SetLimits(subLow, subHigh);
       }
 	//Gen PTD
-
-      genRawPTDHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-      genRawPTDHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-      
-      genRawPTDHist_Q_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-      genRawPTDHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-      
-      genRawPTDHist_G_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-      genRawPTDHist_G_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-      
-      genRawPTDHist_Else_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
-      genRawPTDHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);         
-      
+      if(montecarlo){
+	genRawPTDHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+	genRawPTDHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+	
+	genRawPTDHist_Q_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+	genRawPTDHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+	
+	genRawPTDHist_G_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+	genRawPTDHist_G_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+	
+	genRawPTDHist_Else_p[iter][subIter] = new TH1F(Form("%sGENRawPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);
+	genRawPTDHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);         
+	
       //SK PTD
       
-      genSUBEPTDHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-      genSUBEPTDHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                    
-      
-      genSUBEPTDHist_Q_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-      genSUBEPTDHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
-      
-      genSUBEPTDHist_G_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-      genSUBEPTDHist_G_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);   
-      
-      genSUBEPTDHist_Else_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
-      genSUBEPTDHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                        
+	genSUBEPTDHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+	genSUBEPTDHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                    
+	
+	genSUBEPTDHist_Q_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+	genSUBEPTDHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);
+	
+	genSUBEPTDHist_G_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+	genSUBEPTDHist_G_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);   
+	
+	genSUBEPTDHist_Else_p[iter][subIter] = new TH1F(Form("%sGENSUBEPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBEPTD%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nPTDBins, ptdLow, ptdHigh);   
+	genSUBEPTDHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(ptdLow, ptdHigh);                        
+	
 
-
-      //GEN Nsubjettiness beta = 0.5 RAW
-
-      genRawTauHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genRawTauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
+	//GEN Nsubjettiness beta = 0.5 RAW
+	
+	genRawTauHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genRawTauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
+	
+	genRawTauHist_Q_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genRawTauHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);
+	
+	genRawTauHist_G_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genRawTauHist_G_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);   
+	
+	genRawTauHist_Else_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genRawTauHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                      
       
-      genRawTauHist_Q_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genRawTauHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);
-      
-      genRawTauHist_G_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genRawTauHist_G_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);   
-      
-      genRawTauHist_Else_p[iter][subIter] = new TH1F(Form("%sGENRawTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENRawTau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genRawTauHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                      
-
-      //GEN Nsubjettiness beta = 0.5 SK
-
-      genSUBETauHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genSUBETauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
-      
-      genSUBETauHist_Q_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genSUBETauHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);
-      
-      genSUBETauHist_G_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genSUBETauHist_G_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);   
-      
-      genSUBETauHist_Else_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
-      genSUBETauHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                         
+	//GEN Nsubjettiness beta = 0.5 SK
+	
+	genSUBETauHist_Tot_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_Tot_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genSUBETauHist_Tot_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                    
+	
+	genSUBETauHist_Q_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_Q_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genSUBETauHist_Q_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);
+	
+	genSUBETauHist_G_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_G_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genSUBETauHist_G_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);   
+	
+	genSUBETauHist_Else_p[iter][subIter] = new TH1F(Form("%sGENSUBETau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sGENSUBETau21%s_Else_%s_h", algType[setNum].c_str(), LeadSubLead[subIter].c_str(), centString[iter].c_str()), nTauBins, TauLow, TauHigh);   
+	genSUBETauHist_Else_p[iter][subIter]->GetXaxis()->SetLimits(TauLow, TauHigh);                         
+      }      
    }
   }
 
@@ -318,47 +340,61 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      }
 	    }
 
-	    if(TMath::Abs(genJtSUBEEta_[subIter]) < totJtEtaCut && genJtSUBEPt_[subIter] > totJtPtCut){
+	    if(montecarlo){
+	      if(TMath::Abs(genJtSUBEEta_[subIter]) < totJtEtaCut && genJtSUBEPt_[subIter] > totJtPtCut){
 	     
-	      genSUBEPTDHist_Tot_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight);
-	      genSUBETauHist_Tot_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
-
-
-	      if(TMath::Abs(genJtSUBERefPart_[subIter]) < 9){
-		genSUBEPTDHist_Q_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight);
-		genSUBETauHist_Q_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
-	      }
-	      else if(genJtSUBERefPart_[subIter] == 21){
-		genSUBEPTDHist_G_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight);
-		genSUBETauHist_G_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
-	      }
-	      else{
-		genSUBEPTDHist_Else_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight); 
-		genSUBETauHist_Else_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
+		genSUBEPTDHist_Tot_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight);
+		genSUBETauHist_Tot_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
+		
+		
+		if(TMath::Abs(genJtSUBERefPart_[subIter]) < 9){
+		  genSUBEPTDHist_Q_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight);
+		  genSUBETauHist_Q_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
+		}
+		else if(genJtSUBERefPart_[subIter] == 21){
+		  genSUBEPTDHist_G_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight);
+		  genSUBETauHist_G_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
+		}
+		else{
+		  genSUBEPTDHist_Else_p[centIter][subIter]->Fill(genJtSUBEPTD_[subIter], hatWeight); 
+		  genSUBETauHist_Else_p[centIter][subIter]->Fill(genSUBETau_[subIter][1][2]/genSUBETau_[subIter][0][2], hatWeight);
+		}
 	      }
 	    }
 	  
 	    if(TMath::Abs(pfJtRawEta_[subIter]) < totJtEtaCut && pfJtRawPt_[subIter] > totJtPtCut){
 	      
 	      pfRawPTDHist_Tot_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+              pfRawTauHist_Tot_p[centIter][subIter]->Fill(pfRawTau_[subIter][1][4]/pfRawTau_[subIter][0][4], hatWeight);
 
 	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
 		if(pfJtRawPt_[subIter] > 50) pfRawSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtRawPt_[subIter][subIter2]/pfJtRawPt_[subIter], hatWeight);
 	      }	      
 
-	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9) pfRawPTDHist_Q_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
-	      else if(pfJtRawRefPart_[subIter] == 21) pfRawPTDHist_G_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
-	      else pfRawPTDHist_Else_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9){
+		pfRawPTDHist_Q_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+		pfRawTauHist_Q_p[centIter][subIter]->Fill(pfRawTau_[subIter][1][4]/pfRawTau_[subIter][0][4], hatWeight);
+	      }
+	      else if(pfJtRawRefPart_[subIter] == 21){
+		pfRawPTDHist_G_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+		pfRawTauHist_G_p[centIter][subIter]->Fill(pfRawTau_[subIter][1][4]/pfRawTau_[subIter][0][4], hatWeight);
+	      }
+	      else{
+		pfRawPTDHist_Else_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
+		pfRawTauHist_Else_p[centIter][subIter]->Fill(pfRawTau_[subIter][1][4]/pfRawTau_[subIter][0][4], hatWeight);
+	      }
 	    }
 
-	    if(TMath::Abs(genJtRawEta_[subIter]) < totJtEtaCut && genJtRawPt_[subIter] > totJtPtCut){
-	      
-	      genRawPTDHist_Tot_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
-	      genRawTauHist_Tot_p[centIter][subIter]->Fill(genRawTau_[subIter][1][2]/genRawTau_[subIter][0][2], hatWeight);
+	    if(montecarlo){
+	      if(TMath::Abs(genJtRawEta_[subIter]) < totJtEtaCut && genJtRawPt_[subIter] > totJtPtCut){
+		
+		genRawPTDHist_Tot_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
+		genRawTauHist_Tot_p[centIter][subIter]->Fill(genRawTau_[subIter][1][2]/genRawTau_[subIter][0][2], hatWeight);
 
-	      if(TMath::Abs(genJtRawRefPart_[subIter]) < 9) genRawPTDHist_Q_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
-	      else if(genJtRawRefPart_[subIter] == 21) genRawPTDHist_G_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
-	      else genRawPTDHist_Else_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
+		if(TMath::Abs(genJtRawRefPart_[subIter]) < 9) genRawPTDHist_Q_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
+		else if(genJtRawRefPart_[subIter] == 21) genRawPTDHist_G_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
+		else genRawPTDHist_Else_p[centIter][subIter]->Fill(genJtRawPTD_[subIter], hatWeight);
+	      }
 	    }
 	  }	
 	  
@@ -400,7 +436,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   outFile_p = new TFile(outName.c_str(), "UPDATE");
   for(Int_t iter = 0; iter < centMax; iter++){
     for(Int_t subIter = 0; subIter < 2; subIter++){
-      /*
+      
       pfVsPTDHist_Q_p[iter][subIter]->Scale(1./pfVsPTDHist_Tot_p[iter][subIter]->Integral());
       pfVsPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
       
@@ -424,34 +460,48 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       
       pfRawPTDHist_Tot_p[iter][subIter]->Scale(1./pfRawPTDHist_Tot_p[iter][subIter]->Integral());
       pfRawPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-      */
-      genSUBEPTDHist_Q_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
-      genSUBEPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
       
-      genSUBEPTDHist_G_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
-      genSUBEPTDHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+      if(montecarlo){
+	genSUBEPTDHist_Q_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
+	genSUBEPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genSUBEPTDHist_G_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
+	genSUBEPTDHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genSUBEPTDHist_Else_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
+	genSUBEPTDHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genSUBEPTDHist_Tot_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
+	genSUBEPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawPTDHist_Q_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
+	genRawPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawPTDHist_G_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
+	genRawPTDHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawPTDHist_Else_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
+	genRawPTDHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
       
-      genSUBEPTDHist_Else_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
-      genSUBEPTDHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
-      
-      genSUBEPTDHist_Tot_p[iter][subIter]->Scale(1./genSUBEPTDHist_Tot_p[iter][subIter]->Integral());
-      genSUBEPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-      
-      genRawPTDHist_Q_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
-      genRawPTDHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
-      
-      genRawPTDHist_G_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
-      genRawPTDHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
-      
-      genRawPTDHist_Else_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
-      genRawPTDHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
-      
-      genRawPTDHist_Tot_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
-      genRawPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-
+	genRawPTDHist_Tot_p[iter][subIter]->Scale(1./genRawPTDHist_Tot_p[iter][subIter]->Integral());
+	genRawPTDHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+      }
 
       //Tau
-      /*
+      
+      pfRawTauHist_Q_p[iter][subIter]->Scale(1./pfRawTauHist_Tot_p[iter][subIter]->Integral());
+      pfRawTauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+
+      pfRawTauHist_G_p[iter][subIter]->Scale(1./pfRawTauHist_Tot_p[iter][subIter]->Integral());
+      pfRawTauHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+
+      pfRawTauHist_Else_p[iter][subIter]->Scale(1./pfRawTauHist_Tot_p[iter][subIter]->Integral());
+      pfRawTauHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+
+      pfRawTauHist_Tot_p[iter][subIter]->Scale(1./pfRawTauHist_Tot_p[iter][subIter]->Integral());
+      pfRawTauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+
+
       pfVsTauHist_Q_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
       pfVsTauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
 
@@ -463,51 +513,52 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       pfVsTauHist_Tot_p[iter][subIter]->Scale(1./pfVsTauHist_Tot_p[iter][subIter]->Integral());
       pfVsTauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-      */
-      genSUBETauHist_Q_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
-      genSUBETauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genSUBETauHist_G_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
-      genSUBETauHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genSUBETauHist_Else_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
-      genSUBETauHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genSUBETauHist_Tot_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
-      genSUBETauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genRawTauHist_Q_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
-      genRawTauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genRawTauHist_G_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
-      genRawTauHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genRawTauHist_Else_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
-      genRawTauHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
-
-      genRawTauHist_Tot_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
-      genRawTauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
-
+      
+      if(montecarlo){
+	genSUBETauHist_Q_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
+	genSUBETauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genSUBETauHist_G_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
+	genSUBETauHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genSUBETauHist_Else_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
+	genSUBETauHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genSUBETauHist_Tot_p[iter][subIter]->Scale(1./genSUBETauHist_Tot_p[iter][subIter]->Integral());
+	genSUBETauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawTauHist_Q_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
+	genRawTauHist_Q_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawTauHist_G_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
+	genRawTauHist_G_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawTauHist_Else_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
+	genRawTauHist_Else_p[iter][subIter]->Write("", TObject::kOverwrite);
+	
+	genRawTauHist_Tot_p[iter][subIter]->Scale(1./genRawTauHist_Tot_p[iter][subIter]->Integral());
+	genRawTauHist_Tot_p[iter][subIter]->Write("", TObject::kOverwrite);
+      }
       
       //Sub Rat
       for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
-	/*
+	
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Scale(1./pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Integral());
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Write("", TObject::kOverwrite);
 	
 	pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->Scale(1./pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->Integral());
 	pfVsSubRatHist_Tot_p[iter][subIter][subIter2]->Write("", TObject::kOverwrite);
-	*/
+	
       }
     }
   }
 
   if(hi){
     for(Int_t subIter = 0; subIter < 2; subIter++){
-      /*
+      
       pfRawPTDHiBinHist_p[subIter]->Write("", TObject::kOverwrite);
       pfVsPTDHiBinHist_p[subIter]->Write("", TObject::kOverwrite);
-      */
+      
     }
   }
 
@@ -541,34 +592,47 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       delete pfRawPTDHist_Else_p[iter][subIter];
       pfRawPTDHist_Else_p[iter][subIter] = 0;
 
-
-      delete genSUBEPTDHist_Tot_p[iter][subIter];
-      genSUBEPTDHist_Tot_p[iter][subIter] = 0;
-      
-      delete genSUBEPTDHist_Q_p[iter][subIter];
-      genSUBEPTDHist_Q_p[iter][subIter] = 0;
-      
-      delete genSUBEPTDHist_G_p[iter][subIter];
-      genSUBEPTDHist_G_p[iter][subIter] = 0;
-      
-      delete genSUBEPTDHist_Else_p[iter][subIter];
-      genSUBEPTDHist_Else_p[iter][subIter] = 0;
-      
-      delete genRawPTDHist_Tot_p[iter][subIter];
-      genRawPTDHist_Tot_p[iter][subIter] = 0;
-      
-      delete genRawPTDHist_Q_p[iter][subIter];
-      genRawPTDHist_Q_p[iter][subIter] = 0;
-      
-      delete genRawPTDHist_G_p[iter][subIter];
-      genRawPTDHist_G_p[iter][subIter] = 0;
-      
-      delete genRawPTDHist_Else_p[iter][subIter];
-      genRawPTDHist_Else_p[iter][subIter] = 0;
-
+      if(montecarlo){
+	delete genSUBEPTDHist_Tot_p[iter][subIter];
+	genSUBEPTDHist_Tot_p[iter][subIter] = 0;
+	
+	delete genSUBEPTDHist_Q_p[iter][subIter];
+	genSUBEPTDHist_Q_p[iter][subIter] = 0;
+	
+	delete genSUBEPTDHist_G_p[iter][subIter];
+	genSUBEPTDHist_G_p[iter][subIter] = 0;
+	
+	delete genSUBEPTDHist_Else_p[iter][subIter];
+	genSUBEPTDHist_Else_p[iter][subIter] = 0;
+	
+	delete genRawPTDHist_Tot_p[iter][subIter];
+	genRawPTDHist_Tot_p[iter][subIter] = 0;
+	
+	delete genRawPTDHist_Q_p[iter][subIter];
+	genRawPTDHist_Q_p[iter][subIter] = 0;
+	
+	delete genRawPTDHist_G_p[iter][subIter];
+	genRawPTDHist_G_p[iter][subIter] = 0;
+	
+	delete genRawPTDHist_Else_p[iter][subIter];
+	genRawPTDHist_Else_p[iter][subIter] = 0;
+      }
 
 
       //Tau
+
+      delete pfRawTauHist_Tot_p[iter][subIter];
+      pfRawTauHist_Tot_p[iter][subIter] = 0;
+
+      delete pfRawTauHist_Q_p[iter][subIter];
+      pfRawTauHist_Q_p[iter][subIter] = 0;
+
+      delete pfRawTauHist_G_p[iter][subIter];
+      pfRawTauHist_G_p[iter][subIter] = 0;
+
+      delete pfRawTauHist_Else_p[iter][subIter];
+      pfRawTauHist_Else_p[iter][subIter] = 0;
+
 
       delete pfVsTauHist_Tot_p[iter][subIter];
       pfVsTauHist_Tot_p[iter][subIter] = 0;
@@ -582,29 +646,31 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       delete pfVsTauHist_Else_p[iter][subIter];
       pfVsTauHist_Else_p[iter][subIter] = 0;
 
-      delete genSUBETauHist_Tot_p[iter][subIter];
-      genSUBETauHist_Tot_p[iter][subIter] = 0;
-
-      delete genSUBETauHist_Q_p[iter][subIter];
-      genSUBETauHist_Q_p[iter][subIter] = 0;
-
-      delete genSUBETauHist_G_p[iter][subIter];
-      genSUBETauHist_G_p[iter][subIter] = 0;
-
-      delete genSUBETauHist_Else_p[iter][subIter];
-      genSUBETauHist_Else_p[iter][subIter] = 0;
-
-      delete genRawTauHist_Tot_p[iter][subIter];
-      genRawTauHist_Tot_p[iter][subIter] = 0;
-
-      delete genRawTauHist_Q_p[iter][subIter];
-      genRawTauHist_Q_p[iter][subIter] = 0;
-
-      delete genRawTauHist_G_p[iter][subIter];
-      genRawTauHist_G_p[iter][subIter] = 0;
-
-      delete genRawTauHist_Else_p[iter][subIter];
-      genRawTauHist_Else_p[iter][subIter] = 0;
+      if(montecarlo){
+	delete genSUBETauHist_Tot_p[iter][subIter];
+	genSUBETauHist_Tot_p[iter][subIter] = 0;
+	
+	delete genSUBETauHist_Q_p[iter][subIter];
+	genSUBETauHist_Q_p[iter][subIter] = 0;
+	
+	delete genSUBETauHist_G_p[iter][subIter];
+	genSUBETauHist_G_p[iter][subIter] = 0;
+	
+	delete genSUBETauHist_Else_p[iter][subIter];
+	genSUBETauHist_Else_p[iter][subIter] = 0;
+	
+	delete genRawTauHist_Tot_p[iter][subIter];
+	genRawTauHist_Tot_p[iter][subIter] = 0;
+	
+	delete genRawTauHist_Q_p[iter][subIter];
+	genRawTauHist_Q_p[iter][subIter] = 0;
+	
+	delete genRawTauHist_G_p[iter][subIter];
+	genRawTauHist_G_p[iter][subIter] = 0;
+	
+	delete genRawTauHist_Else_p[iter][subIter];
+	genRawTauHist_Else_p[iter][subIter] = 0;
+      }
 
       //SubRat
 
@@ -658,7 +724,8 @@ void makeFastJetHists(const std::string inName, const std::string outName, sampl
   jetTreeAna_p->AddFriend(pfcandTreeAna_p);
   Int_t algMax = 5;
 
-  for(Int_t setIter = 2; setIter < 3; setIter++){
+  for(Int_t setIter = 1; setIter < 3; setIter++){
+    if(setIter == 2 && !isMonteCarlo(sType)) continue;
     
     makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType);
   }
