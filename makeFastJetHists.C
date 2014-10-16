@@ -69,7 +69,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Float_t ptdLow = 0.0001;                                                                                
   const Float_t ptdHigh = 0.9999;
 
-  const Int_t nSubBins  = 10;                                                                            
+  const Int_t nSubBins  = 40;                                                                            
   const Int_t subLow = 0;                                                                                
   const Int_t subHigh = 1;
 
@@ -108,8 +108,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   TH1F* pfVsTauHist_G_p[4][2];                                                              
   TH1F* pfVsTauHist_Else_p[4][2];                                                 
 
-  TH1F* pfRawSubRatHist_Tot_p[4][2][2];
-  TH1F* pfVsSubRatHist_Tot_p[4][2][2];
+  TH1F* pfRawSubRatHist_Tot_p[4][2][nSubjet+1];
+  TH1F* pfVsSubRatHist_Tot_p[4][2][nSubjet+1];
 
 
   TH1F* genRawPTDHist_Tot_p[4][2];                                                                
@@ -196,7 +196,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       //RatHist
 
-      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+      for(Int_t subIter2 = 0; subIter2 < nSubjet+1; subIter2++){
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2] = new TH1F(Form("%sPFRawSub%dRat%s_%s_h", algType[setNum].c_str(), subIter2 + 1, LeadSubLead[subIter].c_str(), centString[iter].c_str()), Form("%sPFRawSub%dRat%s_%s_h", algType[setNum].c_str(), subIter2 + 1, LeadSubLead[subIter].c_str(), centString[iter].c_str()), nSubBins, subLow, subHigh);
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->GetXaxis()->SetLimits(subLow, subHigh);
 	
@@ -324,9 +324,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      pfVsPTDHist_Tot_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
 	      pfVsTauHist_Tot_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][4]/pfVsTau_[subIter][0][4], hatWeight);
 
-	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+	      for(Int_t subIter2 = 0; subIter2 < nSubjet; subIter2++){
 		if(pfJtVsPt_[subIter] > jtCuts[subIter]) pfVsSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtVsPt_[subIter][subIter2]/pfJtVsPt_[subIter], hatWeight);
 	      }      
+
+	      if(pfJtVsPt_[subIter] > jtCuts[subIter]) pfVsSubRatHist_Tot_p[centIter][subIter][5]->Fill((pfSubJtVsPt_[subIter][0] + pfSubJtVsPt_[subIter][1] + pfSubJtVsPt_[subIter][2] + pfSubJtVsPt_[subIter][3] + pfSubJtVsPt_[subIter][4])/pfJtVsPt_[subIter], hatWeight);
 
 	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9){
 		pfVsPTDHist_Q_p[centIter][subIter]->Fill(pfJtVsPTD_[subIter], hatWeight);
@@ -369,9 +371,11 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      pfRawPTDHist_Tot_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
               pfRawTauHist_Tot_p[centIter][subIter]->Fill(pfRawTau_[subIter][1][4]/pfRawTau_[subIter][0][4], hatWeight);
 
-	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+	      for(Int_t subIter2 = 0; subIter2 < nSubjet; subIter2++){
 		if(pfJtRawPt_[subIter] > jtCuts[subIter]) pfRawSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtRawPt_[subIter][subIter2]/pfJtRawPt_[subIter], hatWeight);
 	      }	      
+
+	      if(pfJtRawPt_[subIter] > jtCuts[subIter]) pfRawSubRatHist_Tot_p[centIter][subIter][5]->Fill((pfSubJtRawPt_[subIter][0] + pfSubJtRawPt_[subIter][1] + pfSubJtRawPt_[subIter][2] + pfSubJtRawPt_[subIter][3] + pfSubJtRawPt_[subIter][4])/pfJtRawPt_[subIter], hatWeight);
 
 	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9){
 		pfRawPTDHist_Q_p[centIter][subIter]->Fill(pfJtRawPTD_[subIter], hatWeight);
@@ -543,7 +547,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       }
       
       //Sub Rat
-      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+      for(Int_t subIter2 = 0; subIter2 < nSubjet+1; subIter2++){
 	
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Scale(1./pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Integral());
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2]->Write("", TObject::kOverwrite);
@@ -676,7 +680,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       //SubRat
 
-      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
+      for(Int_t subIter2 = 0; subIter2 < nSubjet+1; subIter2++){
 	delete pfRawSubRatHist_Tot_p[iter][subIter][subIter2];
 	pfRawSubRatHist_Tot_p[iter][subIter][subIter2] = 0;
 	

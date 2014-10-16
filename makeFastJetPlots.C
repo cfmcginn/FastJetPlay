@@ -98,8 +98,6 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
   TH1F* getHist_G_p[4];
 
   for(Int_t iter = 0; iter < 4; iter++){
-    std::cout << Form("%s%s%s%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()) << std::endl;
-
     getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%s%s%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_Tot_p[iter], 0.4999, 0.0001, 505, 505);
 
@@ -437,15 +435,13 @@ void plotFastJetSubRat(const std::string histFileName, const std::string alg, co
 
   const Int_t color[2] = {kRed, kBlue-7};
 
-  Float_t subRatHeight[2] = {0.40, 0.80};
+  Float_t subRatHeight[6] = {0.20, 0.30, .50, .60, .70, .50};
 
   TH1F* getData_p[4][2];
   TFile* dataFile_p = new TFile(dataFileName.c_str(), "READ");
 
   for(Int_t iter = 0; iter < 4; iter++){
     for(Int_t subIter = 0; subIter < 2; subIter++){
-
-      std::cout << Form("%s%sSub%dRat%s_%s_h", alg.c_str(), constAlg.c_str(), subRatNum, LeadSubLead[subIter].c_str(), centString[iter].c_str()) << std::endl;
       getData_p[iter][subIter] = (TH1F*)dataFile_p->Get(Form("%s%sSub%dRat%s_%s_h", alg.c_str(), constAlg.c_str(), subRatNum, LeadSubLead[subIter].c_str(), centString[iter].c_str()));
       niceTH1(getData_p[iter][subIter], subRatHeight[subRatNum-1], 0.00, 505, 504);
       getData_p[iter][subIter]->SetMarkerColor(color[subIter]);
@@ -555,7 +551,7 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
       //      plotFastJetMeanPTDHiBin(histFileName, algType[iter], LeadSubLead[subIter], dataFileName);
     }
 
-    for(Int_t subRatIter = 0; subRatIter < 2; subRatIter++){    
+    for(Int_t subRatIter = 0; subRatIter < 6; subRatIter++){    
       plotFastJetSubRat(histFileName, algType[iter], "PFVs", subRatIter+1, dataFileName);
       //      plotFastJetSubRat(dataFileName, algType[iter], "PFVs", subRatIter+1, "Data");
 

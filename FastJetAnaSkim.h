@@ -31,7 +31,7 @@ const Int_t nSigma = 3;
 const Int_t nTau = 3;
 const Int_t nBeta = 6;
 const Int_t nFFM = 14;
-const Int_t nSubjet = 2;
+const Int_t nSubjet = 5;
 
 TTree* rechitTreeAna_p = 0;
 TTree* pfcandTreeAna_p = 0;
@@ -307,7 +307,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfJtRawPt", pfJtRawPt_, Form("pfJtRawPt[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawPhi", pfJtRawPhi_, Form("pfJtRawPhi[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawEta", pfJtRawEta_, Form("pfJtRawEta[nPFJtRaw]/F"));
-    pfcandTreeAna_p->Branch("pfJtRawConstN", pfJtRawConstN_, Form("pfJtRawConstN[nPfJtRaw]/I"));
+    pfcandTreeAna_p->Branch("pfJtRawConstN", pfJtRawConstN_, Form("pfJtRawConstN[nPFJtRaw]/I"));
     pfcandTreeAna_p->Branch("pfJtRawPTD", pfJtRawPTD_, Form("pfJtRawPTD[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawR2", pfJtRawR2_, Form("pfJtRawR2[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawSigma", pfJtRawSigma_, Form("pfJtRawSigma[nPFJtRaw][%d]/F", nSigma));
@@ -324,7 +324,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfJtVsPt", pfJtVsPt_, Form("pfJtVsPt[nPFJtVs]/F"));
     pfcandTreeAna_p->Branch("pfJtVsPhi", pfJtVsPhi_, Form("pfJtVsPhi[nPFJtVs]/F"));
     pfcandTreeAna_p->Branch("pfJtVsEta", pfJtVsEta_, Form("pfJtVsEta[nPFJtVs]/F"));
-    pfcandTreeAna_p->Branch("pfJtVsConstN", pfJtVsConstN_, Form("pfJtVsConstN[nPfJtVs]/I"));
+    pfcandTreeAna_p->Branch("pfJtVsConstN", pfJtVsConstN_, Form("pfJtVsConstN[nPFJtVs]/I"));
     pfcandTreeAna_p->Branch("pfJtVsPTD", pfJtVsPTD_, Form("pfJtVsPTD[nPFJtVs]/F"));
     pfcandTreeAna_p->Branch("pfJtVsR2", pfJtVsR2_, Form("pfJtVsR2[nPFJtVs]/F"));
     pfcandTreeAna_p->Branch("pfJtVsSigma", pfJtVsSigma_, Form("pfJtVsSigma[nPFJtVs][%d]/F", nSigma));
@@ -341,7 +341,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfJtSKPt", pfJtSKPt_, Form("pfJtSKPt[nPFJtSK]/F"));
     pfcandTreeAna_p->Branch("pfJtSKPhi", pfJtSKPhi_, Form("pfJtSKPhi[nPFJtSK]/F"));
     pfcandTreeAna_p->Branch("pfJtSKEta", pfJtSKEta_, Form("pfJtSKEta[nPFJtSK]/F"));
-    pfcandTreeAna_p->Branch("pfJtSKConstN", pfJtSKConstN_, Form("pfJtSKConstN[nPfJtSK]/I"));
+    pfcandTreeAna_p->Branch("pfJtSKConstN", pfJtSKConstN_, Form("pfJtSKConstN[nPFJtSK]/I"));
     pfcandTreeAna_p->Branch("pfJtSKPTD", pfJtSKPTD_, Form("pfJtSKPTD[nPFJtSK]/F"));
     pfcandTreeAna_p->Branch("pfJtSKR2", pfJtSKR2_, Form("pfJtSKR2[nPFJtSK]/F"));
     pfcandTreeAna_p->Branch("pfJtSKSigma", pfJtSKSigma_, Form("pfJtSKSigma[nPFJtSK][%d]/F", nSigma));

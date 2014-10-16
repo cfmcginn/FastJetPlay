@@ -50,7 +50,6 @@ fastjet::JetAlgorithm rhoJtAlg = fastjet::kt_algorithm;
 
 //Def. set for subjet clustering
 
-const Int_t nSubJt = 2;
 const Double_t subJtR = 0.1;
 fastjet::JetAlgorithm subJtAlg = fastjet::antikt_algorithm;
 
@@ -70,7 +69,7 @@ void getJtSubstrct(fastjet::PseudoJet* inJt, Int_t& outConstN, Float_t& outPTD, 
   }
 
   getJtFFMoments(inJt, rhoJtR, rhoJtAlg, jtAreaDef, inBG, 14, -0.5, 6.0, outFFMUnsub, outFFMSub, outFFMSubBetter);
-  getSubJt(inJt, subJtR, subJtAlg, nSubJt, subPt, subPhi, subEta);
+  getSubJt(inJt, subJtR, subJtAlg, nSubjet, subPt, subPhi, subEta);
   
   for(Int_t tauIter = 0; tauIter < nTau; tauIter++){
     for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
