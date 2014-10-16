@@ -69,7 +69,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   const Float_t ptdLow = 0.0001;                                                                                
   const Float_t ptdHigh = 0.9999;
 
-  const Int_t nSubBins  = 25;                                                                            
+  const Int_t nSubBins  = 10;                                                                            
   const Int_t subLow = 0;                                                                                
   const Int_t subHigh = 1;
 
@@ -85,6 +85,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
   std::string centString[4];
   const std::string LeadSubLead[2] = {"Leading", "Subleading"};
+
+  const Float_t jtCuts[2] = {100.0, 40.0};
 
   TH1F* pfRawPTDHist_Tot_p[4][2];                                                                
   TH1F* pfRawPTDHist_Q_p[4][2];                                                                        
@@ -323,7 +325,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	      pfVsTauHist_Tot_p[centIter][subIter]->Fill(pfVsTau_[subIter][1][4]/pfVsTau_[subIter][0][4], hatWeight);
 
 	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
-		if(pfJtVsPt_[subIter] > 100 && pfSubJtVsPt_[subIter][subIter2] > 50) pfVsSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtVsPt_[subIter][subIter2]/pfJtVsPt_[subIter], hatWeight);
+		if(pfJtVsPt_[subIter] > jtCuts[subIter]) pfVsSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtVsPt_[subIter][subIter2]/pfJtVsPt_[subIter], hatWeight);
 	      }      
 
 	      if(TMath::Abs(pfJtVsRefPart_[subIter]) < 9){
@@ -368,7 +370,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
               pfRawTauHist_Tot_p[centIter][subIter]->Fill(pfRawTau_[subIter][1][4]/pfRawTau_[subIter][0][4], hatWeight);
 
 	      for(Int_t subIter2 = 0; subIter2 < 2; subIter2++){
-		if(pfJtRawPt_[subIter] > 50) pfRawSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtRawPt_[subIter][subIter2]/pfJtRawPt_[subIter], hatWeight);
+		if(pfJtRawPt_[subIter] > jtCuts[subIter]) pfRawSubRatHist_Tot_p[centIter][subIter][subIter2]->Fill(pfSubJtRawPt_[subIter][subIter2]/pfJtRawPt_[subIter], hatWeight);
 	      }	      
 
 	      if(TMath::Abs(pfJtRawRefPart_[subIter]) < 9){
@@ -724,9 +726,10 @@ void makeFastJetHists(const std::string inName, const std::string outName, sampl
   jetTreeAna_p->AddFriend(pfcandTreeAna_p);
   Int_t algMax = 5;
 
-  for(Int_t setIter = 1; setIter < 3; setIter++){
+  for(Int_t setIter = 2; setIter < 5; setIter++){
     if(setIter == 2 && !isMonteCarlo(sType)) continue;
-    
+    if(setIter == 3) continue;    
+
     makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType);
   }
 

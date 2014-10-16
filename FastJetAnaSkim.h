@@ -308,6 +308,7 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeAna_p->Branch("pfJtRawPhi", pfJtRawPhi_, Form("pfJtRawPhi[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawEta", pfJtRawEta_, Form("pfJtRawEta[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawConstN", pfJtRawConstN_, Form("pfJtRawConstN[nPfJtRaw]/I"));
+    pfcandTreeAna_p->Branch("pfJtRawPTD", pfJtRawPTD_, Form("pfJtRawPTD[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawR2", pfJtRawR2_, Form("pfJtRawR2[nPFJtRaw]/F"));
     pfcandTreeAna_p->Branch("pfJtRawSigma", pfJtRawSigma_, Form("pfJtRawSigma[nPFJtRaw][%d]/F", nSigma));
     pfcandTreeAna_p->Branch("pfJtRawRefPart", pfJtRawRefPart_, Form("pfJtRawRefPart[nPFJtRaw]/I"));

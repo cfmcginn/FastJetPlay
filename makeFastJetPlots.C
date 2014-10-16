@@ -99,6 +99,7 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
 
   for(Int_t iter = 0; iter < 4; iter++){
     std::cout << Form("%s%s%s%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()) << std::endl;
+
     getHist_Tot_p[iter] = (TH1F*)f->Get(Form("%s%s%s%s_Tot_%s_h", alg.c_str(), constAlg.c_str(), ptdTau.c_str(), LeadSubLead.c_str(), centString[iter].c_str()));
     niceTH1(getHist_Tot_p[iter], 0.4999, 0.0001, 505, 505);
 
@@ -424,7 +425,7 @@ void plotFastJetPTDTauHiBin(const std::string histFileName, const std::string al
 }
 
 
-void plotFastJetSubRat(const std::string histFileName, const std::string alg, const std::string constAlg, const Int_t subRatNum, const std::string dataMC)
+void plotFastJetSubRat(const std::string histFileName, const std::string alg, const std::string constAlg, const Int_t subRatNum, const std::string dataFileName)
 {
   const Int_t titleSize = 24;
   const Int_t labelSize = 20;
@@ -432,70 +433,98 @@ void plotFastJetSubRat(const std::string histFileName, const std::string alg, co
   const std::string centString[4] = {"50100", "3050", "1030", "010"};
   const std::string centString2[4] = {"50-100%", "30-50%", "10-30%", "0-10%"};
   const std::string LeadSubLead[2] = {"Leading", "Subleading"};
-  const std::string drawOpt[2] = {"", "SAME"};
+  const std::string drawOpt[2] = {"HIST", "SAME"};
 
   const Int_t color[2] = {kRed, kBlue-7};
 
+  Float_t subRatHeight[2] = {0.40, 0.80};
+
+  TH1F* getData_p[4][2];
+  TFile* dataFile_p = new TFile(dataFileName.c_str(), "READ");
+
+  for(Int_t iter = 0; iter < 4; iter++){
+    for(Int_t subIter = 0; subIter < 2; subIter++){
+
+      std::cout << Form("%s%sSub%dRat%s_%s_h", alg.c_str(), constAlg.c_str(), subRatNum, LeadSubLead[subIter].c_str(), centString[iter].c_str()) << std::endl;
+      getData_p[iter][subIter] = (TH1F*)dataFile_p->Get(Form("%s%sSub%dRat%s_%s_h", alg.c_str(), constAlg.c_str(), subRatNum, LeadSubLead[subIter].c_str(), centString[iter].c_str()));
+      niceTH1(getData_p[iter][subIter], subRatHeight[subRatNum-1], 0.00, 505, 504);
+      getData_p[iter][subIter]->SetMarkerColor(color[subIter]);
+    }
+  }
+
 
   TFile *f = new TFile(histFileName.c_str(), "UPDATE");
-
   TH1F* getHist_p[4][2];
 
   for(Int_t iter = 0; iter < 4; iter++){
     for(Int_t subIter = 0; subIter < 2; subIter++){
       getHist_p[iter][subIter] = (TH1F*)f->Get(Form("%s%sSub%dRat%s_%s_h", alg.c_str(), constAlg.c_str(), subRatNum, LeadSubLead[subIter].c_str(), centString[iter].c_str()));
-      niceTH1(getHist_p[iter][subIter], 0.40, 0.00, 505, 504);
-      getHist_p[iter][subIter]->SetMarkerColor(color[subIter]);
+      niceTH1(getHist_p[iter][subIter], subRatHeight[subRatNum-1], 0.00, 505, 504);
+      getHist_p[iter][subIter]->SetLineColor(color[subIter]);
     }
   }
 
-  TCanvas* plotCanvas_p = new TCanvas(Form("%s%sSub%dRat_c", alg.c_str(), constAlg.c_str(), subRatNum), Form("%s%sSub%dRat_c", alg.c_str(), constAlg.c_str(), subRatNum), 4*300, 1*350);
-  plotCanvas_p->Divide(4, 1, 0.0, 0.0);
+  TCanvas* plotCanvas_p[2];
+  for(Int_t iter = 0; iter < 2; iter++){
+    plotCanvas_p[iter] = new TCanvas(Form("%s%sSub%sRat_c", alg.c_str(), constAlg.c_str(), LeadSubLead[iter].c_str()), Form("%s%sSub%sRat_c", alg.c_str(), constAlg.c_str(), LeadSubLead[iter].c_str()), 4*300, 1*350);
+    plotCanvas_p[iter]->Divide(4, 1, 0.0, 0.0);
+  }
 
   TLatex* label_p = new TLatex();
   label_p->SetNDC();
   label_p->SetTextFont(43);
   label_p->SetTextSizePixels(23);
 
-  const std::string jetLabels[4] = {Form("Dijet selection w/ ak%s", alg.c_str()), Form("Recluster w/ %s", constAlg.c_str()), "CA Algorithm", "R = 0.3"};
-  const std::string cutLabels[4] = {Form("p_{T}^{tot}>%d GeV/c", totJtPtCut), "p_{T}^{sub}>20 GeV/c", "|#eta| < 2.0", "A_{J} Inclusive"};
+  const std::string jetLabels[4] = {Form("Dijet selection w/ ak%s", alg.c_str()), Form("Recluster w/ %s", constAlg.c_str()), "anti-k_{t} Algorithm", "R = 0.3"};
+  const std::string cutLabels[4] = {Form("p_{T}^{tot}>%d GeV/c", totJtPtCut), "", "|#eta| < 2.0", "A_{J} Inclusive"};
 
-  for(Int_t iter = 0; iter < 4; iter++){
-    plotCanvas_p->cd(iter+1);
+  for(Int_t ratIter = 0; ratIter < 2; ratIter++){
+    for(Int_t iter = 0; iter < 4; iter++){
+      plotCanvas_p[ratIter]->cd(iter+1);
+      
+      SetTitleLabel(getHist_p[iter][ratIter], titleSize, labelSize, Form("p_{T}^{%d}/p_{T,%s}", subRatNum, LeadSubLead[ratIter].c_str()), 1.0, "EventFraction", 1.5);
+      getHist_p[iter][ratIter]->DrawCopy("HIST");
+      //      dratMeanLine(getHist_p[iter][0]->GetMean());
 
-    for(Int_t subIter = 0; subIter < 2; subIter++){
-      SetTitleLabel(getHist_p[iter][subIter], titleSize, labelSize, "p_{T}^{sub}/p_{T,Tot}", 1.0, "EventFraction", 1.5);
-      getHist_p[iter][subIter]->DrawCopy(drawOpt[subIter].c_str());
-      //      drawMeanLine(getHist_p[iter][subIter]->GetMean());
+      SetTitleLabel(getData_p[iter][ratIter], titleSize, labelSize, Form("p_{T}^{%d}/p_{T,%s}", subRatNum, LeadSubLead[ratIter].c_str()), 1.0, "EventFraction", 1.5);
+      getData_p[iter][ratIter]->DrawCopy("SAME");
+      //      drawMeanLine(getData_p[iter][0]->GetMean());
+      
+      label_p->DrawLatex(.3, .92, jetLabels[iter].c_str());
+      label_p->DrawLatex(.3, .84, centString2[iter].c_str());
+      label_p->DrawLatex(.3, .76, cutLabels[iter].c_str());
     }
-
-    label_p->DrawLatex(.3, .92, jetLabels[iter].c_str());
-    label_p->DrawLatex(.3, .84, centString2[iter].c_str());
-    label_p->DrawLatex(.3, .76, cutLabels[iter].c_str());
   }
 
-  TLegend* leg_p = new TLegend(0.30, 0.45, 0.55, 0.75);
-  leg_p->SetFillColor(0);
-  leg_p->SetFillStyle(0);
-  leg_p->SetTextFont(43);
-  leg_p->SetTextSizePixels(22);
-  leg_p->SetBorderSize(0);
+  TLegend* leg_p[2];
+  for(Int_t iter = 0; iter < 2; iter++){
+    leg_p[iter] = new TLegend(0.30, 0.45, 0.55, 0.75);
+    leg_p[iter]->SetFillColor(0);
+    leg_p[iter]->SetFillStyle(0);
+    leg_p[iter]->SetTextFont(43);
+    leg_p[iter]->SetTextSizePixels(22);
+    leg_p[iter]->SetBorderSize(0);
+    
+    leg_p[iter]->AddEntry(getHist_p[0][iter], Form("P+H"), "L");
+    leg_p[iter]->AddEntry(getData_p[0][iter], Form("PbPb"), "P");
+  }
 
-  leg_p->AddEntry(getHist_p[0][0], Form("p_{T,sub%d}/p_{T,1}", subRatNum), "P");
-  leg_p->AddEntry(getHist_p[0][1], Form("p_{T,sub%d}/p_{T,2}", subRatNum), "P");
+  for(Int_t iter = 0; iter < 2; iter++){
+    plotCanvas_p[iter]->cd(1);
+    leg_p[iter]->Draw("SAME");
 
-  plotCanvas_p->cd(1);
-  leg_p->Draw("SAME");
-
-  plotCanvas_p->Write("", TObject::kOverwrite);
-  claverCanvasSaving(plotCanvas_p, Form("../FastJetHists/pdfDir/%s%sSub%dRat_%s", alg.c_str(), constAlg.c_str(), subRatNum, dataMC.c_str()), "pdf");
+    plotCanvas_p[iter]->Write("", TObject::kOverwrite);
+    claverCanvasSaving(plotCanvas_p[iter], Form("../FastJetHists/pdfDir/%s%sSub%s%dRat", alg.c_str(), constAlg.c_str(), LeadSubLead[iter].c_str(), subRatNum), "pdf");
+  }
 
   delete label_p;
-  delete plotCanvas_p;
+  delete plotCanvas_p[0];
+  delete plotCanvas_p[1];
 
   for(Int_t iter = 0; iter < 4; iter++){
     for(Int_t subIter = 0; subIter < 2; subIter++){
       delete getHist_p[iter][subIter];
+      delete getData_p[iter][subIter];
     }
   }
 
@@ -512,8 +541,8 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
   const std::string LeadSubLead[2] = {"Leading", "Subleading"};
   const std::string ptdTau[2] = {"PTD", "Tau21"};
 
-  for(Int_t iter = 1; iter < 2; iter++){
-    
+  for(Int_t iter = 4; iter < 5; iter++){
+
     for(Int_t subIter = 0; subIter < 2; subIter++){
 
       for(Int_t ptdTauIter = 0; ptdTauIter < 2; ptdTauIter++){
@@ -527,8 +556,11 @@ void makeFastJetPlots(const std::string histFileName, Bool_t isMonteCarlo = fals
     }
 
     for(Int_t subRatIter = 0; subRatIter < 2; subRatIter++){    
-      //      plotFastJetSubRat(histFileName, algType[iter], "PFVs", subRatIter+1, "MC");
+      plotFastJetSubRat(histFileName, algType[iter], "PFVs", subRatIter+1, dataFileName);
       //      plotFastJetSubRat(dataFileName, algType[iter], "PFVs", subRatIter+1, "Data");
+
+      plotFastJetSubRat(histFileName, algType[iter], "PFRaw", subRatIter+1, dataFileName);
+      //      plotFastJetSubRat(dataFileName, algType[iter], "PFRaw", subRatIter+1, "Data");
     }
   }
 

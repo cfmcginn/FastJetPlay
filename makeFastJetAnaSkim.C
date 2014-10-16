@@ -315,10 +315,11 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
       }
     }
 
-    getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], nPFJtVs_, pfJtVsPhi_, pfJtVsEta_, pfJtVsRefPart_);
-    getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], nPFJtRaw_, pfJtRawPhi_, pfJtRawEta_, pfJtRawRefPart_);
-
     if(montecarlo){
+      getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], nPFJtRaw_, pfJtRawPhi_, pfJtRawEta_, pfJtRawRefPart_);
+      getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], nPFJtVs_, pfJtVsPhi_, pfJtVsEta_, pfJtVsRefPart_);
+      getJtFlavor(AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], nPFJtSK_, pfJtSKPhi_, pfJtSKEta_, pfJtSKRefPart_);
+
       getJtFlavor(AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], nGenJtSUBE_, genJtSUBEPhi_, genJtSUBEEta_, genJtSUBERefPart_);
       getJtFlavor(AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], nGenJtSK_, genJtSKPhi_, genJtSKEta_, genJtSKRefPart_);
       getJtFlavor(AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], nGenJtRaw_, genJtRawPhi_, genJtRawEta_, genJtRawRefPart_);
