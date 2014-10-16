@@ -288,7 +288,7 @@ void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string a
   label_p->SetTextFont(43);
   label_p->SetTextSizePixels(20);
 
-  label_p->DrawLatex(.30, .60, Form("%s %s", LeadSubLead.c_str(), ajCutString));
+  label_p->DrawLatex(.30, .60, Form("%s %s", LeadSubLead.c_str(), ajCutString.c_str()));
 
 
   plotCanvas_p->Write("", TObject::kOverwrite);

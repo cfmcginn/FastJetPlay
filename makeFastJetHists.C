@@ -12,7 +12,7 @@ const Float_t subLeadJtCut = 50.;
 
 const Float_t totJtPtCut = 50.;
 const Float_t totJtEtaCut = 2.0;
-const Float_t totJtAjCut = 0.11;
+const Float_t totJtAjCut = 0.33;
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
@@ -291,7 +291,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     if(montecarlo) hatWeight = pthatWeight_;
 
-    if(AlgJtAsymm_[setNum] > totJtAjCut) continue;
+    if(AlgJtAsymm_[setNum] < totJtAjCut) continue;
 
     if(!hi){
 
@@ -439,7 +439,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     }
   }
 
-  outFile_p = new TFile(outName.c_str(), "UPDATE");
+  outFile_p = new TFile(Form("%s.root", outName.c_str()), "UPDATE");
   for(Int_t iter = 0; iter < centMax; iter++){
     for(Int_t subIter = 0; subIter < 2; subIter++){
       
@@ -713,11 +713,22 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 }
 
 
-void makeFastJetHists(const std::string inName, const std::string outName, sampleType sType = kHIDATA)
+void makeFastJetHists(const std::string inName, sampleType sType = kHIDATA)
 {
   TH1::SetDefaultSumw2();
 
-  outFile_p = new TFile(outName.c_str(), "RECREATE");
+  std::string outName = inName;
+  const std::string cutString[2] = {"AnaSkim", ".root"};
+  const std::string repString[2] = {"Hist", ""};
+  std::cout << "Replace string" << std::endl;
+  for(Int_t iter = 0; iter < 2; iter++){
+    std::size_t strIndex = outName.find(cutString[iter]);
+    if(!(strIndex == std::string::npos)){
+      outName.replace(strIndex, cutString[iter].length(), repString[iter]);
+    }
+  }
+
+  outFile_p = new TFile(Form("%s.root", outName.c_str()), "RECREATE");
   outFile_p->Close();
   delete outFile_p;
 
