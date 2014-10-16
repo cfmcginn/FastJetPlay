@@ -12,7 +12,7 @@ const Float_t subLeadJtCut = 50.;
 
 const Float_t totJtPtCut = 50.;
 const Float_t totJtEtaCut = 2.0;
-const Float_t totJtAjCut = 0.22;
+const Float_t totJtAjCut = 0.11;
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
@@ -291,7 +291,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     if(montecarlo) hatWeight = pthatWeight_;
 
-    //    if(AlgJtAsymm_[setNum] < totJtAjCut) continue;
+    if(AlgJtAsymm_[setNum] > totJtAjCut) continue;
 
     if(!hi){
 

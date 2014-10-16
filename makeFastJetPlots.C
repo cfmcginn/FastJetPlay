@@ -14,6 +14,8 @@
 
 const std::string algType[5] = {"PuCalo", "VsCalo", "T", "PuPF", "VsPF"};
 
+const std::string ajCutString = "A_{J} < 0.11";
+
 const Int_t totJtPtCut = 50;
 
 void handsomeTH1( TH1 *a=0, Int_t col =1, Float_t size=1, Int_t markerstyle=20)
@@ -117,7 +119,7 @@ void plotFastJetPTDTau(const std::string histFileName, const std::string alg, co
   label_p->SetTextSizePixels(23);
 
   const std::string jetLabels[4] = {Form("Dijet selection w/ ak%s", alg.c_str()), Form("Recluster w/ %s", constAlg.c_str()), "anti-k_{t} Algorithm", "R = 0.4"};
-  const std::string cutLabels[4] = {Form("p_{T}>%d GeV/c", totJtPtCut), "|#eta| < 2.0", "A_{J} Inclusive", Form("%s Jet", LeadSubLead.c_str())};
+  const std::string cutLabels[4] = {Form("p_{T}>%d GeV/c", totJtPtCut), "|#eta| < 2.0", ajCutString, Form("%s Jet", LeadSubLead.c_str())};
 
   const Float_t xPos[4] = {0.3, 0.2, 0.2, 0.2};
 
@@ -286,7 +288,7 @@ void plotFastJetMeanPTDHiBin(const std::string histFileName, const std::string a
   label_p->SetTextFont(43);
   label_p->SetTextSizePixels(20);
 
-  label_p->DrawLatex(.30, .60, Form("%s A_{J} Inclusive", LeadSubLead.c_str()));
+  label_p->DrawLatex(.30, .60, Form("%s %s", LeadSubLead.c_str(), ajCutString));
 
 
   plotCanvas_p->Write("", TObject::kOverwrite);
@@ -377,7 +379,7 @@ void plotFastJetPTDTauHiBin(const std::string histFileName, const std::string al
   }
 
   label_p->DrawLatex(.50, .93, LeadSubLead.c_str());
-  label_p->DrawLatex(.50, .85, "A_{J} Inclusive");
+  label_p->DrawLatex(.50, .85, ajCutString.c_str());
   label_p->DrawLatex(.50, .77, Form("p_{T}>%d; |#eta| < 2", totJtPtCut));
   label_p->DrawLatex(.50, .69, "PbPb");
 
@@ -472,7 +474,7 @@ void plotFastJetSubRat(const std::string histFileName, const std::string alg, co
   label_p->SetTextSizePixels(23);
 
   const std::string jetLabels[4] = {Form("Dijet selection w/ ak%s", alg.c_str()), Form("Recluster w/ %s", constAlg.c_str()), "anti-k_{t} Algorithm", "R = 0.3"};
-  const std::string cutLabels[4] = {Form("p_{T}^{tot}>%d GeV/c", totJtPtCut), "", "|#eta| < 2.0", "A_{J} Inclusive"};
+  const std::string cutLabels[4] = {Form("p_{T}^{tot}>%d GeV/c", totJtPtCut), "", "|#eta| < 2.0", ajCutString};
 
   for(Int_t ratIter = 0; ratIter < 2; ratIter++){
     for(Int_t iter = 0; iter < 4; iter++){
