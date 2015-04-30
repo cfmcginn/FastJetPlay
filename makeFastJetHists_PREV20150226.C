@@ -39,17 +39,17 @@ Bool_t isEventCut(Int_t setNum, sampleType sType)
 }
 
 
-void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t setNum, sampleType sType, const std::string constJtStr, Int_t* nConstJt, Float_t constJtPt[], Float_t constJtEta[], Int_t constJtPart[], Float_t constJtPTD[], Float_t constJtSigma[][nSigma], Int_t constJtMult[], Float_t constSubJtPt[][nSubjet], Float_t constJtTau[][nTau][nBeta], Float_t constJtFFMUnsub[][nFFM])
+void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t setNum, sampleType sType = kHIDATA, const std::string constJtStr, Float_t nConstJt, Float_t constJtPt[], Float_t constJtEta[])
 {
-  const Bool_t montecarlo = isMonteCarlo(sType);
-  const Bool_t hi = isHI(sType);
-  
+  const Bool_t montecarlo = isMonteCarlo(sType);                                                         
+  const Bool_t hi = isHI(sType);                                                                       
+                                                                                               
   Int_t centMax = 1;                                                                             
   if(hi) centMax = centHIMax;
 
   const Float_t jtCuts[2] = {100.0, 40.0};
 
-  BookHist(sType, algType[setNum], constJtStr);
+  BookHist(sType, algType[setNum], "PFVs");
 
   for(Int_t jEntry = 0; jEntry < (Int_t)anaTree_p->GetEntries(); jEntry++){
     anaTree_p->GetEntry(jEntry);
@@ -61,21 +61,21 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     if(montecarlo) hatWeight = pthatWeight_;
 
     if(!hi){
-      for(Int_t jtIter = 0; jtIter < *nConstJt; jtIter++){
-	if(constJtPt[jtIter] < 60.0) continue;
-	if(TMath::Abs(constJtEta[jtIter] + pPbEtaBoost) > 1.5) continue;
+      for(Int_t jtIter = 0; jtIter < nPFJtRaw_; jtIter++){
+	if(pfJtRawPt_[jtIter] < 60.0) continue;
+	if(TMath::Abs(pfJtRawEta_[jtIter] + pPbEtaBoost) > 1.5) continue;
 
-	Bool_t isQuark = TMath::Abs(constJtPart[jtIter]) < 9;
-	Bool_t isGluon = TMath::Abs(constJtPart[jtIter]) == 21;
+	Bool_t isQuark = TMath::Abs(pfJtRawRefPart_[jtIter]) < 9;
+	Bool_t isGluon = TMath::Abs(pfJtRawRefPart_[jtIter]) == 21;
 
 	if(jtIter < 2){
-	  ptdHist_Tot_p[0][jtIter]->Fill(constJtPTD[jtIter], hatWeight);
-	  if(isQuark) ptdHist_Q_p[0][jtIter]->Fill(constJtPTD[jtIter], hatWeight);
-	  else if(isGluon) ptdHist_G_p[0][jtIter]->Fill(constJtPTD[jtIter], hatWeight);
-	  else ptdHist_Else_p[0][jtIter]->Fill(constJtPTD[jtIter], hatWeight);
+	  ptdHist_Tot_p[0][jtIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	  if(isQuark) ptdHist_Q_p[0][jtIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	  else if(isGluon) ptdHist_G_p[0][jtIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	  else ptdHist_Else_p[0][jtIter]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 	  
 	  for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	    Float_t sig = constJtSigma[jtIter][sigIter];
+	    Float_t sig = pfJtRawSigma_[jtIter][sigIter];
 
 	    sigHist_Tot_p[0][jtIter][sigIter]->Fill(sig, hatWeight);
 	    if(isQuark) sigHist_Q_p[0][jtIter][sigIter]->Fill(sig, hatWeight);
@@ -83,13 +83,13 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	    else sigHist_Else_p[0][jtIter][sigIter]->Fill(sig, hatWeight);
 	  }
 
-	  multHist_Tot_p[0][jtIter]->Fill(constJtMult[jtIter], hatWeight);
-	  if(isQuark) multHist_Q_p[0][jtIter]->Fill(constJtMult[jtIter], hatWeight);
-	  else if(isGluon) multHist_G_p[0][jtIter]->Fill(constJtMult[jtIter], hatWeight);
-	  else multHist_Else_p[0][jtIter]->Fill(constJtMult[jtIter], hatWeight);
+	  multHist_Tot_p[0][jtIter]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	  if(isQuark) multHist_Q_p[0][jtIter]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	  else if(isGluon) multHist_G_p[0][jtIter]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	  else multHist_Else_p[0][jtIter]->Fill(pfJtRawConstN_[jtIter], hatWeight);
 
           for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-	    Float_t subRat = constSubJtPt[jtIter][subJtIter]/constJtPt[jtIter];
+	    Float_t subRat = pfSubJtRawPt_[jtIter][subJtIter]/pfJtRawPt_[jtIter];
 
             subRatHist_Tot_p[0][jtIter][subJtIter]->Fill(subRat, hatWeight);
             if(isQuark) subRatHist_Q_p[0][jtIter][subJtIter]->Fill(subRat, hatWeight);
@@ -97,19 +97,9 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
             else subRatHist_Else_p[0][jtIter][subJtIter]->Fill(subRat, hatWeight);
           }
 
-          for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-	    Float_t ffmUnsub = constJtFFMUnsub[jtIter][ffmIter];
-	    //	    ffmUnsub *= TMath::Power(((-.5 + (ffmIter*.5) + 1)/2.0), 4);
-
-            ffmUnsubHist_Tot_p[0][jtIter][ffmIter]->Fill(ffmUnsub, hatWeight);
-            if(isQuark) ffmUnsubHist_Q_p[0][jtIter][ffmIter]->Fill(ffmUnsub, hatWeight);
-            else if(isGluon) ffmUnsubHist_G_p[0][jtIter][ffmIter]->Fill(ffmUnsub, hatWeight);
-            else ffmUnsubHist_Else_p[0][jtIter][ffmIter]->Fill(ffmUnsub, hatWeight);
-          }
-
           for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	    Float_t rat21 = constJtTau[jtIter][1][betaIter]/constJtTau[jtIter][0][betaIter];
-	    Float_t rat32 = constJtTau[jtIter][2][betaIter]/constJtTau[jtIter][1][betaIter];
+	    Float_t rat21 = pfRawTau_[jtIter][1][betaIter]/pfRawTau_[jtIter][0][betaIter];
+	    Float_t rat32 = pfRawTau_[jtIter][2][betaIter]/pfRawTau_[jtIter][1][betaIter];
 
             tau21Hist_Tot_p[0][jtIter][betaIter]->Fill(rat21, hatWeight);
             if(isQuark) tau21Hist_Q_p[0][jtIter][betaIter]->Fill(rat21, hatWeight);
@@ -126,13 +116,13 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
 	//inclusive jet
 
- 	ptdHist_Tot_p[0][2]->Fill(constJtPTD[jtIter], hatWeight);
-	if(isQuark) ptdHist_Q_p[0][2]->Fill(constJtPTD[jtIter], hatWeight);
-	else if(isGluon) ptdHist_G_p[0][2]->Fill(constJtPTD[jtIter], hatWeight);
-	else ptdHist_Else_p[0][2]->Fill(constJtPTD[jtIter], hatWeight);
+ 	ptdHist_Tot_p[0][2]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	if(isQuark) ptdHist_Q_p[0][2]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	else if(isGluon) ptdHist_G_p[0][2]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	else ptdHist_Else_p[0][2]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 
 	for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	  Float_t sig = constJtSigma[jtIter][sigIter];
+	  Float_t sig = pfJtRawSigma_[jtIter][sigIter];
 
 	  sigHist_Tot_p[0][2][sigIter]->Fill(sig, hatWeight);
 	  if(isQuark) sigHist_Q_p[0][2][sigIter]->Fill(sig, hatWeight);
@@ -140,13 +130,13 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	  else sigHist_Else_p[0][2][sigIter]->Fill(sig, hatWeight);
 	}
 
-	multHist_Tot_p[0][2]->Fill(constJtMult[jtIter], hatWeight);
-	if(isQuark) multHist_Q_p[0][2]->Fill(constJtMult[jtIter], hatWeight);
-	else if(isGluon) multHist_G_p[0][2]->Fill(constJtMult[jtIter], hatWeight);
-	else multHist_Else_p[0][2]->Fill(constJtMult[jtIter], hatWeight);
+	multHist_Tot_p[0][2]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	if(isQuark) multHist_Q_p[0][2]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	else if(isGluon) multHist_G_p[0][2]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	else multHist_Else_p[0][2]->Fill(pfJtRawConstN_[jtIter], hatWeight);
 
 	for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-	  Float_t subRat = constSubJtPt[jtIter][subJtIter]/constJtPt[jtIter];
+	  Float_t subRat = pfSubJtRawPt_[jtIter][subJtIter]/pfJtRawPt_[jtIter];
 
 	  subRatHist_Tot_p[0][2][subJtIter]->Fill(subRat, hatWeight);
 	  if(isQuark) subRatHist_Q_p[0][2][subJtIter]->Fill(subRat, hatWeight);
@@ -154,20 +144,10 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	  else subRatHist_Else_p[0][2][subJtIter]->Fill(subRat, hatWeight);
 	}
 	
-	for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-	  Float_t ffmUnsub = constJtFFMUnsub[jtIter][ffmIter];
-	  //	  ffmUnsub *= TMath::Power(((-.5 + (ffmIter*.5) + 1)/2.0), 4);
-	  
-	  ffmUnsubHist_Tot_p[0][2][ffmIter]->Fill(ffmUnsub, hatWeight);
-	  if(isQuark) ffmUnsubHist_Q_p[0][2][ffmIter]->Fill(ffmUnsub, hatWeight);
-	  else if(isGluon) ffmUnsubHist_G_p[0][2][ffmIter]->Fill(ffmUnsub, hatWeight);
-	  else ffmUnsubHist_Else_p[0][2][ffmIter]->Fill(ffmUnsub, hatWeight);
-	}
 
-	
 	for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	  Float_t rat21 = constJtTau[jtIter][1][betaIter]/constJtTau[jtIter][0][betaIter];
-	  Float_t rat32 = constJtTau[jtIter][2][betaIter]/constJtTau[jtIter][1][betaIter];
+	  Float_t rat21 = pfRawTau_[jtIter][1][betaIter]/pfRawTau_[jtIter][0][betaIter];
+	  Float_t rat32 = pfRawTau_[jtIter][2][betaIter]/pfRawTau_[jtIter][1][betaIter];
 	  
 	  tau21Hist_Tot_p[0][2][betaIter]->Fill(rat21, hatWeight);
 	  if(isQuark) tau21Hist_Q_p[0][2][betaIter]->Fill(rat21, hatWeight);
@@ -185,20 +165,20 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
 	Int_t ptPos = -1;
 	for(Int_t ptIter = 0; ptIter < 5; ptIter++){
-	  if(constJtPt[jtIter] > ptCuts[ptIter] && constJtPt[jtIter] < ptCuts[ptIter+1]){
+	  if(pfJtRawPt_[jtIter] > ptCuts[ptIter] && pfJtRawPt_[jtIter] < ptCuts[ptIter+1]){
 	    ptPos = ptPosArr[ptIter];
 	    break;
 	  }
 	}
 
 	if(ptPos >= 0){
-	  ptdHist_Tot_p[0][ptPos]->Fill(constJtPTD[jtIter], hatWeight);
-	  if(isQuark) ptdHist_Q_p[0][ptPos]->Fill(constJtPTD[jtIter], hatWeight);
-	  else if(isGluon) ptdHist_G_p[0][ptPos]->Fill(constJtPTD[jtIter], hatWeight);
-	  else ptdHist_Else_p[0][ptPos]->Fill(constJtPTD[jtIter], hatWeight);
+	  ptdHist_Tot_p[0][ptPos]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	  if(isQuark) ptdHist_Q_p[0][ptPos]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	  else if(isGluon) ptdHist_G_p[0][ptPos]->Fill(pfJtRawPTD_[jtIter], hatWeight);
+	  else ptdHist_Else_p[0][ptPos]->Fill(pfJtRawPTD_[jtIter], hatWeight);
 	  
 	  for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	    Float_t sig = constJtSigma[jtIter][sigIter];
+	    Float_t sig = pfJtRawSigma_[jtIter][sigIter];
 
 	    sigHist_Tot_p[0][ptPos][sigIter]->Fill(sig, hatWeight);
 	    if(isQuark) sigHist_Q_p[0][ptPos][sigIter]->Fill(sig, hatWeight);
@@ -206,13 +186,13 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 	    else sigHist_Else_p[0][ptPos][sigIter]->Fill(sig, hatWeight);
 	  }
 
-	  multHist_Tot_p[0][ptPos]->Fill(constJtMult[jtIter], hatWeight);
-	  if(isQuark) multHist_Q_p[0][ptPos]->Fill(constJtMult[jtIter], hatWeight);
-	  else if(isGluon) multHist_G_p[0][ptPos]->Fill(constJtMult[jtIter], hatWeight);
-	  else multHist_Else_p[0][ptPos]->Fill(constJtMult[jtIter], hatWeight);
+	  multHist_Tot_p[0][ptPos]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	  if(isQuark) multHist_Q_p[0][ptPos]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	  else if(isGluon) multHist_G_p[0][ptPos]->Fill(pfJtRawConstN_[jtIter], hatWeight);
+	  else multHist_Else_p[0][ptPos]->Fill(pfJtRawConstN_[jtIter], hatWeight);
 
           for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-            Float_t subRat = constSubJtPt[jtIter][subJtIter]/constJtPt[jtIter];
+            Float_t subRat = pfSubJtRawPt_[jtIter][subJtIter]/pfJtRawPt_[jtIter];
 
             subRatHist_Tot_p[0][ptPos][subJtIter]->Fill(subRat, hatWeight);
             if(isQuark) subRatHist_Q_p[0][ptPos][subJtIter]->Fill(subRat, hatWeight);
@@ -220,19 +200,9 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
             else subRatHist_Else_p[0][ptPos][subJtIter]->Fill(subRat, hatWeight);
           }
 
-          for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-	    Float_t ffmUnsub = constJtFFMUnsub[jtIter][ffmIter];
-	    //	    ffmUnsub *= TMath::Power(((-.5 + (ffmIter*.5) + 1)/2.0), 4);
-
-            ffmUnsubHist_Tot_p[0][ptPos][ffmIter]->Fill(ffmUnsub, hatWeight);
-            if(isQuark) ffmUnsubHist_Q_p[0][ptPos][ffmIter]->Fill(ffmUnsub, hatWeight);
-            else if(isGluon) ffmUnsubHist_G_p[0][ptPos][ffmIter]->Fill(ffmUnsub, hatWeight);
-            else ffmUnsubHist_Else_p[0][ptPos][ffmIter]->Fill(ffmUnsub, hatWeight);
-          }
-
           for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	    Float_t rat21 = constJtTau[jtIter][1][betaIter]/constJtTau[jtIter][0][betaIter];
-	    Float_t rat32 = constJtTau[jtIter][2][betaIter]/constJtTau[jtIter][1][betaIter];
+	    Float_t rat21 = pfRawTau_[jtIter][1][betaIter]/pfRawTau_[jtIter][0][betaIter];
+	    Float_t rat32 = pfRawTau_[jtIter][2][betaIter]/pfRawTau_[jtIter][1][betaIter];
 
             tau21Hist_Tot_p[0][ptPos][betaIter]->Fill(rat21, hatWeight);
             if(isQuark) tau21Hist_Q_p[0][ptPos][betaIter]->Fill(rat21, hatWeight);
@@ -292,23 +262,15 @@ void makeFastJetHists(const std::string inName, sampleType sType = kHIDATA)
 
   std::cout << "AnaSkim Loaded" << std::endl;
 
-  if(isMonteCarlo(sType)) trkTreeAna_p->AddFriend(genTreeAna_p);
-  rechitTreeAna_p->AddFriend(trkTreeAna_p);
-  pfcandTreeAna_p->AddFriend(rechitTreeAna_p);
+  pfcandTreeAna_p->AddFriend(genTreeAna_p);
   jetTreeAna_p->AddFriend(pfcandTreeAna_p);
   Int_t algMax = 5;
 
-  std::cout << "Begin the loop" << std::endl;
-  
   for(Int_t setIter = 4; setIter < 5; setIter++){
     if(setIter == 2 && !isMonteCarlo(sType)) continue;
     if(setIter == 3) continue;    
 
-    //    makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType, "PFVs", &nPFJtRaw_, pfJtRawPt_, pfJtRawEta_, pfJtRawRefPart_, pfJtRawPTD_, pfJtRawSigma_, pfJtRawConstN_, pfSubJtRawPt_, pfRawTau_, pfJtRawFFMUnsub_);
-
-    makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType, "TrkRaw", &nTrkJtRaw_, trkJtRawPt_, trkJtRawEta_, trkJtRawRefPart_, trkJtRawPTD_, trkJtRawSigma_, trkJtRawConstN_, trkSubJtRawPt_, trkRawTau_, trkJtRawFFMUnsub_);
- 
-    //    makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType, "RechitRaw", &nRechitJtRaw_, rechitJtRawPt_, rechitJtRawEta_, rechitJtRawRefPart_, rechitJtRawPTD_, rechitJtRawSigma_, rechitJtRawConstN_, rechitSubJtRawPt_, rechitRawTau_, rechitRawFFMUnsub_);
+    makeJetSubStructHist(jetTreeAna_p, outName, setIter, sType);
   }
 
   return;

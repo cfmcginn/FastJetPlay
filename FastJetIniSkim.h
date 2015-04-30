@@ -1,4 +1,3 @@
-
 //=============================================                                 
 // Author: Chris McGinn                                                         
 //                                                                              
@@ -15,14 +14,7 @@
 #include "TH1F.h"
 #include "commonSetup.h"
 
-enum sampleType{
-  kHIDATA, //0
-  kHIMC,   //1
-  kPPDATA, //2
-  kPPMC,   //3
-  kPADATA, //4
-  kPAMC    //5
-};
+#include "sType.h"
 
 enum AlgoType_PbPb{
   PuCalo,  //0
@@ -41,6 +33,12 @@ Bool_t isMonteCarlo(sampleType sType = kHIDATA){
 
 Bool_t isHI(sampleType sType = kHIDATA){
   if(sType == kHIDATA || sType == kHIMC) return true;
+  else return false;
+}
+
+
+Bool_t isPA(sampleType sType = kHIDATA){
+  if(sType == kPADATA || sType == kPAMC) return true;
   else return false;
 }
 

@@ -23,11 +23,11 @@
 const Float_t lJtPtCut = 120.;
 const Float_t sLJtPtCut = 50.;
 const Float_t jtEtaCut = 2.0; // Default Max at 2.4 to avoid transition junk, otherwise vary as needed
-
 const Int_t nEvtPerFile = 10000;
 
-collisionType getCType(sampleType sType);
+const Float_t pPbEtaBoost = 0.4654094531;
 
+collisionType getCType(sampleType sType);
 
 void setJtBranches(TTree* inJtTree, Bool_t montecarlo = false, Bool_t isGen = false)
 {
@@ -92,7 +92,7 @@ Bool_t passesDijet(Jets jtCollection, Int_t jtIndex[5], Int_t &leadJtCut, Int_t 
       else{
 	subLeadJtCut++;
 	return false;
-      }
+     }
     }
     else if(jtIndex[nIndex] < 0 && nIndex < 5){
       if(jtCollection.jtpt[jtEntry] > sLJtPtCut && TMath::Abs(jtCollection.jteta[jtEntry]) < jtEtaCut){
@@ -122,11 +122,24 @@ Bool_t passesDijet(Jets jtCollection, Int_t jtIndex[5], Int_t &leadJtCut, Int_t 
 }
 
 
+Bool_t passesPPbJet(Jets jtCollection)
+{
+  for(Int_t jtEntry = 0; jtEntry < jtCollection.nref; jtEntry++){
+    if(jtCollection.jtpt[jtEntry] < 60.) break;
+
+    if(TMath::Abs(jtCollection.jteta[jtEntry] + pPbEtaBoost) < 1.5) return true;
+  }
+
+  return false;
+}
+
+
 int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_CFMSKIM.root", Int_t num = 0, Bool_t isGen = false)
 {
   //Define MC or Data
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
+  Bool_t pa = isPA(sType);
 
   std::cout << sType << std::endl;
   std::cout << montecarlo << std::endl;
@@ -169,7 +182,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   c->evtTree->SetBranchStatus("*", 0);
   c->evtTree->SetBranchStatus("vz", 1);
-  c->evtTree->SetBranchStatus("hiEvtPlanes", 1);
+  if(hi) c->evtTree->SetBranchStatus("hiEvtPlanes", 1);
   c->evtTree->SetBranchStatus("run", 1);
   c->evtTree->SetBranchStatus("evt", 1);
   c->evtTree->SetBranchStatus("lumi", 1);
@@ -177,19 +190,23 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   c->pfTree->SetBranchStatus("*", 0);
   c->pfTree->SetBranchStatus("nPFpart", 1);
   c->pfTree->SetBranchStatus("pfPt", 1);
-  c->pfTree->SetBranchStatus("pfVsPt", 1);
+  if(hi) c->pfTree->SetBranchStatus("pfVsPt", 1);
   c->pfTree->SetBranchStatus("pfPhi", 1);
   c->pfTree->SetBranchStatus("pfEta", 1);
-  c->pfTree->SetBranchStatus("vn", 1);
-  c->pfTree->SetBranchStatus("psin", 1);
-  c->pfTree->SetBranchStatus("sumpt", 1);
+  if(hi){ 
+    c->pfTree->SetBranchStatus("vn", 1);
+    c->pfTree->SetBranchStatus("psin", 1);
+    c->pfTree->SetBranchStatus("sumpt", 1);
+  }
 
-  c->towerTree->SetBranchStatus("*", 0);
-  c->towerTree->SetBranchStatus("n", 1);
-  c->towerTree->SetBranchStatus("et", 1);
-  c->towerTree->SetBranchStatus("vsPt", 1);
-  c->towerTree->SetBranchStatus("phi", 1);
-  c->towerTree->SetBranchStatus("eta", 1);
+  if(!pa){
+    c->towerTree->SetBranchStatus("*", 0);
+    c->towerTree->SetBranchStatus("n", 1);
+    c->towerTree->SetBranchStatus("et", 1);
+    c->towerTree->SetBranchStatus("vsPt", 1);
+    c->towerTree->SetBranchStatus("phi", 1);
+    c->towerTree->SetBranchStatus("eta", 1);
+  }
 
   c->trackTree->SetBranchStatus("*", 0);
   c->trackTree->SetBranchStatus("nTrk", 1);
@@ -203,7 +220,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   c->trackTree->SetBranchStatus("trkDxyError1", 1);
   c->trackTree->SetBranchStatus("trkPtError", 1);
 
-  if(montecarlo){
+  if(montecarlo && !pa){
     c->genParticleTree->SetBranchStatus("*", 0);
     c->genParticleTree->SetBranchStatus("b", 1);
     c->genParticleTree->SetBranchStatus("mult", 1);
@@ -229,8 +246,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     setJtBranches(c->akPu3CaloJetTree, montecarlo);
     setJtBranches(c->akPu3PFJetTree, montecarlo, true);
     setJtBranches(c->ak3CaloJetTree, montecarlo);
+    setJtBranches(c->ak3PFJetTree, montecarlo);
   }
-
 
   c->LoadNoTrees();
   
@@ -246,14 +263,15 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     c->hasAkPu3JetTree = true;
     c->hasAkPu3CaloJetTree = true;
     c->hasAk3CaloJetTree = true;
+    c->hasAk3JetTree = true;
   }
 
   if(!isGen){
-    c->hasTowerTree = true;
+    if(!pa) c->hasTowerTree = true;
     c->hasPFTree = true;
     c->hasTrackTree = true;
   }
-  if(montecarlo) c->hasGenParticleTree = true;
+  if(montecarlo && !pa) c->hasGenParticleTree = true;
 
   c->InitTree();
 
@@ -274,10 +292,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   Int_t nEvtsOutTag = 0;
 
-  if(!hi)
-    nentries = c->skimTree->GetEntries();
-  else
-    nentries = c->GetEntries();
+  if(!hi) nentries = c->skimTree->GetEntries();
+  else nentries = c->GetEntries();
 
   std::cout << nentries << std::endl;
 
@@ -300,7 +316,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
     if(!isGen){
-      c->hasTowerTree = false;
+      if(!pa) c->hasTowerTree = false;
       c->hasPFTree = false;
       c->hasTrackTree = false;
     }
@@ -310,17 +326,19 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
     totEv++;
 
-    if(jentry%1000 == 0)
-      std::cout << jentry << ", " << nEvtsOutTag << std::endl;
+    if(jentry%1000 == 0) std::cout << jentry << ", " << nEvtsOutTag << std::endl;
 
     if(!c->selectEvent()){
       selectCut++;
       continue;
     }
-
     if(TMath::Abs(c->evt.vz - meanVz) > 15){
       vzCut++;
       continue;
+    }
+
+    if(pa && !montecarlo){
+      if(c->evt.run >= 211313 || c->evt.run < 210676) continue;
     }
 
     //particle flow
@@ -338,6 +356,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       AlgIniJtCollection[0] = c->akPu3Calo;
       AlgIniJtCollection[1] = c->ak3Calo;
       AlgIniJtCollection[2] = c->akPu3PF;
+      AlgIniJtCollection[3] = c->akPu3PF;
+      AlgIniJtCollection[4] = c->ak3PF;
     }
     
 
@@ -350,90 +370,120 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	jtIndex[algIter][jtIter] = -1;
       }
     }
-
-
-    for(Int_t algIter = 0; algIter < 5; algIter++){
-      if(algIter != 2)
-	algPasses[algIter] = passesDijet(AlgIniJtCollection[algIter], jtIndex[algIter], AlgIniLeadJtPtCut[algIter], AlgIniSubLeadJtPtCut[algIter]);
-    }
-
-    //truth, doesn't work w/ getLeadJt because truth doesnt get its own tree
-
-    if(montecarlo){
-      if(c->akPu3PF.ngen == 0){
-	AlgIniLeadJtPtCut[2]++;
-	algPasses[2] = false;
+    if(!pa){
+      for(Int_t algIter = 0; algIter < 5; algIter++){
+	if(algIter != 2) algPasses[algIter] = passesDijet(AlgIniJtCollection[algIter], jtIndex[algIter], AlgIniLeadJtPtCut[algIter], AlgIniSubLeadJtPtCut[algIter]);
       }
-      else if(c->akPu3PF.ngen == 1){
-	AlgIniSubLeadJtPtCut[2]++;
-	algPasses[2] = false;
-      }
-      else{
-	Int_t nIndex = 2;
-	for(Int_t jtEntry = 0; jtEntry < c->akPu3PF.ngen; jtEntry++){
-	  if(c->akPu3PF.genpt[jtEntry] < sLJtPtCut) break;
 
-	  if(jtIndex[2][0] < 0){
-	    if(c->akPu3PF.genpt[jtEntry] > lJtPtCut){
-	      if(TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut)
-		jtIndex[2][0] = jtEntry;
+      //truth, doesn't work w/ getLeadJt because truth doesnt get its own tree
+
+      if(montecarlo){
+	if(c->akPu3PF.ngen == 0){
+	  AlgIniLeadJtPtCut[2]++;
+	  algPasses[2] = false;
+	}
+	else if(c->akPu3PF.ngen == 1){
+	  AlgIniSubLeadJtPtCut[2]++;
+	  algPasses[2] = false;
+	}
+	else{
+	  Int_t nIndex = 2;
+	  for(Int_t jtEntry = 0; jtEntry < c->akPu3PF.ngen; jtEntry++){
+	    if(c->akPu3PF.genpt[jtEntry] < sLJtPtCut) break;
+
+	    if(jtIndex[2][0] < 0){
+	      if(c->akPu3PF.genpt[jtEntry] > lJtPtCut){
+		if(TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut)
+		  jtIndex[2][0] = jtEntry;
+	      }
+	      else{
+		algPasses[2] = false;
+		break;
+	      }
+	    }
+	    else if(jtIndex[2][1] < 0){
+	      if(c->akPu3PF.genpt[jtEntry] > sLJtPtCut){
+		if(TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut)
+		  jtIndex[2][1] = jtEntry;
+	      }
+	      else{
+		algPasses[2] = false;
+		break;
+	      }
+	    }
+	    else if(jtIndex[2][nIndex] < 0 && nIndex < 5){
+	      if(c->akPu3PF.genpt[jtEntry] > sLJtPtCut && TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut){
+		jtIndex[2][nIndex] = jtEntry;
+		nIndex++;
+	      }
 	    }
 	    else{
-	      algPasses[2] = false;
+	      algPasses[2] = true;
 	      break;
 	    }
 	  }
-	  else if(jtIndex[2][1] < 0){
-	    if(c->akPu3PF.genpt[jtEntry] > sLJtPtCut){
-	      if(TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut)
-		jtIndex[2][1] = jtEntry;
-	    }
-	    else{
-	      algPasses[2] = false;
-	      break;
-	    }
-	  }
-	  else if(jtIndex[2][nIndex] < 0 && nIndex < 5){
-	    if(c->akPu3PF.genpt[jtEntry] > sLJtPtCut && TMath::Abs(c->akPu3PF.geneta[jtEntry]) < jtEtaCut){
-	      jtIndex[2][nIndex] = jtEntry;
-	      nIndex++;
-	    }
-	  }
-	  else{
+	}
+
+	if(jtIndex[2][0] >= 0){
+	  if(jtIndex[2][1] >= 0)
 	    algPasses[2] = true;
-	    break;
-	  }
+	  else
+	    algPasses[2] = false;
+	}
+	else{
+	  AlgIniLeadJtPtCut[2]++;
+	  algPasses[2] = false;
+	}
+      }
+    }
+    else{
+      for(Int_t algIter = 0; algIter < 5; algIter++){
+        if(algIter != 2) algPasses[algIter] = passesPPbJet(AlgIniJtCollection[algIter]);
+      }
+
+      for(Int_t jtEntry = 0; jtEntry < c->akPu3PF.ngen; jtEntry++){
+	if(c->akPu3PF.genpt[jtEntry] < 60.) break;
+
+	if(TMath::Abs(c->akPu3PF.geneta[jtEntry] + pPbEtaBoost) < 1.5){
+	  algPasses[jtEntry] = true;
+	  break;
 	}
       }
 
-      if(jtIndex[2][0] >= 0){
-	if(jtIndex[2][1] >= 0)
-	  algPasses[2] = true;
-	else
-	  algPasses[2] = false;
-      }
-      else{
-	AlgIniLeadJtPtCut[2]++;
-	algPasses[2] = false;
+      for(Int_t algIter = 0; algIter < 5; algIter++){
+	if(algPasses[algIter]){
+	  if(algIter == 2){
+	    for(Int_t jtIter = 0; jtIter < c->akPu3PF.ngen; jtIter++){
+	      jtIndex[algIter][jtIter] = jtIter;
+	      if(jtIter == 4) break;
+	    }
+	  }
+	  else{
+	    for(Int_t jtIter = 0; jtIter < AlgIniJtCollection[algIter].nref; jtIter++){
+	      jtIndex[algIter][jtIter] = jtIter;
+	      if(jtIter == 4) break;
+	    }
+	  }
+	}
       }
     }
-    
+
     if(algPasses[0] == false && algPasses[1] == false && algPasses[2] == false && algPasses[3] == false && algPasses[4] == false)
       continue;
 
     if(!isGen){
-      c->hasTowerTree = true;
+      if(!pa) c->hasTowerTree = true;
       c->hasPFTree = true;
       c->hasTrackTree = true;
     }    
-    if(montecarlo) c->hasGenParticleTree = true;
+    if(montecarlo && !pa) c->hasGenParticleTree = true;
 
     c->GetEntry(jentry);
 
     InitIniJtVar();
 
     if(kHIMC == sType) pthatIni_ = c->akPu3PF.pthat;
-    else if(kPPMC == sType) pthatIni_ = c->ak3Calo.pthat;
+    else if(kPPMC == sType || kPAMC == sType) pthatIni_ = c->ak3Calo.pthat;
 
     if(hi){
       hiEvtPlaneIni_ = c->evt.hiEvtPlanes[21];                                                  
@@ -455,7 +505,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     //Iterate over jets
 
     Int_t algMax = 5;
-    if(!hi) algMax = 3;
+    if(!hi && !pa) algMax = 3;
 
     for(Int_t algIter = 0; algIter < algMax; algIter++){
       if(algIter == 2){
@@ -464,6 +514,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	else{
 	  for(Int_t jtIter = 0; jtIter < 5; jtIter++){
 	    if(jtIndex[algIter][jtIter] >= 0){
+	      std::cout << AlgIniJtCollection[algIter].genpt[jtIndex[algIter][jtIter]] << std::endl;
+
 	      AlgIniJtPt_[algIter][jtIter] = AlgIniJtCollection[algIter].genpt[jtIndex[algIter][jtIter]];
 	      AlgIniJtPhi_[algIter][jtIter] = AlgIniJtCollection[algIter].genphi[jtIndex[algIter][jtIter]];
 	      AlgIniJtEta_[algIter][jtIter] = AlgIniJtCollection[algIter].geneta[jtIndex[algIter][jtIter]];
@@ -498,14 +550,15 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       //Iterate over rechits
       
       nRechits_ = 0;
-
-      for(Int_t rechitIter = 0; rechitIter < c->tower.n; rechitIter++){
-	if(TMath::Abs(c->tower.eta[rechitIter]) < 2.3){
-	  rechitPt_[nRechits_] = c->tower.et[rechitIter];
-	  rechitVsPt_[nRechits_] = c->tower.vsPt[rechitIter];
-	  rechitPhi_[nRechits_] = c->tower.phi[rechitIter];
-	  rechitEta_[nRechits_] = c->tower.eta[rechitIter];
-	  nRechits_++;
+      if(pa){
+	for(Int_t rechitIter = 0; rechitIter < c->tower.n; rechitIter++){
+	  if(TMath::Abs(c->tower.eta[rechitIter]) < 2.3){
+	    rechitPt_[nRechits_] = c->tower.et[rechitIter];
+	    rechitVsPt_[nRechits_] = c->tower.vsPt[rechitIter];
+	    rechitPhi_[nRechits_] = c->tower.phi[rechitIter];
+	    rechitEta_[nRechits_] = c->tower.eta[rechitIter];
+	    nRechits_++;
+	  }
 	}
       }
       
@@ -570,6 +623,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	}
       }
     }
+
  
     if(!isGen){
       trkIniSKPtCut_ = getSKPtCut(nTrk_, trkPt_, trkPhi_, trkEta_);
@@ -578,8 +632,6 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     }
     if(montecarlo) genIniSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
     
-
-
     if(!isGen){
       rechitTreeIni_p->Fill();
       pfcandTreeIni_p->Fill();
@@ -591,7 +643,11 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 
     Int_t nEvtsPassed = jetTreeIni_p->GetEntries();
 
-    if(nEvtsPassed%nEvtPerFile == 0){
+    Bool_t newFile = false;
+    if(!pa && nEvtsPassed%nEvtPerFile == 0) newFile = true;
+    else if(pa && nEvtsPassed%(2*nEvtPerFile) == 0) newFile = true;
+
+    if(newFile){
       outFile->cd();
 
       nEvtsOutTag++;

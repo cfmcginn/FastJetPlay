@@ -59,6 +59,8 @@ void calcSigma(fastjet::PseudoJet* inJt)
   Float_t eigen2 = 0.0;
 
   for(Int_t iter = 0; iter < (Int_t)(jtConst.size()); iter++){
+    ptSum += jtConst[iter].perp()*jtConst[iter].perp();
+
     matElement[0] += pow(jtConst[iter].perp(), 2.0)*pow(jtConst[iter].eta() - aveEta, 2.0);
     matElement[1] -= pow(jtConst[iter].perp(), 2.0)*TMath::Abs(jtConst[iter].eta() - aveEta)*TMath::Abs(getDPHI(jtConst[iter].phi_std(), avePhi));
     matElement[2] -= pow(jtConst[iter].perp(), 2.0)*TMath::Abs(jtConst[iter].eta() - aveEta)*TMath::Abs(getDPHI(jtConst[iter].phi_std(), avePhi));
@@ -67,9 +69,9 @@ void calcSigma(fastjet::PseudoJet* inJt)
 
   getEigenN2(matElement, eigen1, eigen2);
 
-  internalSig[0] = eigen1/ptSum;
-  internalSig[1] = eigen2/ptSum;
-  internalSig[2] = TMath::Sqrt(eigen1*eigen1 + eigen2*eigen2);
+  internalSig[0] = TMath::Sqrt(eigen1/ptSum);
+  internalSig[1] = TMath::Sqrt(eigen2/ptSum);
+  internalSig[2] = TMath::Sqrt(internalSig[0]*internalSig[0] + internalSig[1]*internalSig[1]);
 
   return;
 }
