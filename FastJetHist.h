@@ -1,261 +1,179 @@
 //=============================================
 // Author: Chris McGinn
 //
-// FastJet AnaSkim Class (MC)
+// FastJet Histogram Class (MC)
 //
 //=============================================
 #ifndef FastJetHist_h
 #define FastJetHist_h
 
-#include <string>
-
 #include "FastJetAnaSkim.h"
 
-#include "TH1F.h"
+//rechit substruct hist
+JetSubstructHist* rechitRawJt_HistTot_p;
+JetSubstructHist* rechitVsJt_HistTot_p;
 
-const Int_t jtMax = 8;
-const std::string jtOrder[jtMax] = {"Lead", "Sublead", "Inc", "6080", "80100", "100120", "120140", "140200"};
+JetSubstructHist* rechitRawJt_HistQ_p;
+JetSubstructHist* rechitVsJt_HistQ_p;
 
-const Int_t centHIMax = 4;
+JetSubstructHist* rechitRawJt_HistG_p;
+JetSubstructHist* rechitVsJt_HistG_p;
 
-TH1F* ptdHist_Tot_p[centHIMax][jtMax];
-TH1F* ptdHist_Q_p[centHIMax][jtMax];
-TH1F* ptdHist_G_p[centHIMax][jtMax];
-TH1F* ptdHist_Else_p[centHIMax][jtMax];
+//pf substruct hist                                                          
 
-TH1F* sigHist_Tot_p[centHIMax][jtMax][nSigma];
-TH1F* sigHist_Q_p[centHIMax][jtMax][nSigma];
-TH1F* sigHist_G_p[centHIMax][jtMax][nSigma];
-TH1F* sigHist_Else_p[centHIMax][jtMax][nSigma];
+JetSubstructHist* pfRawJt_HistTot_p;
+JetSubstructHist* pfVsJt_HistTot_p;
+JetSubstructHist* pfSKJt_HistTot_p;
 
-TH1F* multHist_Tot_p[centHIMax][jtMax];
-TH1F* multHist_Q_p[centHIMax][jtMax];
-TH1F* multHist_G_p[centHIMax][jtMax];
-TH1F* multHist_Else_p[centHIMax][jtMax];
+JetSubstructHist* pfRawJt_HistQ_p;
+JetSubstructHist* pfVsJt_HistQ_p;
+JetSubstructHist* pfSKJt_HistQ_p;
 
-TH1F* ptdHiBinHist_p[jtMax];
+JetSubstructHist* pfRawJt_HistG_p;
+JetSubstructHist* pfVsJt_HistG_p;
+JetSubstructHist* pfSKJt_HistG_p;
 
-TH1F* tau21Hist_Tot_p[centHIMax][jtMax][nBeta];
-TH1F* tau21Hist_Q_p[centHIMax][jtMax][nBeta];
-TH1F* tau21Hist_G_p[centHIMax][jtMax][nBeta];
-TH1F* tau21Hist_Else_p[centHIMax][jtMax][nBeta];
+//track substruct hist
 
-TH1F* tau32Hist_Tot_p[centHIMax][jtMax][nBeta];
-TH1F* tau32Hist_Q_p[centHIMax][jtMax][nBeta];
-TH1F* tau32Hist_G_p[centHIMax][jtMax][nBeta];
-TH1F* tau32Hist_Else_p[centHIMax][jtMax][nBeta];
+JetSubstructHist* trkRawJt_HistTot_p;
+JetSubstructHist* trkSKJt_HistTot_p;
 
-TH1F* subRatHist_Tot_p[centHIMax][jtMax][nSubjet];
-TH1F* subRatHist_Q_p[centHIMax][jtMax][nSubjet];
-TH1F* subRatHist_G_p[centHIMax][jtMax][nSubjet];
-TH1F* subRatHist_Else_p[centHIMax][jtMax][nSubjet];
+JetSubstructHist* trkRawJt_HistQ_p;
+JetSubstructHist* trkSKJt_HistQ_p;
 
-TH1F* ffmUnsubHist_Tot_p[centHIMax][jtMax][nFFM];
-TH1F* ffmUnsubHist_Q_p[centHIMax][jtMax][nFFM];
-TH1F* ffmUnsubHist_G_p[centHIMax][jtMax][nFFM];
-TH1F* ffmUnsubHist_Else_p[centHIMax][jtMax][nFFM];
+JetSubstructHist* trkRawJt_HistG_p;
+JetSubstructHist* trkSKJt_HistG_p;
 
-std::string getCentString(sampleType sType, Int_t centLow, Int_t centHi);
-void BookHist(sampleType sType, const std::string evtSelAlg, const std::string clustAlg);
-void CleanHist(TH1F* cleanHist_p);
-void CleanHistAll(sampleType sType);
-void WriteHistAll(TFile* outFile_p, sampleType sType);
+//gen substruct hist
+
+JetSubstructHist* genRawJt_HistTot_p;
+JetSubstructHist* genSKJt_HistTot_p;
+JetSubstructHist* genSUBEJt_HistTot_p;
+
+JetSubstructHist* genRawJt_HistQ_p;
+JetSubstructHist* genSKJt_HistQ_p;
+JetSubstructHist* genSUBEJt_HistQ_p;
+
+JetSubstructHist* genRawJt_HistG_p;
+JetSubstructHist* genSKJt_HistG_p;
+JetSubstructHist* genSUBEJt_HistG_p;
+
+void BookHist(sampleType sType, const std::string evtSelAlg);
 void ScaleHistAll(sampleType sType);
+void WriteHistAll(TFile* outFile_p, sampleType sType);
+void CleanHistAll(sampleType sType);
+void CleanSubstructAll(sampleType sType);
 
-std::string getCentString(sampleType sType, Int_t centLow, Int_t centHi)
+void BookHist(sampleType sType, const std::string evtSelAlg)
 {
-  if(isHI(sType)) return Form("%d%d", (Int_t)(centLow*.5), (Int_t)((centHi+1)*.5));
-  else if(isPA(sType)) return "PA";
-  else return "PP";
-}
+  Bool_t isMC = isMonteCarlo(sType);
 
-void BookHist(sampleType sType, const std::string evtSelAlg, const std::string clustAlg)
-{
-  const Bool_t hi = isHI(sType);
+  InitJetSubstructHist(rechitRawJt_HistTot_p, sType, Form("%s_rechitRawTot", evtSelAlg.c_str()));
+  InitJetSubstructHist(rechitVsJt_HistTot_p, sType, Form("%s_rechitVsTot", evtSelAlg.c_str()));
 
-  const Int_t centLow[centHIMax] = {0, 20, 60, 100};
-  const Int_t centHi[centHIMax] = {19, 59, 99, 199};
+  if(isMC){
+    InitJetSubstructHist(rechitRawJt_HistQ_p, sType, Form("%s_rechitRawQ", evtSelAlg.c_str()));
+    InitJetSubstructHist(rechitVsJt_HistQ_p, sType, Form("%s_rechitVsQ", evtSelAlg.c_str()));
 
-  Int_t centBin = 1;
-  if(hi) centBin = centHIMax;
-
-  std::string centString[4];
-  for(Int_t centIter = 0; centIter < centBin; centIter++){
-    centString[centIter] = getCentString(sType, centLow[centIter], centHi[centIter]);
+    InitJetSubstructHist(rechitRawJt_HistG_p, sType, Form("%s_rechitRawG", evtSelAlg.c_str()));
+    InitJetSubstructHist(rechitVsJt_HistG_p, sType, Form("%s_rechitVsG", evtSelAlg.c_str()));
   }
 
-  const Int_t nPTDHiBins = 10;
+  InitJetSubstructHist(pfRawJt_HistTot_p, sType, Form("%s_pfRawTot", evtSelAlg.c_str()));
+  InitJetSubstructHist(pfVsJt_HistTot_p, sType, Form("%s_pfVsTot", evtSelAlg.c_str()));
+  InitJetSubstructHist(pfSKJt_HistTot_p, sType, Form("%s_pfSKTot", evtSelAlg.c_str()));
 
-  const Int_t nPTDBins = 20;
-  const Float_t ptdLow = 0.0001;
-  const Float_t ptdHi = 0.9999;
-
-  const Int_t nSigBins[nSigma] = {20, 20, 20};
-  const Float_t sigLow = 0.0001;
-  const Float_t sigHi[nSigma] = {0.1999, 0.1999, 0.1999};
-
-  const Int_t nMultBins = 50;
-  const Float_t multLow = -.0001;
-  const Float_t multHi = 49.9999;
-
-  const Int_t nTauBins = 20;
-  const Float_t tauLow = 0.0001;
-  const Float_t tauHi = 0.9999;
-
-  const Int_t nSubBins  = 40;
-  const Int_t subLow = 0;
-  const Int_t subHi = 1;
-
-  const Int_t nFFMBins[nFFM] = {50, 40, 40, 5, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40};
-  const Float_t ffmLow = 0;
-  const Float_t ffmHi[nFFM] = {200, 40, 6, 5, 1, 1, 1, 1, 1, 0.1, 0.05, 0.05, 0.05, 0.05};
-
-  for(Int_t jtIter = 0; jtIter < jtMax; jtIter++){
-    const std::string ptdStr = Form("%s%sPTD_%s_", evtSelAlg.c_str(), clustAlg.c_str(), jtOrder[jtIter].c_str());
-
-    std::string sigStr[nSigma];
-    for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-      sigStr[sigIter] = Form("%s%sSig%d_%s_", evtSelAlg.c_str(), clustAlg.c_str(), sigIter, jtOrder[jtIter].c_str());
-    }
-    const std::string multStr = Form("%s%sMult_%s_", evtSelAlg.c_str(), clustAlg.c_str(), jtOrder[jtIter].c_str());
-
-    std::string tau21Str[nBeta];
-    std::string tau32Str[nBeta];
-
-    for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-      tau21Str[betaIter] = Form("%s%sTau21Beta%d_%s_", evtSelAlg.c_str(), clustAlg.c_str(), betaIter, jtOrder[jtIter].c_str());
-      tau32Str[betaIter] = Form("%s%sTau32Beta%d_%s_", evtSelAlg.c_str(), clustAlg.c_str(), betaIter, jtOrder[jtIter].c_str());
-    }
-
-    std::string ratStr[nSubjet];
-    for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-      ratStr[subJtIter] = Form("%s%sRatSub%d_%s_", evtSelAlg.c_str(), clustAlg.c_str(), subJtIter, jtOrder[jtIter].c_str());
-    }
-
-    std::string ffmUnsubStr[nFFM];
-    for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-      ffmUnsubStr[ffmIter] = Form("%s%sffmUnsub%d_%s_", evtSelAlg.c_str(), clustAlg.c_str(), ffmIter, jtOrder[jtIter].c_str());
-    }
-
-    if(hi) ptdHiBinHist_p[jtIter] = new TH1F(Form("%s_HiBin_h", ptdStr.c_str()), Form("%s_HiBin_h", ptdStr.c_str()), nPTDHiBins, -0.5, 199.5);
+  if(isMC){
+    InitJetSubstructHist(pfRawJt_HistQ_p, sType, Form("%s_pfRawQ", evtSelAlg.c_str()));
+    InitJetSubstructHist(pfVsJt_HistQ_p, sType, Form("%s_pfVsQ", evtSelAlg.c_str()));
+    InitJetSubstructHist(pfSKJt_HistQ_p, sType, Form("%s_pfSKQ", evtSelAlg.c_str()));
     
-    for(Int_t centIter = 0; centIter < centBin; centIter++){
-      const std::string backStr = Form("_%s_h", centString[centIter].c_str());
-      
-      ptdHist_Tot_p[centIter][jtIter] = new TH1F(Form("%sTot%s", ptdStr.c_str(), backStr.c_str()), Form("%sTot%s", ptdStr.c_str(), backStr.c_str()), nPTDBins, ptdLow, ptdHi);
-      ptdHist_Q_p[centIter][jtIter] = new TH1F(Form("%sQ%s", ptdStr.c_str(), backStr.c_str()), Form("%sQ%s", ptdStr.c_str(), backStr.c_str()), nPTDBins, ptdLow, ptdHi);
-      ptdHist_G_p[centIter][jtIter] = new TH1F(Form("%sG%s", ptdStr.c_str(), backStr.c_str()), Form("%sG%s", ptdStr.c_str(), backStr.c_str()), nPTDBins, ptdLow, ptdHi);
-      ptdHist_Else_p[centIter][jtIter] = new TH1F(Form("%sElse%s", ptdStr.c_str(), backStr.c_str()), Form("%sElse%s", ptdStr.c_str(), backStr.c_str()), nPTDBins, ptdLow, ptdHi);
+    InitJetSubstructHist(pfRawJt_HistG_p, sType, Form("%s_pfRawG", evtSelAlg.c_str()));
+    InitJetSubstructHist(pfVsJt_HistG_p, sType, Form("%s_pfVsG", evtSelAlg.c_str()));
+    InitJetSubstructHist(pfSKJt_HistG_p, sType, Form("%s_pfSKG", evtSelAlg.c_str()));
+  }
 
+  InitJetSubstructHist(trkRawJt_HistTot_p, sType, Form("%s_trkRawTot", evtSelAlg.c_str()));
+  InitJetSubstructHist(trkSKJt_HistTot_p, sType, Form("%s_trkSKTot", evtSelAlg.c_str()));
 
-      for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	sigHist_Tot_p[centIter][jtIter][sigIter] = new TH1F(Form("%sTot%s", sigStr[sigIter].c_str(), backStr.c_str()), Form("%sTot%s", sigStr[sigIter].c_str(), backStr.c_str()), nSigBins[sigIter], sigLow, sigHi[sigIter]);
-	sigHist_Q_p[centIter][jtIter][sigIter] = new TH1F(Form("%sQ%s", sigStr[sigIter].c_str(), backStr.c_str()), Form("%sQ%s", sigStr[sigIter].c_str(), backStr.c_str()), nSigBins[sigIter], sigLow, sigHi[sigIter]);
-	sigHist_G_p[centIter][jtIter][sigIter] = new TH1F(Form("%sG%s", sigStr[sigIter].c_str(), backStr.c_str()), Form("%sG%s", sigStr[sigIter].c_str(), backStr.c_str()), nSigBins[sigIter], sigLow, sigHi[sigIter]);
-	sigHist_Else_p[centIter][jtIter][sigIter] = new TH1F(Form("%sElse%s", sigStr[sigIter].c_str(), backStr.c_str()), Form("%sElse%s", sigStr[sigIter].c_str(), backStr.c_str()), nSigBins[sigIter], sigLow, sigHi[sigIter]);
-      }
+  if(isMC){
+    InitJetSubstructHist(trkRawJt_HistQ_p, sType, Form("%s_trkRawQ", evtSelAlg.c_str()));
+    InitJetSubstructHist(trkSKJt_HistQ_p, sType, Form("%s_trkSKQ", evtSelAlg.c_str()));
+    
+    InitJetSubstructHist(trkRawJt_HistG_p, sType, Form("%s_trkRawG", evtSelAlg.c_str()));
+    InitJetSubstructHist(trkSKJt_HistG_p, sType, Form("%s_trkSKG", evtSelAlg.c_str()));
+  }
 
-      multHist_Tot_p[centIter][jtIter] = new TH1F(Form("%sTot%s", multStr.c_str(), backStr.c_str()), Form("%sTot%s", multStr.c_str(), backStr.c_str()), nMultBins, multLow, multHi);
-      multHist_Q_p[centIter][jtIter] = new TH1F(Form("%sQ%s", multStr.c_str(), backStr.c_str()), Form("%sQ%s", multStr.c_str(), backStr.c_str()), nMultBins, multLow, multHi);
-      multHist_G_p[centIter][jtIter] = new TH1F(Form("%sG%s", multStr.c_str(), backStr.c_str()), Form("%sG%s", multStr.c_str(), backStr.c_str()), nMultBins, multLow, multHi);
-      multHist_Else_p[centIter][jtIter] = new TH1F(Form("%sElse%s", multStr.c_str(), backStr.c_str()), Form("%sElse%s", multStr.c_str(), backStr.c_str()), nMultBins, multLow, multHi);
-
-
-      for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	tau21Hist_Tot_p[centIter][jtIter][betaIter] = new TH1F(Form("%sTot%s", tau21Str[betaIter].c_str(), backStr.c_str()), Form("%sTot%s", tau21Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-	tau21Hist_Q_p[centIter][jtIter][betaIter] = new TH1F(Form("%sQ%s", tau21Str[betaIter].c_str(), backStr.c_str()), Form("%sQ%s", tau21Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-	tau21Hist_G_p[centIter][jtIter][betaIter] = new TH1F(Form("%sG%s", tau21Str[betaIter].c_str(), backStr.c_str()), Form("%sG%s", tau21Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-	tau21Hist_Else_p[centIter][jtIter][betaIter] = new TH1F(Form("%sElse%s", tau21Str[betaIter].c_str(), backStr.c_str()), Form("%sElse%s", tau21Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-
-	tau32Hist_Tot_p[centIter][jtIter][betaIter] = new TH1F(Form("%sTot%s", tau32Str[betaIter].c_str(), backStr.c_str()), Form("%sTot%s", tau32Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-	tau32Hist_Q_p[centIter][jtIter][betaIter] = new TH1F(Form("%sQ%s", tau32Str[betaIter].c_str(), backStr.c_str()), Form("%sQ%s", tau32Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-	tau32Hist_G_p[centIter][jtIter][betaIter] = new TH1F(Form("%sG%s", tau32Str[betaIter].c_str(), backStr.c_str()), Form("%sG%s", tau32Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-	tau32Hist_Else_p[centIter][jtIter][betaIter] = new TH1F(Form("%sElse%s", tau32Str[betaIter].c_str(), backStr.c_str()), Form("%sElse%s", tau32Str[betaIter].c_str(), backStr.c_str()), nTauBins, tauLow, tauHi);
-      }
-
-      for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-	subRatHist_Tot_p[centIter][jtIter][subJtIter] = new TH1F(Form("%sTot%s", ratStr[subJtIter].c_str(), backStr.c_str()), Form("%sTot%s", ratStr[subJtIter].c_str(), backStr.c_str()), nSubBins, subLow, subHi);
-	subRatHist_Q_p[centIter][jtIter][subJtIter] = new TH1F(Form("%sQ%s", ratStr[subJtIter].c_str(), backStr.c_str()), Form("%sQ%s", ratStr[subJtIter].c_str(), backStr.c_str()), nSubBins, subLow, subHi);
-	subRatHist_G_p[centIter][jtIter][subJtIter] = new TH1F(Form("%sG%s", ratStr[subJtIter].c_str(), backStr.c_str()), Form("%sG%s", ratStr[subJtIter].c_str(), backStr.c_str()), nSubBins, subLow, subHi);
-	subRatHist_Else_p[centIter][jtIter][subJtIter] = new TH1F(Form("%sElse%s", ratStr[subJtIter].c_str(), backStr.c_str()), Form("%sElse%s", ratStr[subJtIter].c_str(), backStr.c_str()), nSubBins, subLow, subHi);
-      }
-
-      for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-	ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter] = new TH1F(Form("%sTot%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), Form("%sTot%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), nFFMBins[ffmIter], ffmLow, ffmHi[ffmIter]);
-	ffmUnsubHist_Q_p[centIter][jtIter][ffmIter] = new TH1F(Form("%sQ%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), Form("%sQ%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), nFFMBins[ffmIter], ffmLow, ffmHi[ffmIter]);
-	ffmUnsubHist_G_p[centIter][jtIter][ffmIter] = new TH1F(Form("%sG%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), Form("%sG%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), nFFMBins[ffmIter], ffmLow, ffmHi[ffmIter]);
-	ffmUnsubHist_Else_p[centIter][jtIter][ffmIter] = new TH1F(Form("%sElse%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), Form("%sElse%s", ffmUnsubStr[ffmIter].c_str(), backStr.c_str()), nFFMBins[ffmIter], ffmLow, ffmHi[ffmIter]);
-      }
-    }
+  if(isMC){
+    InitJetSubstructHist(genRawJt_HistTot_p, sType, Form("%s_genRawTot", evtSelAlg.c_str()));
+    InitJetSubstructHist(genSKJt_HistTot_p, sType, Form("%s_genSKTot", evtSelAlg.c_str()));
+    InitJetSubstructHist(genSUBEJt_HistTot_p, sType, Form("%s_genSUBETot", evtSelAlg.c_str()));
+    
+    InitJetSubstructHist(genRawJt_HistQ_p, sType, Form("%s_genRawQ", evtSelAlg.c_str()));
+    InitJetSubstructHist(genSKJt_HistQ_p, sType, Form("%s_genSKQ", evtSelAlg.c_str()));
+    InitJetSubstructHist(genSUBEJt_HistQ_p, sType, Form("%s_genSUBEQ", evtSelAlg.c_str()));
+    
+    InitJetSubstructHist(genRawJt_HistG_p, sType, Form("%s_genRawG", evtSelAlg.c_str()));
+    InitJetSubstructHist(genSKJt_HistG_p, sType, Form("%s_genSKG", evtSelAlg.c_str()));
+    InitJetSubstructHist(genSUBEJt_HistG_p, sType, Form("%s_genSUBEG", evtSelAlg.c_str()));
   }
 
   return;
 }
 
-void CleanHist(TH1F* cleanHist_p)
+
+void GetHist(TFile* outFile_p, sampleType sType, const std::string evtSelAlg)
 {
-  if(cleanHist_p!=0){
-    delete cleanHist_p;
-    cleanHist_p = 0;
+  Bool_t isMC = isMonteCarlo(sType);
+
+  GetJetSubstructHist(outFile_p, rechitRawJt_HistTot_p, sType, Form("%s_rechitRawTot", evtSelAlg.c_str()));
+  GetJetSubstructHist(outFile_p, rechitVsJt_HistTot_p, sType, Form("%s_rechitVsTot", evtSelAlg.c_str()));
+
+  if(isMC){
+    GetJetSubstructHist(outFile_p, rechitRawJt_HistQ_p, sType, Form("%s_rechitRawQ", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, rechitVsJt_HistQ_p, sType, Form("%s_rechitVsQ", evtSelAlg.c_str()));
+
+    GetJetSubstructHist(outFile_p, rechitRawJt_HistG_p, sType, Form("%s_rechitRawG", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, rechitVsJt_HistG_p, sType, Form("%s_rechitVsG", evtSelAlg.c_str()));
   }
-  return;
-}
 
-void CleanHistAll(sampleType sType)
-{
-  const Bool_t hi = isHI(sType);
+  GetJetSubstructHist(outFile_p, pfRawJt_HistTot_p, sType, Form("%s_pfRawTot", evtSelAlg.c_str()));
+  GetJetSubstructHist(outFile_p, pfVsJt_HistTot_p, sType, Form("%s_pfVsTot", evtSelAlg.c_str()));
+  GetJetSubstructHist(outFile_p, pfSKJt_HistTot_p, sType, Form("%s_pfSKTot", evtSelAlg.c_str()));
 
-  Int_t centBin = 1;
-  if(hi) centBin = centHIMax;
+  if(isMC){
+    GetJetSubstructHist(outFile_p, pfRawJt_HistQ_p, sType, Form("%s_pfRawQ", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, pfVsJt_HistQ_p, sType, Form("%s_pfVsQ", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, pfSKJt_HistQ_p, sType, Form("%s_pfSKQ", evtSelAlg.c_str()));
+    
+    GetJetSubstructHist(outFile_p, pfRawJt_HistG_p, sType, Form("%s_pfRawG", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, pfVsJt_HistG_p, sType, Form("%s_pfVsG", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, pfSKJt_HistG_p, sType, Form("%s_pfSKG", evtSelAlg.c_str()));
+  }
 
-  for(Int_t jtIter = 0; jtIter < jtMax; jtIter++){
-    if(hi) CleanHist(ptdHiBinHist_p[jtIter]);
+  GetJetSubstructHist(outFile_p, trkRawJt_HistTot_p, sType, Form("%s_trkRawTot", evtSelAlg.c_str()));
+  GetJetSubstructHist(outFile_p, trkSKJt_HistTot_p, sType, Form("%s_trkSKTot", evtSelAlg.c_str()));
 
-    for(Int_t centIter = 0; centIter < centBin; centIter++){
-      CleanHist(ptdHist_Tot_p[centIter][jtIter]);
-      CleanHist(ptdHist_Q_p[centIter][jtIter]);
-      CleanHist(ptdHist_G_p[centIter][jtIter]);
-      CleanHist(ptdHist_Else_p[centIter][jtIter]);
+  if(isMC){
+    GetJetSubstructHist(outFile_p, trkRawJt_HistQ_p, sType, Form("%s_trkRawQ", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, trkSKJt_HistQ_p, sType, Form("%s_trkSKQ", evtSelAlg.c_str()));
+    
+    GetJetSubstructHist(outFile_p, trkRawJt_HistG_p, sType, Form("%s_trkRawG", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, trkSKJt_HistG_p, sType, Form("%s_trkSKG", evtSelAlg.c_str()));
+  }
 
-      for(Int_t sigmaIter = 0; sigmaIter < nSigma; sigmaIter++){
-	CleanHist(sigHist_Tot_p[centIter][jtIter][sigmaIter]);
-	CleanHist(sigHist_Q_p[centIter][jtIter][sigmaIter]);
-	CleanHist(sigHist_G_p[centIter][jtIter][sigmaIter]);
-	CleanHist(sigHist_Else_p[centIter][jtIter][sigmaIter]);
-      }
-
-      CleanHist(multHist_Tot_p[centIter][jtIter]);
-      CleanHist(multHist_Q_p[centIter][jtIter]);
-      CleanHist(multHist_G_p[centIter][jtIter]);
-      CleanHist(multHist_Else_p[centIter][jtIter]);
-
-      for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	CleanHist(tau21Hist_Tot_p[centIter][jtIter][betaIter]);
-	CleanHist(tau21Hist_Q_p[centIter][jtIter][betaIter]);
-	CleanHist(tau21Hist_G_p[centIter][jtIter][betaIter]);
-	CleanHist(tau21Hist_Else_p[centIter][jtIter][betaIter]);
-
-	CleanHist(tau32Hist_Tot_p[centIter][jtIter][betaIter]);
-	CleanHist(tau32Hist_Q_p[centIter][jtIter][betaIter]);
-	CleanHist(tau32Hist_G_p[centIter][jtIter][betaIter]);
-	CleanHist(tau32Hist_Else_p[centIter][jtIter][betaIter]);
-      }
-
-      for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-	CleanHist(subRatHist_Tot_p[centIter][jtIter][subJtIter]);
-	CleanHist(subRatHist_Q_p[centIter][jtIter][subJtIter]);
-	CleanHist(subRatHist_G_p[centIter][jtIter][subJtIter]);
-	CleanHist(subRatHist_Else_p[centIter][jtIter][subJtIter]);
-      }
-
-      for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-	CleanHist(ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]);
-	CleanHist(ffmUnsubHist_Q_p[centIter][jtIter][ffmIter]);
-	CleanHist(ffmUnsubHist_G_p[centIter][jtIter][ffmIter]);
-	CleanHist(ffmUnsubHist_Else_p[centIter][jtIter][ffmIter]);
-      }
-
-    }
+  if(isMC){
+    GetJetSubstructHist(outFile_p, genRawJt_HistTot_p, sType, Form("%s_genRawTot", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, genSKJt_HistTot_p, sType, Form("%s_genSKTot", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, genSUBEJt_HistTot_p, sType, Form("%s_genSUBETot", evtSelAlg.c_str()));
+    
+    GetJetSubstructHist(outFile_p, genRawJt_HistQ_p, sType, Form("%s_genRawQ", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, genSKJt_HistQ_p, sType, Form("%s_genSKQ", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, genSUBEJt_HistQ_p, sType, Form("%s_genSUBEQ", evtSelAlg.c_str()));
+    
+    GetJetSubstructHist(outFile_p, genRawJt_HistG_p, sType, Form("%s_genRawG", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, genSKJt_HistG_p, sType, Form("%s_genSKG", evtSelAlg.c_str()));
+    GetJetSubstructHist(outFile_p, genSUBEJt_HistG_p, sType, Form("%s_genSUBEG", evtSelAlg.c_str()));
   }
 
   return;
@@ -264,122 +182,215 @@ void CleanHistAll(sampleType sType)
 
 void ScaleHistAll(sampleType sType)
 {
-  const Bool_t hi = isHI(sType);
+  Bool_t isMC = isMonteCarlo(sType);
 
-  Int_t centBin = 1;
-  if(hi) centBin = centHIMax;
-
-  for(Int_t jtIter = 0; jtIter < jtMax; jtIter++){
-    for(Int_t centIter = 0; centIter < centBin; centIter++){
-      ptdHist_Q_p[centIter][jtIter]->Scale(1./ptdHist_Tot_p[centIter][jtIter]->Integral());
-      ptdHist_G_p[centIter][jtIter]->Scale(1./ptdHist_Tot_p[centIter][jtIter]->Integral());
-      ptdHist_Else_p[centIter][jtIter]->Scale(1./ptdHist_Tot_p[centIter][jtIter]->Integral());
-      ptdHist_Tot_p[centIter][jtIter]->Scale(1./ptdHist_Tot_p[centIter][jtIter]->Integral());
-
-      for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	sigHist_Q_p[centIter][jtIter][sigIter]->Scale(1./sigHist_Tot_p[centIter][jtIter][sigIter]->Integral());
-	sigHist_G_p[centIter][jtIter][sigIter]->Scale(1./sigHist_Tot_p[centIter][jtIter][sigIter]->Integral());
-	sigHist_Else_p[centIter][jtIter][sigIter]->Scale(1./sigHist_Tot_p[centIter][jtIter][sigIter]->Integral());
-	sigHist_Tot_p[centIter][jtIter][sigIter]->Scale(1./sigHist_Tot_p[centIter][jtIter][sigIter]->Integral());
-      }
-
-      multHist_Q_p[centIter][jtIter]->Scale(1./multHist_Tot_p[centIter][jtIter]->Integral());
-      multHist_G_p[centIter][jtIter]->Scale(1./multHist_Tot_p[centIter][jtIter]->Integral());
-      multHist_Else_p[centIter][jtIter]->Scale(1./multHist_Tot_p[centIter][jtIter]->Integral());
-      multHist_Tot_p[centIter][jtIter]->Scale(1./multHist_Tot_p[centIter][jtIter]->Integral());
-
-      
-      for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	tau21Hist_Q_p[centIter][jtIter][betaIter]->Scale(1./tau21Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-	tau21Hist_G_p[centIter][jtIter][betaIter]->Scale(1./tau21Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-	tau21Hist_Else_p[centIter][jtIter][betaIter]->Scale(1./tau21Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-	tau21Hist_Tot_p[centIter][jtIter][betaIter]->Scale(1./tau21Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-
-	tau32Hist_Q_p[centIter][jtIter][betaIter]->Scale(1./tau32Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-	tau32Hist_G_p[centIter][jtIter][betaIter]->Scale(1./tau32Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-	tau32Hist_Else_p[centIter][jtIter][betaIter]->Scale(1./tau32Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-	tau32Hist_Tot_p[centIter][jtIter][betaIter]->Scale(1./tau32Hist_Tot_p[centIter][jtIter][betaIter]->Integral());
-      }
-      
-
-      for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-        subRatHist_Q_p[centIter][jtIter][subJtIter]->Scale(1./subRatHist_Tot_p[centIter][jtIter][subJtIter]->Integral());
-        subRatHist_G_p[centIter][jtIter][subJtIter]->Scale(1./subRatHist_Tot_p[centIter][jtIter][subJtIter]->Integral());
-        subRatHist_Else_p[centIter][jtIter][subJtIter]->Scale(1./subRatHist_Tot_p[centIter][jtIter][subJtIter]->Integral());
-	subRatHist_Tot_p[centIter][jtIter][subJtIter]->Scale(1./subRatHist_Tot_p[centIter][jtIter][subJtIter]->Integral());
-      }
-
-      for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-        ffmUnsubHist_Q_p[centIter][jtIter][ffmIter]->Scale(1./ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]->Integral());
-        ffmUnsubHist_G_p[centIter][jtIter][ffmIter]->Scale(1./ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]->Integral());
-        ffmUnsubHist_Else_p[centIter][jtIter][ffmIter]->Scale(1./ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]->Integral());
-	ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]->Scale(1./ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]->Integral());
-      }
-    }
+  if(isMC){
+    ScaleJetSubstructHist(rechitRawJt_HistQ_p, rechitRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(rechitRawJt_HistG_p, rechitRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(rechitVsJt_HistQ_p, rechitVsJt_HistTot_p, sType);
+    ScaleJetSubstructHist(rechitVsJt_HistG_p, rechitVsJt_HistTot_p, sType);
+    
+    ScaleJetSubstructHist(pfRawJt_HistQ_p, pfRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(pfRawJt_HistG_p, pfRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(pfVsJt_HistQ_p, pfVsJt_HistTot_p, sType);
+    ScaleJetSubstructHist(pfVsJt_HistG_p, pfVsJt_HistTot_p, sType);
+    ScaleJetSubstructHist(pfSKJt_HistQ_p, pfSKJt_HistTot_p, sType);
+    ScaleJetSubstructHist(pfSKJt_HistG_p, pfSKJt_HistTot_p, sType);
+    
+    ScaleJetSubstructHist(trkRawJt_HistQ_p, trkRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(trkRawJt_HistG_p, trkRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(trkSKJt_HistQ_p, trkSKJt_HistTot_p, sType);
+    ScaleJetSubstructHist(trkSKJt_HistG_p, trkSKJt_HistTot_p, sType);
+    
+    ScaleJetSubstructHist(genRawJt_HistQ_p, genRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genRawJt_HistG_p, genRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genSKJt_HistQ_p, genSKJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genSKJt_HistG_p, genSKJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genSUBEJt_HistQ_p, genSUBEJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genSUBEJt_HistG_p, genSUBEJt_HistTot_p, sType);
   }
+    
+  ScaleJetSubstructHist(rechitRawJt_HistTot_p, rechitRawJt_HistTot_p, sType);
+  ScaleJetSubstructHist(rechitVsJt_HistTot_p, rechitVsJt_HistTot_p, sType);
+  ScaleJetSubstructHist(pfRawJt_HistTot_p, pfRawJt_HistTot_p, sType);
+  ScaleJetSubstructHist(pfVsJt_HistTot_p, pfVsJt_HistTot_p, sType);
+  ScaleJetSubstructHist(pfSKJt_HistTot_p, pfSKJt_HistTot_p, sType);
+  ScaleJetSubstructHist(trkRawJt_HistTot_p, trkRawJt_HistTot_p, sType);
+  ScaleJetSubstructHist(trkSKJt_HistTot_p, trkSKJt_HistTot_p, sType);
+  if(isMC){
+    ScaleJetSubstructHist(genRawJt_HistTot_p, genRawJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genSKJt_HistTot_p, genSKJt_HistTot_p, sType);
+    ScaleJetSubstructHist(genSUBEJt_HistTot_p, genSUBEJt_HistTot_p, sType);
+  }
+
   return;
 }
 
 
 void WriteHistAll(TFile* outFile_p, sampleType sType)
 {
-  outFile_p->cd();
+  Bool_t isMC = isMonteCarlo(sType);
 
-  const Bool_t hi = isHI(sType);
+  WriteJetSubstructHist(outFile_p, rechitRawJt_HistTot_p, sType);
+  WriteJetSubstructHist(outFile_p, rechitVsJt_HistTot_p, sType);
 
-  Int_t centBin = 1;
-  if(hi) centBin = centHIMax;
+  if(isMC){
+    WriteJetSubstructHist(outFile_p, rechitRawJt_HistQ_p, sType);
+    WriteJetSubstructHist(outFile_p, rechitVsJt_HistQ_p, sType);
 
-  for(Int_t jtIter = 0; jtIter < jtMax; jtIter++){
-    if(hi) ptdHiBinHist_p[jtIter]->Write("", TObject::kOverwrite);
-
-    for(Int_t centIter = 0; centIter < centBin; centIter++){
-      ptdHist_Q_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-      ptdHist_G_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-      ptdHist_Else_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-      ptdHist_Tot_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-
-      for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
-	sigHist_Q_p[centIter][jtIter][sigIter]->Write("", TObject::kOverwrite);
-	sigHist_G_p[centIter][jtIter][sigIter]->Write("", TObject::kOverwrite);
-	sigHist_Else_p[centIter][jtIter][sigIter]->Write("", TObject::kOverwrite);
-	sigHist_Tot_p[centIter][jtIter][sigIter]->Write("", TObject::kOverwrite);
-      }
-
-      multHist_Q_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-      multHist_G_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-      multHist_Else_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-      multHist_Tot_p[centIter][jtIter]->Write("", TObject::kOverwrite);
-
-      for(Int_t betaIter = 0; betaIter < nBeta; betaIter++){
-	tau21Hist_Q_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	tau21Hist_G_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	tau21Hist_Else_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	tau21Hist_Tot_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	
-	tau32Hist_Q_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	tau32Hist_G_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	tau32Hist_Else_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-	tau32Hist_Tot_p[centIter][jtIter][betaIter]->Write("", TObject::kOverwrite);
-      }
-      
-
-      for(Int_t subJtIter = 0; subJtIter < nSubjet; subJtIter++){
-        subRatHist_Tot_p[centIter][jtIter][subJtIter]->Write("", TObject::kOverwrite);
-        subRatHist_Q_p[centIter][jtIter][subJtIter]->Write("", TObject::kOverwrite);
-        subRatHist_G_p[centIter][jtIter][subJtIter]->Write("", TObject::kOverwrite);
-        subRatHist_Else_p[centIter][jtIter][subJtIter]->Write("", TObject::kOverwrite);
-      }
-
-      for(Int_t ffmIter = 0; ffmIter < nFFM; ffmIter++){
-        ffmUnsubHist_Tot_p[centIter][jtIter][ffmIter]->Write("", TObject::kOverwrite);
-        ffmUnsubHist_Q_p[centIter][jtIter][ffmIter]->Write("", TObject::kOverwrite);
-        ffmUnsubHist_G_p[centIter][jtIter][ffmIter]->Write("", TObject::kOverwrite);
-        ffmUnsubHist_Else_p[centIter][jtIter][ffmIter]->Write("", TObject::kOverwrite);
-      }
-      
-    }
+    WriteJetSubstructHist(outFile_p, rechitRawJt_HistG_p, sType);
+    WriteJetSubstructHist(outFile_p, rechitVsJt_HistG_p, sType);
   }
+
+  WriteJetSubstructHist(outFile_p, pfRawJt_HistTot_p, sType);
+  WriteJetSubstructHist(outFile_p, pfVsJt_HistTot_p, sType);
+  WriteJetSubstructHist(outFile_p, pfSKJt_HistTot_p, sType);
+
+  if(isMC){
+    WriteJetSubstructHist(outFile_p, pfRawJt_HistQ_p, sType);
+    WriteJetSubstructHist(outFile_p, pfVsJt_HistQ_p, sType);
+    WriteJetSubstructHist(outFile_p, pfSKJt_HistQ_p, sType);
+    
+    WriteJetSubstructHist(outFile_p, pfRawJt_HistG_p, sType);
+    WriteJetSubstructHist(outFile_p, pfVsJt_HistG_p, sType);
+    WriteJetSubstructHist(outFile_p, pfSKJt_HistG_p, sType);
+  }
+
+  WriteJetSubstructHist(outFile_p, trkRawJt_HistTot_p, sType);
+  WriteJetSubstructHist(outFile_p, trkSKJt_HistTot_p, sType);
+
+  if(isMC){
+    WriteJetSubstructHist(outFile_p, trkRawJt_HistQ_p, sType);
+    WriteJetSubstructHist(outFile_p, trkSKJt_HistQ_p, sType);
+    
+    WriteJetSubstructHist(outFile_p, trkRawJt_HistG_p, sType);
+    WriteJetSubstructHist(outFile_p, trkSKJt_HistG_p, sType);
+  }
+
+  if(isMC){
+    WriteJetSubstructHist(outFile_p, genRawJt_HistTot_p, sType);
+    WriteJetSubstructHist(outFile_p, genSKJt_HistTot_p, sType);
+    WriteJetSubstructHist(outFile_p, genSUBEJt_HistTot_p, sType);
+
+    WriteJetSubstructHist(outFile_p, genRawJt_HistQ_p, sType);
+    WriteJetSubstructHist(outFile_p, genSKJt_HistQ_p, sType);
+    WriteJetSubstructHist(outFile_p, genSUBEJt_HistQ_p, sType);
+    
+    WriteJetSubstructHist(outFile_p, genRawJt_HistG_p, sType);
+    WriteJetSubstructHist(outFile_p, genSKJt_HistG_p, sType);
+    WriteJetSubstructHist(outFile_p, genSUBEJt_HistG_p, sType);
+  }
+
+  return;
+}
+
+
+void CleanHistAll(sampleType sType)
+{
+  Bool_t isMC = isMonteCarlo(sType);
+
+  CleanupJetSubstructHist(rechitRawJt_HistTot_p, sType);
+  CleanupJetSubstructHist(rechitVsJt_HistTot_p, sType);
+
+  if(isMC){
+    CleanupJetSubstructHist(rechitRawJt_HistQ_p, sType);
+    CleanupJetSubstructHist(rechitVsJt_HistQ_p, sType);
+
+    CleanupJetSubstructHist(rechitRawJt_HistG_p, sType);
+    CleanupJetSubstructHist(rechitVsJt_HistG_p, sType);
+  }
+
+  CleanupJetSubstructHist(pfRawJt_HistTot_p, sType);
+  CleanupJetSubstructHist(pfVsJt_HistTot_p, sType);
+  CleanupJetSubstructHist(pfSKJt_HistTot_p, sType);
+
+  if(isMC){
+    CleanupJetSubstructHist(pfRawJt_HistQ_p, sType);
+    CleanupJetSubstructHist(pfVsJt_HistQ_p, sType);
+    CleanupJetSubstructHist(pfSKJt_HistQ_p, sType);
+    
+    CleanupJetSubstructHist(pfRawJt_HistG_p, sType);
+    CleanupJetSubstructHist(pfVsJt_HistG_p, sType);
+    CleanupJetSubstructHist(pfSKJt_HistG_p, sType);
+  }
+
+  CleanupJetSubstructHist(trkRawJt_HistTot_p, sType);
+  CleanupJetSubstructHist(trkSKJt_HistTot_p, sType);
+
+  if(isMC){
+    CleanupJetSubstructHist(trkRawJt_HistQ_p, sType);
+    CleanupJetSubstructHist(trkSKJt_HistQ_p, sType);
+    
+    CleanupJetSubstructHist(trkRawJt_HistG_p, sType);
+    CleanupJetSubstructHist(trkSKJt_HistG_p, sType);
+  }
+
+  if(isMC){
+    CleanupJetSubstructHist(genRawJt_HistTot_p, sType);
+    CleanupJetSubstructHist(genSKJt_HistTot_p, sType);
+    CleanupJetSubstructHist(genSUBEJt_HistTot_p, sType);
+
+    CleanupJetSubstructHist(genRawJt_HistQ_p, sType);
+    CleanupJetSubstructHist(genSKJt_HistQ_p, sType);
+    CleanupJetSubstructHist(genSUBEJt_HistQ_p, sType);
+    
+    CleanupJetSubstructHist(genRawJt_HistG_p, sType);
+    CleanupJetSubstructHist(genSKJt_HistG_p, sType);
+    CleanupJetSubstructHist(genSUBEJt_HistG_p, sType);
+  }
+
+  return;
+}
+
+
+void CleanSubstructAll(sampleType sType)
+{
+  Bool_t isMC = isMonteCarlo(sType);
+
+  delete rechitRawJt_HistTot_p;
+  delete rechitVsJt_HistTot_p;
+
+  delete pfRawJt_HistTot_p;
+  delete pfVsJt_HistTot_p;
+  delete pfSKJt_HistTot_p;
+
+  delete trkRawJt_HistTot_p;
+  delete trkSKJt_HistTot_p;
+
+  if(isMC){
+    delete genRawJt_HistTot_p;
+    delete genSKJt_HistTot_p;
+    delete genSUBEJt_HistTot_p;
+
+    delete rechitRawJt_HistQ_p;
+    delete rechitVsJt_HistQ_p;
+    
+    delete pfRawJt_HistQ_p;
+    delete pfVsJt_HistQ_p;
+    delete pfSKJt_HistQ_p;
+    
+    delete trkRawJt_HistQ_p;
+    delete trkSKJt_HistQ_p;
+    
+    delete genRawJt_HistQ_p;
+    delete genSKJt_HistQ_p;
+    delete genSUBEJt_HistQ_p;
+    
+    delete rechitRawJt_HistG_p;
+    delete rechitVsJt_HistG_p;
+    
+    delete pfRawJt_HistG_p;
+    delete pfVsJt_HistG_p;
+    delete pfSKJt_HistG_p;
+    
+    delete trkRawJt_HistG_p;
+    delete trkSKJt_HistG_p;
+    
+    delete genRawJt_HistG_p;
+    delete genSKJt_HistG_p;
+    delete genSUBEJt_HistG_p;
+  }
+
   return;
 }
 
