@@ -41,6 +41,7 @@ const Float_t clustPtCut = 30.;
 
 const Int_t tauArr[nTau] = {1, 2, 3};
 const Double_t betaArr[nBeta] = {0.2, 0.5, 1.0, 1.5, 2.0, 3.0};
+const Double_t betaSDArr[nSDBeta] = {-0.5, -0.1, 0.0, 0.1, 0.5};
 
 //Def. set for jet clustering
 
@@ -117,8 +118,10 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], JetSubstruct*
   outJet_p->nJt_ = 0;
 
   const Double_t zCut = 0.10;
-  const Double_t beta = 2.0;
-  fastjet::contrib::SoftDrop sd(zCut, beta);
+  fastjet::contrib::SoftDrop* sd[nSDBeta];
+  for(Int_t iter = 0; iter < nSDBeta; iter++){
+    sd[iter] = new fastjet::contrib::SoftDrop(betaSDArr[iter], zCut);
+  }
 
   for(Int_t iter = 0; iter < (Int_t)algSortVect.size(); iter++){
     if(algSortVect[iter].perp() < clustPtCut) break; 
@@ -129,13 +132,20 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], JetSubstruct*
       outJet_p->jtEta_[outJet_p->nJt_] = algSortVect[iter].eta();
 
 
-      fastjet::PseudoJet tempSDJt = sd(algSortVect[iter]);
-      outJet_p->jtSoftPt_[outJet_p->nJt_] = tempSDJt.perp();
+      for(Int_t iter2 = 0; iter2 < nSDBeta; iter2++){
+	fastjet::PseudoJet tempSDJt = (*sd[iter2])(algSortVect[iter]);
+	outJet_p->jtSoftPt_[outJet_p->nJt_][iter2] = tempSDJt.perp();
+	outJet_p->jtSoftSymmZ_[outJet_p->nJt_][iter2] = tempSDJt.structure_of<fastjet::contrib::SoftDrop>().symmetry();
+      }
 
       getJtSubstrct(&algSortVect[iter], outJet_p, algVect_p);
       outJet_p->nJt_++;
       if(outJet_p->nJt_ == 5) break;
     }
+  }
+
+  for(Int_t iter = 0; iter < nSDBeta; iter++){
+    delete sd[iter];
   }
 
   algSortVect.clear();

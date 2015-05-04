@@ -15,6 +15,7 @@ const Int_t nTau = 3;
 const Int_t nBeta = 6;
 const Int_t nFFM = 14;
 const Int_t nSubjet = 5;
+const Int_t nSDBeta = 5;
 
 class JetSubstruct{
 public:
@@ -30,7 +31,8 @@ public:
   Float_t jtMatchPhi_[maxJets];
   Float_t jtMatchEta_[maxJets];
   Int_t jtConstN_[maxJets];
-  Float_t jtSoftPt_[maxJets];
+  Float_t jtSoftPt_[maxJets][nSDBeta];
+  Float_t jtSoftSymmZ_[maxJets][nSDBeta];
   Float_t jtPTD_[maxJets];
   Float_t jtChg_[maxJets];
   Float_t jtR2_[maxJets];
@@ -55,7 +57,8 @@ void SetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->Branch(Form("%s_jtMatchPhi", fillName.c_str()), inJt_p->jtMatchPhi_, Form("%s_jtMatchPhi[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtMatchEta", fillName.c_str()), inJt_p->jtMatchEta_, Form("%s_jtMatchEta[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtConstN", fillName.c_str()), inJt_p->jtConstN_, Form("%s_jtConstN[%s_nJt]/I", fillName.c_str(), fillName.c_str()));
-  inTree_p->Branch(Form("%s_jtSoftPt", fillName.c_str()), inJt_p->jtSoftPt_, Form("%s_jtSoftPt[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
+  inTree_p->Branch(Form("%s_jtSoftPt", fillName.c_str()), inJt_p->jtSoftPt_, Form("%s_jtSoftPt[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSDBeta));
+  inTree_p->Branch(Form("%s_jtSoftSymmZ", fillName.c_str()), inJt_p->jtSoftSymmZ_, Form("%s_jtSoftSymmZ[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSDBeta));
   inTree_p->Branch(Form("%s_jtPTD", fillName.c_str()), inJt_p->jtPTD_, Form("%s_jtPTD[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtChg", fillName.c_str()), inJt_p->jtChg_, Form("%s_jtChg[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtR2", fillName.c_str()), inJt_p->jtR2_, Form("%s_jtR2[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
@@ -84,6 +87,7 @@ void GetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->SetBranchAddress(Form("%s_jtMatchEta", fillName.c_str()), inJt_p->jtMatchEta_);
   inTree_p->SetBranchAddress(Form("%s_jtConstN", fillName.c_str()), inJt_p->jtConstN_);
   inTree_p->SetBranchAddress(Form("%s_jtSoftPt", fillName.c_str()), inJt_p->jtSoftPt_);
+  inTree_p->SetBranchAddress(Form("%s_jtSoftSymmZ", fillName.c_str()), inJt_p->jtSoftSymmZ_);
   inTree_p->SetBranchAddress(Form("%s_jtPTD", fillName.c_str()), inJt_p->jtPTD_);
   inTree_p->SetBranchAddress(Form("%s_jtChg", fillName.c_str()), inJt_p->jtChg_);
   inTree_p->SetBranchAddress(Form("%s_jtR2", fillName.c_str()), inJt_p->jtR2_);
