@@ -42,6 +42,7 @@ const Float_t clustPtCut = 30.;
 const Int_t tauArr[nTau] = {1, 2, 3};
 const Double_t betaArr[nBeta] = {0.2, 0.5, 1.0, 1.5, 2.0, 3.0};
 const Double_t betaSDArr[nSDBeta] = {-0.5, -0.1, 0.0, 0.1, 0.5};
+const Double_t betaChgArr[nChgBeta] = {0.5, 1.0};
 
 //Def. set for jet clustering
 
@@ -67,11 +68,17 @@ const Float_t pthatWeights_PYTH_HYD[10] = {.611066, .0374106, .00232016, .000149
 const Int_t pthatCuts_PYTH_HIJ[10] = {15, 30, 50, 80, 120, 170, 220, 280, 370, 1000000000};
 const Float_t pthatWeights_PYTH_HIJ[9] = {.803486, .800737, .0115077, .0012741, .000235174, .0000321983, .00000629003, .00000202126, .000000573347};
 
+const Int_t pthatCuts_PYTH_PPTrk[7] = {15, 30, 50, 80, 120, 170, 1000000};
+const Float_t pthatWeights_PYTH_PPTrk[6] = {.161482, .00749461, .000752396, .0000837038, .0000101988, .00000175206};
+
+
 void getJtSubstrct(fastjet::PseudoJet* inJt, JetSubstruct* outJet_p, std::vector<fastjet::PseudoJet>* inBG)
 {
   outJet_p->jtConstN_[outJet_p->nJt_] = (Int_t)(inJt->constituents().size());
   outJet_p->jtPTD_[outJet_p->nJt_] = getPTD(inJt);
-  outJet_p->jtChg_[outJet_p->nJt_] = getJtCharge(inJt);
+  for(Int_t iter = 0; iter < nChgBeta; iter++){
+    outJet_p->jtChg_[outJet_p->nJt_][iter] = getJtCharge(inJt, betaChgArr[iter]);
+  }
   outJet_p->jtR2_[outJet_p->nJt_] = getAvgDelR(inJt, 2.0);
 
   calcSigma(inJt);
@@ -92,8 +99,9 @@ void getJtSubstrct(fastjet::PseudoJet* inJt, JetSubstruct* outJet_p, std::vector
 }
 
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], JetSubstruct* outJet_p, Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], Bool_t isChg, JetSubstruct* outJet_p, Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
 {
+  Int_t nAlgVect = 0;
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
   TLorentzVector tempTL;
 
@@ -103,11 +111,10 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], JetSubstruct*
     if(pt[iter] > ptCut){
        tempTL.SetPtEtaPhiM(pt[iter], eta[iter], phi[iter], 0);
        algVect_p->push_back(tempTL);
+       if(isChg) algVect_p->at(nAlgVect).set_user_index(chg[iter]);
+       else algVect_p->at(nAlgVect).set_user_index(0);
+       nAlgVect++;
     }       
-  }
-
-  for(Int_t iter = 0; iter < (Int_t)(algVect_p->size()); iter++){
-    algVect_p->at(iter).set_user_index(10);
   }
 
   fastjet::ClusterSequence cs(*algVect_p, jtDef);
@@ -258,7 +265,6 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
 
   Int_t dummyArr[2] = {0,0};
 
-
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
     if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
     //    std::cout << "Entry: " << jentry << std::endl;
@@ -274,20 +280,20 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
     InitJtVar();
 
     if(!isGen){
-      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, rechitRawJt_p, 0.010, dummyArr);
-      if(hi) getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, rechitVsJt_p, 0.010, dummyArr); 
+      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, dummyArr, false, rechitRawJt_p, 0.010, dummyArr);
+      if(hi) getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, dummyArr, false, rechitVsJt_p, 0.010, dummyArr); 
  
-      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfRawJt_p, 0.010, dummyArr);
-      if(hi) getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, pfVsJt_p, 0.010, dummyArr);
-      getJt(nPF_, pfPt_, pfPhi_, pfEta_, pfSKJt_p, pfIniSKPtCut_, dummyArr);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, dummyArr, false, pfRawJt_p, 0.010, dummyArr);
+      if(hi) getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, dummyArr, false, pfVsJt_p, 0.010, dummyArr);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, dummyArr, false, pfSKJt_p, pfIniSKPtCut_, dummyArr);
 
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkRawJt_p, 0.010, dummyArr);
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkSKJt_p, trkIniSKPtCut_, dummyArr);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkRawJt_p, 0.010, dummyArr);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkSKJt_p, trkIniSKPtCut_, dummyArr);
     }
     if(montecarlo){
-      getJt(nGen_, genPt_, genPhi_, genEta_, genRawJt_p, 0.010, dummyArr);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genSKJt_p, genIniSKPtCut_, dummyArr);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genSUBEJt_p, 0.010, genSube_, true);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genRawJt_p, 0.010, dummyArr);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSKJt_p, genIniSKPtCut_, dummyArr);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSUBEJt_p, 0.010, genSube_, true);
     }
 
     run_ = runIni_;
@@ -316,6 +322,14 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
 	    break;
 	  }
 	}
+      }
+      else{
+	for(Int_t hatIter = 0; hatIter < 6; hatIter++){
+          if(pthat_ >= pthatCuts_PYTH_PPTrk[hatIter] && pthat_ < pthatCuts_PYTH_PPTrk[hatIter + 1]){
+            pthatWeight_ = pthatWeights_PYTH_PPTrk[hatIter];
+            break;
+          }
+        }
       }
     }
 

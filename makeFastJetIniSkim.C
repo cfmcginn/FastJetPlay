@@ -213,6 +213,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
   c->trackTree->SetBranchStatus("trkPt", 1);
   c->trackTree->SetBranchStatus("trkPhi", 1);
   c->trackTree->SetBranchStatus("trkEta", 1);
+  c->trackTree->SetBranchStatus("trkCharge", 1);
   c->trackTree->SetBranchStatus("highPurity", 1);
   c->trackTree->SetBranchStatus("trkDz1", 1);
   c->trackTree->SetBranchStatus("trkDzError1", 1);
@@ -228,6 +229,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     c->genParticleTree->SetBranchStatus("phi", 1);
     c->genParticleTree->SetBranchStatus("eta", 1);
     c->genParticleTree->SetBranchStatus("sube", 1);
+    c->genParticleTree->SetBranchStatus("chg", 1);
   }
 
   if(hi){
@@ -596,6 +598,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	trkPt_[nTrk_] = c->track.trkPt[trkIter];
 	trkPhi_[nTrk_] = c->track.trkPhi[trkIter];
 	trkEta_[nTrk_] = c->track.trkEta[trkIter];
+	trkChg_[nTrk_] = c->track.trkCharge[trkIter];
 	nTrk_++;
 
 	if(nTrk_ > maxTracks - 1){
@@ -614,6 +617,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	genPhi_[nGen_] = c->genparticle.phi[genIter];
 	genEta_[nGen_] = c->genparticle.eta[genIter];
 	genSube_[nGen_] = c->genparticle.sube[genIter];
+	genChg_[nGen_] = c->genparticle.chg[genIter];
 	
 	nGen_++;
 
