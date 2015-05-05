@@ -32,7 +32,7 @@ const Int_t nPTDBins = 20;
 const Float_t ptdLow = 0.0001;
 const Float_t ptdHi = 0.9999;
 
-const Int_t nSDSymmZBins = 30;
+const Int_t nSDSymmZBins = 15;
 const Float_t sdSymmZLow = 0.0001;
 const Float_t sdSymmZHi = 0.5999;
 
@@ -219,6 +219,8 @@ void FillJetSubstructHist(JetSubstruct* inJt_p, JetSubstructHist* inJtHist_p, sa
       if(qG == Qua && TMath::Abs(inJt_p->jtRefPart_[jtIter]) > 8) continue;
       else if(qG == Glu && TMath::Abs(inJt_p->jtRefPart_[jtIter]) != 22) continue;
     }
+
+    //    if(isMC && TMath::Abs(inJt_p->jtRefPart_[jtIter]) > 900) continue;
 
     inJtHist_p->ptdHist_p[centPos][jtIter]->Fill(inJt_p->jtPTD_[jtIter], weight);
     for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
