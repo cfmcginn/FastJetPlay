@@ -15,6 +15,7 @@
 #include "sType.h"
 #include "qGType.h"
 #include "TFile.h"
+#include "TMath.h"
 
 const Int_t nSigma = 3;
 const Int_t nTau = 3;
@@ -22,7 +23,7 @@ const Int_t nBeta = 6;
 const Int_t nFFM = 14;
 const Int_t nSubjet = 5;
 const Int_t nSDBeta = 5;
-const Int_t nChgBeta = 2;
+const Int_t nChgBeta = 5;
 
 const Int_t centHIMax = 4;
 const Int_t centArr[centHIMax] = {20, 60, 100, 200};
@@ -42,18 +43,17 @@ const Float_t phiLow = -TMath::Pi();
 const Float_t phiHi = TMath::Pi();
 
 
+const Int_t nSDSymmZBins = 15;
+const Float_t sdSymmZLow = 0.0001;
+const Float_t sdSymmZHi = 0.5999;
 
 const Int_t nPTDBins = 20;
 const Float_t ptdLow = 0.0001;
 const Float_t ptdHi = 0.9999;
 
-const Int_t nSDSymmZBins = 15;
-const Float_t sdSymmZLow = 0.0001;
-const Float_t sdSymmZHi = 0.5999;
-
-const Int_t nChgBins = 15;
-const Float_t chgLow = -1.5;
-const Float_t chgHi = 1.5;
+const Int_t nChgBins = 20;
+const Float_t chgLow = 0.0001;
+const Float_t chgHi = 1.4999;
 
 
 class JetSubstruct{
@@ -66,6 +66,7 @@ public:
   Float_t jtPt_[maxJets];
   Float_t jtPhi_[maxJets];
   Float_t jtEta_[maxJets];
+  Int_t jtMatchIndex_[maxJets];
   Float_t jtMatchPt_[maxJets];
   Float_t jtMatchPhi_[maxJets];
   Float_t jtMatchEta_[maxJets];
@@ -84,6 +85,7 @@ public:
   Float_t subJtPt_[maxJets][nSubjet];
   Float_t subJtPhi_[maxJets][nSubjet];
   Float_t subJtEta_[maxJets][nSubjet];
+  Float_t subJtScalePt_[maxJets][nSubjet];
 };
 
 class JetSubstructHist{
@@ -128,6 +130,7 @@ void SetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->Branch(Form("%s_jtPt", fillName.c_str()), inJt_p->jtPt_, Form("%s_jtPt[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtPhi", fillName.c_str()), inJt_p->jtPhi_, Form("%s_jtPhi[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtEta", fillName.c_str()), inJt_p->jtEta_, Form("%s_jtEta[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
+  inTree_p->Branch(Form("%s_jtMatchIndex", fillName.c_str()), inJt_p->jtMatchIndex_, Form("%s_jtMatchIndex[%s_nJt]/I", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtMatchPt", fillName.c_str()), inJt_p->jtMatchPt_, Form("%s_jtMatchPt[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtMatchPhi", fillName.c_str()), inJt_p->jtMatchPhi_, Form("%s_jtMatchPhi[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtMatchEta", fillName.c_str()), inJt_p->jtMatchEta_, Form("%s_jtMatchEta[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
@@ -135,8 +138,8 @@ void SetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->Branch(Form("%s_jtSoftPt", fillName.c_str()), inJt_p->jtSoftPt_, Form("%s_jtSoftPt[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSDBeta));
   inTree_p->Branch(Form("%s_jtSoftSymmZ", fillName.c_str()), inJt_p->jtSoftSymmZ_, Form("%s_jtSoftSymmZ[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSDBeta));
   inTree_p->Branch(Form("%s_jtPTD", fillName.c_str()), inJt_p->jtPTD_, Form("%s_jtPTD[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
-  inTree_p->Branch(Form("%s_jtChg", fillName.c_str()), inJt_p->jtChg_, Form("%s_jtChg[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
-  inTree_p->Branch(Form("%s_jtR2", fillName.c_str()), inJt_p->jtR2_, Form("%s_jtR2[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nChgBeta));
+  inTree_p->Branch(Form("%s_jtChg", fillName.c_str()), inJt_p->jtChg_, Form("%s_jtChg[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nChgBeta));
+  inTree_p->Branch(Form("%s_jtR2", fillName.c_str()), inJt_p->jtR2_, Form("%s_jtR2[%s_nJt]/F", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtSigma", fillName.c_str()), inJt_p->jtSigma_, Form("%s_jtSigma[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSigma));
   inTree_p->Branch(Form("%s_jtRefPart", fillName.c_str()), inJt_p->jtRefPart_, Form("%s_jtRefPart[%s_nJt]/I", fillName.c_str(), fillName.c_str()));
   inTree_p->Branch(Form("%s_jtFFMUnsub", fillName.c_str()), inJt_p->jtFFMUnsub_, Form("%s_jtFFMUnsub[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nFFM));
@@ -145,7 +148,8 @@ void SetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->Branch(Form("%s_jtTau", fillName.c_str()), inJt_p->jtTau_, Form("%s_jtTau[%s_nJt][%d][%d]/F", fillName.c_str(), fillName.c_str(), nTau, nBeta));
   inTree_p->Branch(Form("%s_subJtPt", fillName.c_str()), inJt_p->subJtPt_, Form("%s_subJtPt[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSubjet));
   inTree_p->Branch(Form("%s_subJtPhi", fillName.c_str()), inJt_p->subJtPhi_, Form("%s_subJtPhi[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSubjet));
-  inTree_p->Branch(Form("%s_subJtEta", fillName.c_str()), inJt_p->subJtEta_, Form("%s_subJtEta[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSubjet));
+  inTree_p->Branch(Form("%s_subJtEta", fillName.c_str()), inJt_p->subJtEta_, Form("%s_subJtEta[%s_nJt][%d]/F", fillName.c_str(),fillName.c_str(), nSubjet));
+  inTree_p->Branch(Form("%s_subJtScalePt", fillName.c_str()), inJt_p->subJtScalePt_, Form("%s_subJtScalePt[%s_nJt][%d]/F", fillName.c_str(), fillName.c_str(), nSubjet));
 
   return;
 }
@@ -157,6 +161,7 @@ void GetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->SetBranchAddress(Form("%s_jtPt", fillName.c_str()), inJt_p->jtPt_);
   inTree_p->SetBranchAddress(Form("%s_jtPhi", fillName.c_str()), inJt_p->jtPhi_);
   inTree_p->SetBranchAddress(Form("%s_jtEta", fillName.c_str()), inJt_p->jtEta_);
+  inTree_p->SetBranchAddress(Form("%s_jtMatchIndex", fillName.c_str()), inJt_p->jtMatchIndex_);
   inTree_p->SetBranchAddress(Form("%s_jtMatchPt", fillName.c_str()), inJt_p->jtMatchPt_);
   inTree_p->SetBranchAddress(Form("%s_jtMatchPhi", fillName.c_str()), inJt_p->jtMatchPhi_);
   inTree_p->SetBranchAddress(Form("%s_jtMatchEta", fillName.c_str()), inJt_p->jtMatchEta_);
@@ -175,6 +180,7 @@ void GetJetSubstructBranches(TTree* inTree_p, JetSubstruct* inJt_p, const std::s
   inTree_p->SetBranchAddress(Form("%s_subJtPt", fillName.c_str()), inJt_p->subJtPt_);
   inTree_p->SetBranchAddress(Form("%s_subJtPhi", fillName.c_str()), inJt_p->subJtPhi_);
   inTree_p->SetBranchAddress(Form("%s_subJtEta", fillName.c_str()), inJt_p->subJtEta_);
+  inTree_p->SetBranchAddress(Form("%s_subJtScalePt", fillName.c_str()), inJt_p->subJtScalePt_);
 
   return;
 }
@@ -269,8 +275,9 @@ void FillJetSubstructHist(JetSubstruct* inJt_p, JetSubstructHist* inJtHist_p, sa
   for(Int_t jtIter = 0; jtIter < jtMax; jtIter++){
     if(qG != Tot){
       if(qG == Qua && TMath::Abs(inJt_p->jtRefPart_[jtIter]) > 8) continue;
-      else if(qG == Glu && TMath::Abs(inJt_p->jtRefPart_[jtIter]) != 22) continue;
+      else if(qG == Glu && TMath::Abs(inJt_p->jtRefPart_[jtIter]) != 21) continue;
     }
+    //    if(qG == Qua) std::cout << "QUARKS! " << jtIter << ", " << inJt_p->jtPt_[jtIter] << ", " << inJt_p->jtRefPart_[jtIter] << ", " << inJt_p->jtChg_[jtIter][0] << std::endl;
 
     //    if(isMC && TMath::Abs(inJt_p->jtRefPart_[jtIter]) > 900) continue;
 
