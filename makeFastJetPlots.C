@@ -188,7 +188,7 @@ void plotFastJetPTDTauPanel(const std::string pbpbFileName, const std::string al
 
   TFile* dumFile_p[2] = {0, 0};
 
-  GetHistForPlot(pbpbFile_p, ppFile_p, hiMCFile_p, ppMCFile_p, "VsCalo");
+  GetHistForPlot(pbpbFile_p, ppFile_p, hiMCFile_p, ppMCFile_p, alg);
 
   TCanvas* plotCanvas_p[2];
   const Int_t nPanel = 5;
@@ -201,7 +201,7 @@ void plotFastJetPTDTauPanel(const std::string pbpbFileName, const std::string al
   }
 
   TLine* oneLine_p;
-  oneLine_p = new TLine(0., 1., .6, 1.);
+  oneLine_p = new TLine(0., 1., 1.5, 1.);
 
   oneLine_p->SetLineColor(1);
   oneLine_p->SetLineStyle(2);
@@ -211,134 +211,175 @@ void plotFastJetPTDTauPanel(const std::string pbpbFileName, const std::string al
   error++;
 
   plotCanvas_p[0]->cd(1);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetMaximum(.299);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetMinimum(.001);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->GetXaxis()->CenterTitle();
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->GetXaxis()->SetTitleOffset(1.5);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->GetYaxis()->CenterTitle();
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->GetYaxis()->SetTitleOffset(2.5);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetXTitle("z_{symm}; #beta=0");
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetYTitle("Event Fraction");
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->DrawCopy("E1 P");
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetMaximum(.299);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetMinimum(.001);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->GetXaxis()->CenterTitle();
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->GetXaxis()->SetTitleOffset(1.5);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->GetYaxis()->CenterTitle();
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->GetYaxis()->SetTitleOffset(2.5);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetXTitle("jtChg; #kappa=1.0");
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetYTitle("Event Fraction");
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->DrawCopy("E1 P");
 
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][0]->SetMarkerStyle(25);
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][0]->SetFillColor(18);
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][0]->DrawCopy("E1 HIST SAME");
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][0]->DrawCopy("E1 SAME");
+  std::cout << error << std::endl;
+  error++;
 
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][0]->SetMarkerSize(0);
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][0]->SetFillColor(kBlue);
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][0]->Add(trkSKJt_HistPPMCG_p->chgHist_p[0][0][0]);
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][0]->DrawCopy("E1 HIST SAME");
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][2]->SetMarkerStyle(25);
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][2]->SetFillColor(18);
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][2]->DrawCopy("E1 HIST SAME");
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][0][2]->DrawCopy("E1 SAME");
 
-  trkSKJt_HistPPMCG_p->chgHist_p[0][0][0]->SetMarkerSize(0);
-  trkSKJt_HistPPMCG_p->chgHist_p[0][0][0]->SetFillColor(kRed);
-  trkSKJt_HistPPMCG_p->chgHist_p[0][0][0]->DrawCopy("E1 HIST SAME");
+  std::cout << error << std::endl;
+  error++;
 
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->DrawCopy("E1 P SAME");
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][2]->SetMarkerSize(0);
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][2]->SetFillColor(kBlue);
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][2]->Add(trkSKJt_HistPPMCG_p->chgHist_p[0][0][0]);
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][0][2]->DrawCopy("E1 HIST SAME");
+
+  std::cout << error << std::endl;
+  error++;
+
+  trkSKJt_HistPPMCG_p->chgHist_p[0][0][2]->SetMarkerSize(0);
+  trkSKJt_HistPPMCG_p->chgHist_p[0][0][2]->SetFillColor(kRed);
+  trkSKJt_HistPPMCG_p->chgHist_p[0][0][2]->DrawCopy("E1 HIST SAME");
+
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->DrawCopy("E1 P SAME");
 
   std::cout << error << std::endl;
   error++;
 
   plotCanvas_p[1]->cd(1);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetMaximum(.299);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetMinimum(.001);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->GetXaxis()->CenterTitle();
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->GetXaxis()->SetTitleOffset(1.5);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->GetYaxis()->CenterTitle();
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->GetYaxis()->SetTitleOffset(2.5);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetXTitle("z_{symm}; #beta=0");
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetYTitle("Event Fraction");
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->DrawCopy("E1 P");
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetMaximum(.299);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetMinimum(.001);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->GetXaxis()->CenterTitle();
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->GetXaxis()->SetTitleOffset(1.5);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->GetYaxis()->CenterTitle();
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->GetYaxis()->SetTitleOffset(2.5);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetXTitle("jtChg; #kappa=1.0");
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetYTitle("Event Fraction");
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->DrawCopy("E1 P");
 
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][0]->SetMarkerStyle(25);
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][0]->SetFillColor(18);
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][0]->DrawCopy("E1 HIST SAME");
-  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][0]->DrawCopy("E1 SAME");
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][2]->SetMarkerStyle(25);
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][2]->SetFillColor(18);
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][2]->DrawCopy("E1 HIST SAME");
+  trkSKJt_HistPPMCTot_p->chgHist_p[0][1][2]->DrawCopy("E1 SAME");
 
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][0]->SetMarkerSize(0);
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][0]->SetFillColor(kBlue);
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][0]->Add(trkSKJt_HistPPMCG_p->chgHist_p[0][1][0]);
-  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][0]->DrawCopy("E1 HIST SAME");
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][2]->SetMarkerSize(0);
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][2]->SetFillColor(kBlue);
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][2]->Add(trkSKJt_HistPPMCG_p->chgHist_p[0][1][0]);
+  trkSKJt_HistPPMCQ_p->chgHist_p[0][1][2]->DrawCopy("E1 HIST SAME");
 
-  trkSKJt_HistPPMCG_p->chgHist_p[0][1][0]->SetMarkerSize(0);
-  trkSKJt_HistPPMCG_p->chgHist_p[0][1][0]->SetFillColor(kRed);
-  trkSKJt_HistPPMCG_p->chgHist_p[0][1][0]->DrawCopy("E1 HIST SAME");
+  trkSKJt_HistPPMCG_p->chgHist_p[0][1][2]->SetMarkerSize(0);
+  trkSKJt_HistPPMCG_p->chgHist_p[0][1][2]->SetFillColor(kRed);
+  trkSKJt_HistPPMCG_p->chgHist_p[0][1][2]->DrawCopy("E1 HIST SAME");
 
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->DrawCopy("E1 P SAME");
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->DrawCopy("E1 P SAME");
+
+  std::cout << error << std::endl;
+  error++;
 
   for(Int_t iter = 0; iter < 4; iter++){
     plotCanvas_p[0]->cd(iter+2);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->SetMaximum(.299);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->SetMinimum(.001);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->GetXaxis()->CenterTitle();
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->GetXaxis()->SetTitleOffset(1.5);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->SetXTitle("z_{symm}; #beta=0");
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 P");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->SetMaximum(.299);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->SetMinimum(.001);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->GetXaxis()->CenterTitle();
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->GetXaxis()->SetTitleOffset(1.5);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->SetXTitle("jtChg; #kappa=1.0");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 P");
 
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][0]->SetMarkerStyle(25);
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][0]->SetFillColor(18);
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 HIST SAME");
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 SAME");
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][2]->SetMarkerStyle(25);
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][2]->SetFillColor(18);
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 HIST SAME");
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 SAME");
+    
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][0][2]->SetMarkerSize(0);
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][0][2]->SetFillColor(kBlue);
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][0][2]->Add(trkSKJt_HistHIMCG_p->chgHist_p[3-iter][0][0]);
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 HIST SAME");
+    
+    trkSKJt_HistHIMCG_p->chgHist_p[3-iter][0][2]->SetMarkerSize(0);
+    trkSKJt_HistHIMCG_p->chgHist_p[3-iter][0][2]->SetFillColor(kRed);
+    trkSKJt_HistHIMCG_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 HIST SAME");
+        
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 P SAME");
 
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 P SAME");
+    std::cout << iter << ", " << error << std::endl;
+    error++;
 
     plotCanvas_p[0]->cd(iter+7);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][0][2]);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->SetMaximum(1.499);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->SetMinimum(.501);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 P");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][0][0]);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->SetMaximum(1.499);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->SetMinimum(.501);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 P");
 
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][0]->Divide(trkSKJt_HistPPMCTot_p->chgHist_p[0][0][2]);
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 P SAME");
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][2]->Divide(trkSKJt_HistPPMCTot_p->chgHist_p[0][0][0]);
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 P SAME");
 
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][0]->DrawCopy("E1 P SAME");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][0][2]->DrawCopy("E1 P SAME");
 
     oneLine_p->DrawClone();
 
+    std::cout << iter << ", " << error << std::endl;
+    error++;
 
     plotCanvas_p[1]->cd(iter+2);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->SetMaximum(.299);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->SetMinimum(.001);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->GetXaxis()->CenterTitle();
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->GetXaxis()->SetTitleOffset(1.5);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->SetXTitle("z_{symm}; #beta=0");
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 P");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->SetMaximum(.299);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->SetMinimum(.001);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->GetXaxis()->CenterTitle();
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->GetXaxis()->SetTitleOffset(1.5);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->SetXTitle("jtChg; #kappa=1.0");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 P");
 
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][0]->SetMarkerStyle(25);
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][0]->SetFillColor(18);
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 HIST SAME");
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 SAME");
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][2]->SetMarkerStyle(25);
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][2]->SetFillColor(18);
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 HIST SAME");
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 SAME");
 
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 P SAME");
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][1][2]->SetMarkerSize(0);
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][1][2]->SetFillColor(kBlue);
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][1][2]->Add(trkSKJt_HistHIMCG_p->chgHist_p[3-iter][1][0]);
+    trkSKJt_HistHIMCQ_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 HIST SAME");
+    
+    trkSKJt_HistHIMCG_p->chgHist_p[3-iter][1][2]->SetMarkerSize(0);
+    trkSKJt_HistHIMCG_p->chgHist_p[3-iter][1][2]->SetFillColor(kRed);
+    trkSKJt_HistHIMCG_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 HIST SAME");
+    
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 P SAME");
+
+    std::cout << iter << ", " << error << std::endl;
+    error++;
 
     plotCanvas_p[1]->cd(iter+7);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][1][2]);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->SetMaximum(1.499);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->SetMinimum(0.501);
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 P");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][1][0]);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->SetMaximum(1.499);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->SetMinimum(0.501);
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 P");
 
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][0]->Divide(trkSKJt_HistPPMCTot_p->chgHist_p[0][0][2]);
-    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 P SAME");
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][2]->Divide(trkSKJt_HistPPMCTot_p->chgHist_p[0][1][0]);
+    trkSKJt_HistHIMCTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 P SAME");
 
-    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][0]->DrawCopy("E1 P SAME");
+    trkSKJt_HistPbPbTot_p->chgHist_p[3-iter][1][2]->DrawCopy("E1 P SAME");
     oneLine_p->DrawClone();
   }
 
+  std::cout << error << std::endl;
+  error++;
+
   plotCanvas_p[0]->cd(6);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][0][2]);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetMaximum(1.499);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetMinimum(.501);
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->SetYTitle("Ratio");
-  trkSKJt_HistPPTot_p->chgHist_p[0][0][0]->DrawCopy("E1 P");
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][0][1]);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetMaximum(1.499);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetMinimum(.501);
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->SetYTitle("Ratio");
+  trkSKJt_HistPPTot_p->chgHist_p[0][0][2]->DrawCopy("E1 P");
   oneLine_p->DrawClone();
 
   plotCanvas_p[1]->cd(6);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][1][2]);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetMaximum(1.499);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetMinimum(.501);
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->SetYTitle("Ratio");
-  trkSKJt_HistPPTot_p->chgHist_p[0][1][0]->DrawCopy("E1 P");
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->Divide(trkSKJt_HistPPTot_p->chgHist_p[0][1][1]);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetMaximum(1.499);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetMinimum(.501);
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->SetYTitle("Ratio");
+  trkSKJt_HistPPTot_p->chgHist_p[0][1][2]->DrawCopy("E1 P");
   oneLine_p->DrawClone();
 
   TLatex* label1_p = new TLatex();
@@ -354,6 +395,9 @@ void plotFastJetPTDTauPanel(const std::string pbpbFileName, const std::string al
     }
   }
 
+
+  std::cout << error << std::endl;
+  error++;
 
   TFile* outFile_p = new TFile("testPlot.root", "RECREATE");
   plotCanvas_p[0]->Write("", TObject::kOverwrite);

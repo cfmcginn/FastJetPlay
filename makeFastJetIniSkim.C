@@ -507,7 +507,7 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     //Iterate over jets
 
     Int_t algMax = 5;
-    if(!hi && !pa) algMax = 3;
+    //    if(!hi && !pa) algMax = 3;
 
     for(Int_t algIter = 0; algIter < algMax; algIter++){
       if(algIter == 2){

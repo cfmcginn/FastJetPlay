@@ -109,7 +109,6 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     FillJetSubstructHist(trkRawJt_p, trkRawJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
     FillJetSubstructHist(trkSKJt_p, trkSKJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
-
     if(isMC){
       FillJetSubstructHist(genRawJt_p, genRawJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
@@ -118,6 +117,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     if(isMC){
       // QUARKS!
+
       FillJetSubstructHist(rechitRawJt_p, rechitRawJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
       FillJetSubstructHist(rechitVsJt_p, rechitVsJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
 
@@ -150,10 +150,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
   }
 
   outFile_p = new TFile(Form("%s.root", outName.c_str()), "UPDATE");
-  std::cout << "FAIL?" << std::endl;
   ScaleHistAll(sType);
   WriteHistAll(outFile_p, sType);
-  std::cout << "FAIL?" << std::endl;
   outFile_p->Close();
   delete outFile_p;
   outFile_p = 0;
