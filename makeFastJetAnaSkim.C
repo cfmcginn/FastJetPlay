@@ -39,17 +39,18 @@ const Float_t clustPtCut = 30.;
 
 //Nsubjettiness var, taus and betas
 
+/*
 const Int_t tauArr[nTau] = {1, 2, 3};
 const Double_t betaArr[nBeta] = {0.2, 0.5, 1.0, 1.5, 2.0, 3.0};
 const Double_t betaSDArr[nSDBeta] = {-0.5, -0.1, 0.0, 0.1, 0.5};
 const Double_t betaChgArr[nChgBeta] = {0.3, 0.5, 1.0, 1.5, 2.0};
-
+*/
 //Def. set for jet clustering
 
 const Double_t jtR = 0.4;
 fastjet::JetAlgorithm jtAlg = fastjet::antikt_algorithm;
 fastjet::JetDefinition jtDef(jtAlg, jtR, fastjet::E_scheme, fastjet::Best);
-fastjet::AreaDefinition jtAreaDef(fastjet::active_area, fastjet::GhostedAreaSpec(fastjet::SelectorAbsRapMax(2.3)));
+fastjet::AreaDefinition jtAreaDef(fastjet::active_area, fastjet::GhostedAreaSpec(fastjet::SelectorAbsRapMax(5.0)));
 
 //Def. set for rho correction (Jet FFM)
 
@@ -119,8 +120,8 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], 
     }       
   }
 
-  fastjet::ClusterSequence cs(*algVect_p, jtDef);
-  //  fastjet::ClusterSequenceArea cs(*algVect_p, jtDef, jtAreaDef);
+  // fastjet::ClusterSequence cs(*algVect_p, jtDef);
+  fastjet::ClusterSequenceArea cs(*algVect_p, jtDef, jtAreaDef);
   //  fastjet::ClusterSequence csNoArea = fastjet::ClusterSequence(cs);
   std::vector<fastjet::PseudoJet> algSortVect = fastjet::sorted_by_pt(cs.inclusive_jets());
 
@@ -130,6 +131,8 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], 
   fastjet::contrib::SoftDrop* sd[nSDBeta];
   for(Int_t iter = 0; iter < nSDBeta; iter++){
     sd[iter] = new fastjet::contrib::SoftDrop(betaSDArr[iter], zCut);
+    if(betaSDArr[iter] < 0) sd[iter]->set_tagging_mode();
+    sd[iter]->set_verbose_structure();
   }
 
   for(Int_t iter = 0; iter < (Int_t)algSortVect.size(); iter++){
@@ -140,14 +143,15 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], 
       outJet_p->jtPhi_[outJet_p->nJt_] = algSortVect[iter].phi_std();
       outJet_p->jtEta_[outJet_p->nJt_] = algSortVect[iter].eta();
 
-
       for(Int_t iter2 = 0; iter2 < nSDBeta; iter2++){
 	fastjet::PseudoJet tempSDJt = (*sd[iter2])(algSortVect[iter]);
+	if(tempSDJt == 0.0) continue;
 	outJet_p->jtSoftPt_[outJet_p->nJt_][iter2] = tempSDJt.perp();
 	outJet_p->jtSoftSymmZ_[outJet_p->nJt_][iter2] = tempSDJt.structure_of<fastjet::contrib::SoftDrop>().symmetry();
       }
 
       getJtSubstrct(&algSortVect[iter], outJet_p, algVect_p);
+
       outJet_p->nJt_++;
       if(outJet_p->nJt_ == 5) break;
     }
@@ -282,7 +286,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
   Int_t dummyArr[2] = {0,0};
 
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
-    if(jentry%1000 == 0) std::cout << "Entry: " << jentry << std::endl;
+    if(jentry%10 == 0) std::cout << "Entry: " << jentry << std::endl;
     //    std::cout << "Entry: " << jentry << std::endl;
 
     if(!isGen){
@@ -305,6 +309,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
 
       getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkRawJt_p, 0.010, dummyArr);
       getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkSKJt_p, trkIniSKPtCut_, dummyArr);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trk3CutJt_p, 3.0, dummyArr);
     }
     if(montecarlo){
       getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genRawJt_p, 0.010, dummyArr);
@@ -400,6 +405,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
     
     getJtMatch(AlgJtPt_[VsPF], AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], trkRawJt_p, montecarlo);
     getJtMatch(AlgJtPt_[VsPF], AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], trkSKJt_p, montecarlo);
+    getJtMatch(AlgJtPt_[VsPF], AlgJtPhi_[VsPF], AlgJtEta_[VsPF], AlgRefPartFlav_[VsPF], trk3CutJt_p, montecarlo);
 
     if(montecarlo){
       getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genSUBEJt_p, montecarlo);
@@ -416,6 +422,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
 
     getSubJtScalePt(trkRawJt_p);
     getSubJtScalePt(trkSKJt_p);
+    getSubJtScalePt(trk3CutJt_p);
 
     if(montecarlo){
       getSubJtScalePt(genRawJt_p);

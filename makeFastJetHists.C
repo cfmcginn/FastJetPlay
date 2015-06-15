@@ -50,6 +50,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
   trkRawJt_HistTot_p = new JetSubstructHist();
   trkSKJt_HistTot_p = new JetSubstructHist();
+  trk3CutJt_HistTot_p = new JetSubstructHist();
 
   if(isMC){
     genRawJt_HistTot_p = new JetSubstructHist();
@@ -67,6 +68,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     
     trkRawJt_HistQ_p = new JetSubstructHist();
     trkSKJt_HistQ_p = new JetSubstructHist();
+    trk3CutJt_HistQ_p = new JetSubstructHist();
     
     genRawJt_HistQ_p = new JetSubstructHist();
     genSKJt_HistQ_p = new JetSubstructHist();
@@ -81,6 +83,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     
     trkRawJt_HistG_p = new JetSubstructHist();
     trkSKJt_HistG_p = new JetSubstructHist();
+    trk3CutJt_HistG_p = new JetSubstructHist();
     
     genRawJt_HistG_p = new JetSubstructHist();
     genSKJt_HistG_p = new JetSubstructHist();
@@ -109,6 +112,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
     FillJetSubstructHist(trkRawJt_p, trkRawJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
     FillJetSubstructHist(trkSKJt_p, trkSKJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
+    FillJetSubstructHist(trk3CutJt_p, trk3CutJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
     if(isMC){
       FillJetSubstructHist(genRawJt_p, genRawJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
@@ -127,6 +131,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       FillJetSubstructHist(trkRawJt_p, trkRawJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
       FillJetSubstructHist(trkSKJt_p, trkSKJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
+      FillJetSubstructHist(trk3CutJt_p, trk3CutJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
 
       FillJetSubstructHist(genRawJt_p, genRawJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
@@ -142,6 +147,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
       FillJetSubstructHist(trkRawJt_p, trkRawJt_HistG_p, sType, hiBin_, hatWeight, Glu);
       FillJetSubstructHist(trkSKJt_p, trkSKJt_HistG_p, sType, hiBin_, hatWeight, Glu);
+      FillJetSubstructHist(trk3CutJt_p, trk3CutJt_HistG_p, sType, hiBin_, hatWeight, Glu);
 
       FillJetSubstructHist(genRawJt_p, genRawJt_HistG_p, sType, hiBin_, hatWeight, Glu);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistG_p, sType, hiBin_, hatWeight, Glu);
@@ -151,7 +157,7 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
 
   outFile_p = new TFile(Form("%s.root", outName.c_str()), "UPDATE");
   ScaleHistAll(sType);
-  WriteHistAll(outFile_p, sType);
+  WriteHistAll(outFile_p, sType, algType[setNum]);
   outFile_p->Close();
   delete outFile_p;
   outFile_p = 0;
@@ -195,7 +201,7 @@ void makeFastJetHists(const std::string inName, sampleType sType = kHIDATA)
 
   std::cout << "Begin the loop" << std::endl;
   
-  for(Int_t setIter = 1; setIter < 2; setIter++){
+  for(Int_t setIter = 2; setIter < 5; setIter++){
     if(setIter == 2 && !isMonteCarlo(sType)) continue;
     if(setIter == 3) continue;    
 
