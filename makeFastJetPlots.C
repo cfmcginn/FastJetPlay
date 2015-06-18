@@ -98,14 +98,19 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 
   const Int_t nSub = nTH1Sub_[histNum];
   const std::string plotStr = th1Str_[histNum];
-  std::cout << "A" << std::endl;
   inStruct_p->StandardizeTH1(histNum);
   inStruct_p->StandardizeMeanTH1(histNum);
-  std::cout << "B" << std::endl;
 
   TFile* outFile_p = new TFile("testPlot.root", "UPDATE");
   TCanvas* plotCanvas_p[histJtMax][nSub];
   TCanvas* plotCanvasMean_p[histJtMax];
+  TCanvas* plotCanvasMeanQG_p[histJtMax];
+
+  TCanvas* plotCanvasSubTot_p[histJtMax];
+  TCanvas* plotCanvasSubMC_p[histJtMax];
+  TCanvas* plotCanvasSubQ_p[histJtMax];
+  TCanvas* plotCanvasSubG_p[histJtMax];
+
   Int_t nPanel_Temp = 1;
   Int_t nPanel_Temp2 = 1;
   if(isPbPb || isHIMC){
@@ -127,13 +132,26 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
   }
   
   for(Int_t iter = 0; iter < histJtMax; iter++){
-    plotCanvasMean_p[iter] = new TCanvas(Form("%s_%s_%s_%s_Mean_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_Mean_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), nPanel*300, nPanel2*350);
-    plotCanvasMean_p[iter]->Divide(nPanel, nPanel2, 0.0, 0.0);
+    plotCanvasMean_p[iter] = new TCanvas(Form("%s_%s_%s_%s_Mean_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_Mean_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), 1*300, 1*350);
+    //    plotCanvasMean_p[iter]->Divide(nPanel, nPanel2, 0.0, 0.0);
+
+    plotCanvasMeanQG_p[iter] = new TCanvas(Form("%s_%s_%s_%s_MeanQG_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_MeanQG_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), 1*300, 1*350);
+
+    plotCanvasSubTot_p[iter] = new TCanvas(Form("%s_%s_%s_%s_SubTot_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_SubTot_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), nPanel*300, nPanel2*350);
+    plotCanvasSubTot_p[iter]->Divide(nPanel, nPanel2, 0.0, 0.0);
+
+    plotCanvasSubMC_p[iter] = new TCanvas(Form("%s_%s_%s_%s_SubMC_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_SubMC_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), nPanel*300, nPanel2*350);
+    plotCanvasSubMC_p[iter]->Divide(nPanel, nPanel2, 0.0, 0.0);
+
+    plotCanvasSubQ_p[iter] = new TCanvas(Form("%s_%s_%s_%s_SubQ_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_SubQ_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), nPanel*300, nPanel2*350);
+    plotCanvasSubQ_p[iter]->Divide(nPanel, nPanel2, 0.0, 0.0);
+
+    plotCanvasSubG_p[iter] = new TCanvas(Form("%s_%s_%s_%s_SubG_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), Form("%s_%s_%s_%s_SubG_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str()), nPanel*300, nPanel2*350);
+    plotCanvasSubG_p[iter]->Divide(nPanel, nPanel2, 0.0, 0.0);
 
     for(Int_t iter2 = 0; iter2 < nSub; iter2++){
       plotCanvas_p[iter][iter2] = new TCanvas(Form("%s_%s_%s_%s%d_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str(), iter2), Form("%s_%s_%s_%s%d_c", alg.c_str(), alg2.c_str(), lead[iter].c_str(), plotStr.c_str(), iter2), nPanel*300, nPanel2*350);
       plotCanvas_p[iter][iter2]->Divide(nPanel, nPanel2, 0.0, 0.0);
-      //      std::cout << "Plot Canv: " << plotCanvas_p[iter][iter2]->GetName() << std::endl;
     }
   }
 
@@ -164,7 +182,6 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
   oneLine_p->SetLineColor(1);
   oneLine_p->SetLineStyle(2);
       
-  std::cout << "A" << std::endl;
 
   Float_t ratMax = 0;
   Float_t ratMin = 1000000;
@@ -174,41 +191,86 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
   const Bool_t legBool1[nLeg1] = {isPP, isPbPb, isPP && isPbPb, isPPMC, isHIMC, isPPMC && isHIMC, isPPMC || isHIMC, isPPMC || isHIMC, inStruct_p->isGenPP_, inStruct_p->isGenHI_};
   const std::string legStr1[nLeg1] = {"pp", "PbPb", "PbPb/pp", "PYT.", "PYT.+HYD.", "PYT.+HYD./PYT", "QUARKS!", "gluons?", "Gen. PYT.", "Gen. PYT.+HYD."};
 
+  const Int_t nLegMean = 6;
+  TH1F* legHistMean_p[nLegMean];
+  const Bool_t legBoolMean[nLegMean] = {isPP, isPbPb, isPbPb, isPPMC, isHIMC, isHIMC};
+  const std::string legStrMean[nLegMean] = {"pp", "PbPb 30-100%", "PbPb 0-30%", "PYT.", "P.+H. 30-100%", "P.+H. 0-30%"};
+
+  const Int_t nLegMeanQG = 6;
+  TH1F* legHistMeanQG_p[nLegMeanQG];
+  const Bool_t legBoolMeanQG[nLegMeanQG] = {isPPMC, isHIMC, isHIMC, isPPMC, isHIMC, isHIMC};
+  const std::string legStrMeanQG[nLegMeanQG] = {"PYT. Quark (Q)", "P.+H. (Q) 30-100%", "P.+H. (Q) 0-30%", "PYT. Gluon (G)", "P.+H. (G) 30-100%", "P.+H. (G) 0-30%"};
+
+
 
   for(Int_t plotIter = 0; plotIter < histJtMax; plotIter++){
     TH1F ppTotMean_h;
     TH1F ppMCTotMean_h;
+    TH1F ppMCQMean_h;
+    TH1F ppMCGMean_h;
 
     if(isPP) ppTotMean_h = inStruct_p->ppStruct_p->GetActiveMeanTH1(histNum, 0, plotIter);
-    if(isPPMC) ppMCTotMean_h = inStruct_p->ppMCTotStruct_p->GetActiveMeanTH1(histNum, 0, plotIter);
-
-    plotCanvasMean_p[plotIter]->cd(1);
+    if(isPPMC){
+      ppMCTotMean_h = inStruct_p->ppMCTotStruct_p->GetActiveMeanTH1(histNum, 0, plotIter);
+      ppMCQMean_h = inStruct_p->ppMCQStruct_p->GetActiveMeanTH1(histNum, 0, plotIter);
+      ppMCGMean_h = inStruct_p->ppMCGStruct_p->GetActiveMeanTH1(histNum, 0, plotIter);
+    }
+    plotCanvasMean_p[plotIter]->cd();
 
     if(isPP) ppTotMean_h.DrawCopy("E1 P");
     if(isPPMC){
       if(!isPP) ppMCTotMean_h.DrawCopy("E1 P");
       else ppMCTotMean_h.DrawCopy("E1 SAME P");
       ppMCTotMean_h.DrawCopy("E1 SAME P");
+
+      plotCanvasMeanQG_p[plotIter]->cd();
+      ppMCQMean_h.DrawCopy("E1 P");
+      ppMCGMean_h.DrawCopy("E1 P SAME");
     }
     if(isPP) ppTotMean_h.DrawCopy("E1 P SAME");
+
+    legHistMean_p[0] = (TH1F*)ppTotMean_h.Clone();
+    legHistMean_p[3] = (TH1F*)ppMCTotMean_h.Clone();
+
+    legHistMeanQG_p[0] = (TH1F*)ppMCQMean_h.Clone();
+    legHistMeanQG_p[3] = (TH1F*)ppMCGMean_h.Clone();
 
     for(Int_t iter = 0; iter < nPanel-1; iter++){
       TH1F pbpbTotMean_h;
       TH1F hiMCTotMean_h;
+      TH1F hiMCQMean_h;
+      TH1F hiMCGMean_h;
       if(isPbPb) pbpbTotMean_h = inStruct_p->pbpbStruct_p->GetActiveMeanTH1(histNum, nPanel - 2 - iter, plotIter);
-      if(isHIMC) hiMCTotMean_h = inStruct_p->hiMCTotStruct_p->GetActiveMeanTH1(histNum, nPanel - 2 - iter, plotIter);
-      //EDIT HERE
-      plotCanvasMean_p[plotIter]->cd(iter+2);
-
-      if(isPbPb) pbpbTotMean_h.DrawCopy("E1 P");
       if(isHIMC){
-	if(!isPbPb) hiMCTotMean_h.DrawCopy("E1 P");
+	hiMCTotMean_h = inStruct_p->hiMCTotStruct_p->GetActiveMeanTH1(histNum, nPanel - 2 - iter, plotIter);
+	hiMCQMean_h = inStruct_p->hiMCQStruct_p->GetActiveMeanTH1(histNum, nPanel - 2 - iter, plotIter);
+	hiMCGMean_h = inStruct_p->hiMCGStruct_p->GetActiveMeanTH1(histNum, nPanel - 2 - iter, plotIter);
+      }
+      //EDIT HERE
+      plotCanvasMean_p[plotIter]->cd();
+
+      legHistMean_p[1+iter] = (TH1F*)pbpbTotMean_h.Clone();
+      legHistMean_p[4+iter] = (TH1F*)hiMCTotMean_h.Clone();
+
+      legHistMeanQG_p[1+iter] = (TH1F*)hiMCQMean_h.Clone();
+      legHistMeanQG_p[4+iter] = (TH1F*)hiMCGMean_h.Clone();
+
+      if(isPbPb){
+	if(!isPP && !isPPMC && iter == 0) pbpbTotMean_h.DrawCopy("E1 P");
+	else pbpbTotMean_h.DrawCopy("E1 P SAME");
+      }
+      if(isHIMC){
+	if(!isPbPb && !isPP && !isPPMC && iter == 0) hiMCTotMean_h.DrawCopy("E1 P");
 	else hiMCTotMean_h.DrawCopy("E1 SAME P");
 	hiMCTotMean_h.DrawCopy("E1 SAME");
       }
       if(isPbPb) pbpbTotMean_h.DrawCopy("E1 P SAME");
-    }
 
+      plotCanvasMeanQG_p[plotIter]->cd();
+      if(!isPPMC) hiMCQMean_h.DrawCopy("E1 P");
+      else hiMCQMean_h.DrawCopy("E1 SAME P");
+      hiMCGMean_h.DrawCopy("E1 SAME P");
+    }
 
     for(Int_t subIter = 0; subIter < nSub; subIter++){
       TH1F ppTot_h;
@@ -217,16 +279,45 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
       TH1F ppMCG_h;
       //Edit
 
+      TH1F ppTot2_h;
+      TH1F ppMCTot2_h;
+      TH1F ppMCQ2_h;
+      TH1F ppMCG2_h;
+
       TH1F genPP_h;
 
-      if(isPP) ppTot_h = inStruct_p->ppStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+      if(isPP){
+	ppTot_h = inStruct_p->ppStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+	ppTot2_h = inStruct_p->ppStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+	
+	ppTot2_h.SetMarkerSize(1);
+	ppTot2_h.SetMarkerColor(subCol[subIter]);
+	ppTot2_h.SetLineColor(subCol[subIter]);
+	ppTot2_h.SetMarkerStyle(subStyle[subIter]);
+      }
       if(isPPMC){
 	ppMCTot_h = inStruct_p->ppMCTotStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
 	ppMCQ_h = inStruct_p->ppMCQStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
 	ppMCG_h = inStruct_p->ppMCGStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
 
-	std::cout << "YOLO" << std::endl;
-	std::cout << ppMCTot_h.GetName() << std::endl;
+	ppMCTot2_h = inStruct_p->ppMCTotStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+	ppMCQ2_h = inStruct_p->ppMCQStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+	ppMCG2_h = inStruct_p->ppMCGStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+
+        ppMCTot2_h.SetMarkerSize(1);
+        ppMCTot2_h.SetMarkerColor(subCol[subIter]);
+        ppMCTot2_h.SetLineColor(subCol[subIter]);
+        ppMCTot2_h.SetMarkerStyle(subStyle[subIter]);
+
+        ppMCQ2_h.SetMarkerSize(1);
+        ppMCQ2_h.SetMarkerColor(subCol[subIter]);
+        ppMCQ2_h.SetLineColor(subCol[subIter]);
+        ppMCQ2_h.SetMarkerStyle(subStyle[subIter]);
+
+        ppMCG2_h.SetMarkerSize(1);
+        ppMCG2_h.SetMarkerColor(subCol[subIter]);
+        ppMCG2_h.SetLineColor(subCol[subIter]);
+        ppMCG2_h.SetMarkerStyle(subStyle[subIter]);
       }
       if(inStruct_p->isGenPP_) genPP_h = inStruct_p->genPPStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
 
@@ -256,19 +347,72 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 
       if(inStruct_p->isGenPP_) genPP_h.DrawCopy("E1 P SAME");
 
+      std::string sameStr = "SAME";
+      if(subIter == 0) sameStr = "";
+
+      plotCanvasSubTot_p[plotIter]->cd(1);
+      if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+      if(isPP) ppTot2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+      if(isPPMC){
+	plotCanvasSubMC_p[plotIter]->cd(1);
+	if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	ppMCTot2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	plotCanvasSubQ_p[plotIter]->cd(1);
+        if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+        ppMCQ2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	plotCanvasSubG_p[plotIter]->cd(1);
+        if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+        ppMCG2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+      }
+
       for(Int_t iter = 0; iter < nPanel-1; iter++){
 	TH1F pbpbTot_h;
 	TH1F hiMCTot_h;
 	TH1F hiMCQ_h;
 	TH1F hiMCG_h;
 
+	TH1F pbpbTot2_h;
+	TH1F hiMCTot2_h;
+	TH1F hiMCQ2_h;
+	TH1F hiMCG2_h;
+
 	TH1F genHI_h;
 	
-	if(isPbPb) pbpbTot_h = inStruct_p->pbpbStruct_p->GetActiveTH1(histNum, nPanel - 2 -iter, plotIter, subIter);
+	if(isPbPb){
+	  pbpbTot_h = inStruct_p->pbpbStruct_p->GetActiveTH1(histNum, nPanel - 2 -iter, plotIter, subIter);
+	  pbpbTot2_h = inStruct_p->pbpbStruct_p->GetActiveTH1(histNum, nPanel - 2 -iter, plotIter, subIter);
+
+	  pbpbTot2_h.SetMarkerSize(1);
+	  pbpbTot2_h.SetMarkerColor(subCol[subIter]);
+	  pbpbTot2_h.SetLineColor(subCol[subIter]);
+	  pbpbTot2_h.SetMarkerStyle(subStyle[subIter]);
+	}
 	if(isHIMC){
 	  hiMCTot_h = inStruct_p->hiMCTotStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
 	  hiMCQ_h = inStruct_p->hiMCQStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
 	  hiMCG_h = inStruct_p->hiMCGStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+
+	  hiMCTot2_h = inStruct_p->hiMCTotStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+	  hiMCQ2_h = inStruct_p->hiMCQStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+	  hiMCG2_h = inStruct_p->hiMCGStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+
+	  hiMCTot2_h.SetMarkerSize(1);
+          hiMCTot2_h.SetMarkerColor(subCol[subIter]);
+          hiMCTot2_h.SetLineColor(subCol[subIter]);
+          hiMCTot2_h.SetMarkerStyle(subStyle[subIter]);
+
+	  hiMCQ2_h.SetMarkerSize(1);
+          hiMCQ2_h.SetMarkerColor(subCol[subIter]);
+          hiMCQ2_h.SetLineColor(subCol[subIter]);
+          hiMCQ2_h.SetMarkerStyle(subStyle[subIter]);
+
+	  hiMCG2_h.SetMarkerSize(1);
+          hiMCG2_h.SetMarkerColor(subCol[subIter]);
+          hiMCG2_h.SetLineColor(subCol[subIter]);
+          hiMCG2_h.SetMarkerStyle(subStyle[subIter]);
 	}
 	if(inStruct_p->isGenHI_) genHI_h = inStruct_p->genHIStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
 
@@ -297,6 +441,26 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 	if(isPbPb) pbpbTot_h.DrawCopy("E1 P SAME");
 	
 	if(inStruct_p->isGenHI_) genHI_h.DrawCopy("E1 P SAME");
+
+
+	plotCanvasSubTot_p[plotIter]->cd(iter+2);
+	if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	if(isPbPb) pbpbTot2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	if(isHIMC){
+	  plotCanvasSubMC_p[plotIter]->cd(iter+2);
+	  if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	  hiMCTot2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	  plotCanvasSubQ_p[plotIter]->cd(iter+2);
+	  if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	  hiMCQ2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	  plotCanvasSubG_p[plotIter]->cd(iter+2);
+	  if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	  hiMCG2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+	}
+
 
 	plotCanvas_p[plotIter][subIter]->cd(iter+2+nPanel);
 	if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
@@ -333,16 +497,55 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
       //Edit
       
       if(isPP) ppTot_h = inStruct_p->ppStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
-      if(isPPMC) ppMCTot_h = inStruct_p->ppMCTotStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+      if(isPPMC){
+	ppMCTot_h = inStruct_p->ppMCTotStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+	ppMCQ_h = inStruct_p->ppMCQStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+	ppMCG_h = inStruct_p->ppMCGStruct_p->GetActiveTH1(histNum, 0, plotIter, subIter);
+      }
 
       for(Int_t iter = 0; iter < nPanel-1; iter++){
 	TH1F pbpbTot_h;
 	TH1F hiMCTot_h;
 	TH1F hiMCQ_h;
 	TH1F hiMCG_h;
+
+	TH1F pbpbTot2_h;
+	TH1F hiMCTot2_h;
+	TH1F hiMCQ2_h;
+	TH1F hiMCG2_h;
 	
-	if(isPbPb) pbpbTot_h = inStruct_p->pbpbStruct_p->GetActiveTH1(histNum, nPanel - 2 -iter, plotIter, subIter);
-	if(isHIMC) hiMCTot_h = inStruct_p->hiMCTotStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+	if(isPbPb){
+	  pbpbTot_h = inStruct_p->pbpbStruct_p->GetActiveTH1(histNum, nPanel - 2 -iter, plotIter, subIter);
+	  pbpbTot2_h = inStruct_p->pbpbStruct_p->GetActiveTH1(histNum, nPanel - 2 -iter, plotIter, subIter);
+
+          pbpbTot2_h.SetMarkerSize(1);
+          pbpbTot2_h.SetMarkerColor(subCol[subIter]);
+          pbpbTot2_h.SetLineColor(subCol[subIter]);
+          pbpbTot2_h.SetMarkerStyle(subStyle[subIter]);
+	}
+	if(isHIMC){
+	  hiMCTot_h = inStruct_p->hiMCTotStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+
+	  hiMCTot2_h = inStruct_p->hiMCTotStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+	  hiMCQ2_h = inStruct_p->hiMCQStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+	  hiMCG2_h = inStruct_p->hiMCGStruct_p->GetActiveTH1(histNum, nPanel - 2 - iter, plotIter, subIter);
+
+          hiMCTot2_h.SetMarkerSize(1);
+          hiMCTot2_h.SetMarkerColor(subCol[subIter]);
+          hiMCTot2_h.SetLineColor(subCol[subIter]);
+          hiMCTot2_h.SetMarkerStyle(subStyle[subIter]);
+
+          hiMCQ2_h.SetMarkerSize(1);
+          hiMCQ2_h.SetMarkerColor(subCol[subIter]);
+          hiMCQ2_h.SetLineColor(subCol[subIter]);
+          hiMCQ2_h.SetMarkerStyle(subStyle[subIter]);
+
+          hiMCG2_h.SetMarkerSize(1);
+          hiMCG2_h.SetMarkerColor(subCol[subIter]);
+          hiMCG2_h.SetLineColor(subCol[subIter]);
+          hiMCG2_h.SetMarkerStyle(subStyle[subIter]);
+
+	}
 	
 	plotCanvas_p[plotIter][subIter]->cd(iter+2+nPanel);
 	if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
@@ -353,12 +556,34 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 	  pbpbTot_h.SetMinimum(ratMin);
 	  pbpbTot_h.SetMarkerStyle(34);
 	  pbpbTot_h.DrawCopy("E1 P");
+
+	  pbpbTot2_h.Divide(&ppTot_h);
+          pbpbTot2_h.SetMaximum(ratMax);
+          pbpbTot2_h.SetMinimum(ratMin);
+          pbpbTot2_h.SetMarkerStyle(34);
+          pbpbTot2_h.DrawCopy("E1 P");
 	}
 	if(isHIMC && isPPMC){
 	  hiMCTot_h.Divide(&ppMCTot_h);
 	  hiMCTot_h.SetMaximum(ratMax);
 	  hiMCTot_h.SetMinimum(ratMin);
 	  hiMCTot_h.SetMarkerStyle(28);
+
+	  hiMCTot2_h.Divide(&ppMCTot_h);
+	  hiMCTot2_h.SetMaximum(ratMax);
+	  hiMCTot2_h.SetMinimum(ratMin);
+	  hiMCTot2_h.SetMarkerStyle(28);
+
+	  hiMCQ2_h.Divide(&ppMCQ_h);
+	  hiMCQ2_h.SetMaximum(ratMax);
+	  hiMCQ2_h.SetMinimum(ratMin);
+	  hiMCQ2_h.SetMarkerStyle(28);
+
+	  hiMCG2_h.Divide(&ppMCG_h);
+	  hiMCG2_h.SetMaximum(ratMax);
+	  hiMCG2_h.SetMinimum(ratMin);
+	  hiMCG2_h.SetMarkerStyle(28);
+
 	  if(!isPbPb && ! isPP) hiMCTot_h.DrawCopy("E1 P");
 	  else hiMCTot_h.DrawCopy("E1 P SAME");
 	}
@@ -369,6 +594,27 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 	if(iter == 0){
 	  legHist1_p[2] = (TH1F*)pbpbTot_h.Clone();
 	  legHist1_p[5] = (TH1F*)hiMCTot_h.Clone();
+	}
+
+	std::string sameStr = "SAME";
+	if(subIter == 0) sameStr = "";
+
+	plotCanvasSubTot_p[plotIter]->cd(iter+2+nPanel);
+	if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	if(isPbPb) pbpbTot2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	if(isHIMC){
+	  plotCanvasSubMC_p[plotIter]->cd(iter+2+nPanel);
+	  if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	  hiMCTot2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	  plotCanvasSubQ_p[plotIter]->cd(iter+2+nPanel);
+	  if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	  hiMCQ2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
+
+	  plotCanvasSubG_p[plotIter]->cd(iter+2+nPanel);
+	  if(histNum == 10 || histNum == 11 || histNum == 12) gPad->SetLogx();
+	  hiMCG2_h.DrawCopy(Form("E1 P %s", sameStr.c_str()));
 	}
       }
       
@@ -421,6 +667,21 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
   leg2_p->SetTextSizePixels(28);
   leg2_p->SetBorderSize(0);
 
+  TLegend* legMean_p = new TLegend(0.40, 0.70, 0.85, 0.98);
+  legMean_p->SetFillColor(0);
+  legMean_p->SetFillStyle(0);
+  legMean_p->SetTextFont(43);
+  legMean_p->SetTextSizePixels(20);
+  legMean_p->SetBorderSize(0);
+
+  TLegend* legMeanQG_p = new TLegend(0.3, 0.70, 0.85, 0.98);
+  legMeanQG_p->SetFillColor(0);
+  legMeanQG_p->SetFillStyle(0);
+  legMeanQG_p->SetTextFont(43);
+  legMeanQG_p->SetTextSizePixels(16);
+  legMeanQG_p->SetBorderSize(0);
+
+
   for(Int_t iter = 0; iter < nLeg1; iter++){
     if(iter == nLeg1 - 4 || iter == nLeg1 - 3) continue;
     if(legBool1[iter]) leg1_p->AddEntry(legHist1_p[iter], Form("%s", legStr1[iter].c_str()), "P L");
@@ -430,11 +691,28 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
     if(legBool1[iter]) leg2_p->AddEntry(legHist1_p[iter], Form("%s", legStr1[iter].c_str()), "F");
   }
 
+  for(Int_t iter = 0; iter < nLegMean; iter++){
+    if(legBoolMean[iter]) legMean_p->AddEntry(legHistMean_p[iter], Form("%s", legStrMean[iter].c_str()), "P L");
+  }
+
+  for(Int_t iter = 0; iter < nLegMeanQG; iter++){
+    if(legBoolMeanQG[iter]) legMeanQG_p->AddEntry(legHistMeanQG_p[iter], Form("%s", legStrMeanQG[iter].c_str()), "P L");
+  }
+
   for(Int_t iter = 0; iter < nPanel; iter++){
     for(Int_t plotIter = 0; plotIter < histJtMax; plotIter++){
-      plotCanvasMean_p[plotIter]->cd(iter+1);
-      label1_p->DrawLatex(.58, .7, Form("%s", panelLab[iter].c_str()));
-      if(iter == 0) label1_p->DrawLatex(.58, .6, Form("%s", lead[plotIter].c_str()));
+      plotCanvasMean_p[plotIter]->cd();
+      //      label1_p->DrawLatex(.58, .7, Form("%s", panelLab[iter].c_str()));
+      if(iter == 0){
+	label1_p->DrawLatex(.3, .25, Form("%s", lead[plotIter].c_str()));
+	legMean_p->Draw("SAME");
+      }
+
+      plotCanvasMeanQG_p[plotIter]->cd();
+      if(iter == 0){
+        label1_p->DrawLatex(.6, .35, Form("%s", lead[plotIter].c_str()));
+        legMeanQG_p->Draw("SAME");
+      }
 
       for(Int_t subIter = 0; subIter < nSub; subIter++){
 	plotCanvas_p[plotIter][subIter]->cd(iter+1);
@@ -453,8 +731,25 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 
   outFile_p->cd();
   for(Int_t plotIter = 0; plotIter < histJtMax; plotIter++){
-    plotCanvasMean_p[plotIter]->Write("", TObject::kOverwrite);
-    claverCanvasSaving(plotCanvasMean_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_Mean", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+    if(nSub != 1){
+      plotCanvasMean_p[plotIter]->Write("", TObject::kOverwrite);
+      claverCanvasSaving(plotCanvasMean_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_Mean", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+      
+      plotCanvasMeanQG_p[plotIter]->Write("", TObject::kOverwrite);
+      claverCanvasSaving(plotCanvasMeanQG_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_MeanQG", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+
+      plotCanvasSubTot_p[plotIter]->Write("", TObject::kOverwrite);
+      claverCanvasSaving(plotCanvasSubTot_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_SubTot", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+
+      plotCanvasSubMC_p[plotIter]->Write("", TObject::kOverwrite);
+      claverCanvasSaving(plotCanvasSubMC_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_SubMC", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+
+      plotCanvasSubQ_p[plotIter]->Write("", TObject::kOverwrite);
+      claverCanvasSaving(plotCanvasSubQ_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_SubQ", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+
+      plotCanvasSubG_p[plotIter]->Write("", TObject::kOverwrite);
+      claverCanvasSaving(plotCanvasSubG_p[plotIter], Form("../FastJetHists/pdfDir/%s_%s_%s_%s_SubG", alg.c_str(), alg2.c_str(), lead[plotIter].c_str(), plotStr.c_str()), "pdf");
+    }
 
     for(Int_t subIter = 0; subIter < nSub; subIter++){      
       plotCanvas_p[plotIter][subIter]->Write("", TObject::kOverwrite);
@@ -468,12 +763,17 @@ void plotFastJetPTDTauPanel(JetSuperSubstructHist* inStruct_p, const std::string
 
   for(Int_t plotIter = 0; plotIter < histJtMax; plotIter++){
     delete plotCanvasMean_p[plotIter];
+    delete plotCanvasMeanQG_p[plotIter];
+
+    delete plotCanvasSubTot_p[plotIter];
+    delete plotCanvasSubMC_p[plotIter];
+    delete plotCanvasSubQ_p[plotIter];
+    delete plotCanvasSubG_p[plotIter];
 
     for(Int_t subIter = 0; subIter < nSub; subIter++){
       delete plotCanvas_p[plotIter][subIter];
     }
   }
-
   return;
 }
 
@@ -559,14 +859,20 @@ void makeFastJetPlots(const std::string pbpbFileName, const std::string ppFileNa
     genRawJt_HistPPMCTot_p = new JetSubstructHist();
     genSKJt_HistPPMCTot_p = new JetSubstructHist();
     genSUBEJt_HistPPMCTot_p = new JetSubstructHist();
+    genChgJt_HistPPMCTot_p = new JetSubstructHist();
+    genSKChgJt_HistPPMCTot_p = new JetSubstructHist();
 
     genRawJt_HistPPMCQ_p = new JetSubstructHist();
     genSKJt_HistPPMCQ_p = new JetSubstructHist();
     genSUBEJt_HistPPMCQ_p = new JetSubstructHist();
+    genChgJt_HistPPMCQ_p = new JetSubstructHist();
+    genSKChgJt_HistPPMCQ_p = new JetSubstructHist();
 
     genRawJt_HistPPMCG_p = new JetSubstructHist();
     genSKJt_HistPPMCG_p = new JetSubstructHist();
     genSUBEJt_HistPPMCG_p = new JetSubstructHist();
+    genChgJt_HistPPMCG_p = new JetSubstructHist();
+    genSKChgJt_HistPPMCG_p = new JetSubstructHist();
 
     T_genSUBEJt_HistPPMCTot_p = new JetSubstructHist();
   }
@@ -609,14 +915,20 @@ void makeFastJetPlots(const std::string pbpbFileName, const std::string ppFileNa
     genRawJt_HistHIMCTot_p = new JetSubstructHist();
     genSKJt_HistHIMCTot_p = new JetSubstructHist();
     genSUBEJt_HistHIMCTot_p = new JetSubstructHist();
+    genChgJt_HistHIMCTot_p = new JetSubstructHist();
+    genSKChgJt_HistHIMCTot_p = new JetSubstructHist();
 
     genRawJt_HistHIMCQ_p = new JetSubstructHist();
     genSKJt_HistHIMCQ_p = new JetSubstructHist();
     genSUBEJt_HistHIMCQ_p = new JetSubstructHist();
+    genChgJt_HistHIMCQ_p = new JetSubstructHist();
+    genSKChgJt_HistHIMCQ_p = new JetSubstructHist();
 
     genRawJt_HistHIMCG_p = new JetSubstructHist();
     genSKJt_HistHIMCG_p = new JetSubstructHist();
     genSUBEJt_HistHIMCG_p = new JetSubstructHist();
+    genChgJt_HistHIMCG_p = new JetSubstructHist();
+    genSKChgJt_HistHIMCG_p = new JetSubstructHist();
 
     T_genSUBEJt_HistHIMCTot_p = new JetSubstructHist();
   }
@@ -674,6 +986,44 @@ void makeFastJetPlots(const std::string pbpbFileName, const std::string ppFileNa
 
   genSK_p->genPPStruct_p = T_genSUBEJt_HistPPMCTot_p;
   genSK_p->genHIStruct_p = T_genSUBEJt_HistHIMCTot_p;
+
+  JetSuperSubstructHist* genChg_p = new JetSuperSubstructHist();
+  genChg_p->isPP_ = false;
+  genChg_p->isPPMC_ = isPPMC;
+  genChg_p->isPbPb_ = false;
+  genChg_p->isHIMC_ = isHIMC;
+  genChg_p->isGenPP_ = true;
+  genChg_p->isGenHI_ = true;
+
+  genChg_p->hiMCTotStruct_p = genChgJt_HistHIMCTot_p;
+  genChg_p->hiMCQStruct_p = genChgJt_HistHIMCQ_p;
+  genChg_p->hiMCGStruct_p = genChgJt_HistHIMCG_p;
+
+  genChg_p->ppMCTotStruct_p = genChgJt_HistPPMCTot_p;
+  genChg_p->ppMCQStruct_p = genChgJt_HistPPMCQ_p;
+  genChg_p->ppMCGStruct_p = genChgJt_HistPPMCG_p;
+
+  genChg_p->genPPStruct_p = T_genSUBEJt_HistPPMCTot_p;
+  genChg_p->genHIStruct_p = T_genSUBEJt_HistHIMCTot_p;
+
+  JetSuperSubstructHist* genSKChg_p = new JetSuperSubstructHist();
+  genSKChg_p->isPP_ = false;
+  genSKChg_p->isPPMC_ = isPPMC;
+  genSKChg_p->isPbPb_ = false;
+  genSKChg_p->isHIMC_ = isHIMC;
+  genSKChg_p->isGenPP_ = false;
+  genSKChg_p->isGenHI_ = false;
+
+  genSKChg_p->hiMCTotStruct_p = genSKChgJt_HistHIMCTot_p;
+  genSKChg_p->hiMCQStruct_p = genSKChgJt_HistHIMCQ_p;
+  genSKChg_p->hiMCGStruct_p = genSKChgJt_HistHIMCG_p;
+
+  genSKChg_p->ppMCTotStruct_p = genSKChgJt_HistPPMCTot_p;
+  genSKChg_p->ppMCQStruct_p = genSKChgJt_HistPPMCQ_p;
+  genSKChg_p->ppMCGStruct_p = genSKChgJt_HistPPMCG_p;
+
+  genSKChg_p->genPPStruct_p = T_genSUBEJt_HistPPMCTot_p;
+  genSKChg_p->genHIStruct_p = T_genSUBEJt_HistHIMCTot_p;
 
 
   JetSuperSubstructHist* pfRaw_p = new JetSuperSubstructHist();
@@ -741,34 +1091,65 @@ void makeFastJetPlots(const std::string pbpbFileName, const std::string ppFileNa
 
   pfSK_p->genPPStruct_p = T_genSUBEJt_HistPPMCTot_p;
   pfSK_p->genHIStruct_p = T_genSUBEJt_HistHIMCTot_p;
+
+
+  JetSuperSubstructHist* trkRaw_p = new JetSuperSubstructHist();
+  trkRaw_p->isPP_ = isPP;
+  trkRaw_p->isPPMC_ = isPPMC;
+  trkRaw_p->isPbPb_ = isPbPb;
+  trkRaw_p->isHIMC_ = isHIMC;
+  trkRaw_p->isGenPP_ = true;
+  trkRaw_p->isGenHI_ = true;
+
+  trkRaw_p->ppMCTotStruct_p = trkRawJt_HistPPMCTot_p;
+  trkRaw_p->ppMCQStruct_p = trkRawJt_HistPPMCQ_p;
+  trkRaw_p->ppMCGStruct_p = trkRawJt_HistPPMCG_p;
+
+  trkRaw_p->hiMCTotStruct_p = trkRawJt_HistHIMCTot_p;
+  trkRaw_p->hiMCQStruct_p = trkRawJt_HistHIMCQ_p;
+  trkRaw_p->hiMCGStruct_p = trkRawJt_HistHIMCG_p;
+
+  trkRaw_p->ppStruct_p = trkRawJt_HistPPTot_p;
+  trkRaw_p->pbpbStruct_p = trkRawJt_HistPbPbTot_p;
+
+  trkRaw_p->genPPStruct_p = T_genSUBEJt_HistPPMCTot_p;
+  trkRaw_p->genHIStruct_p = T_genSUBEJt_HistHIMCTot_p;
+
   GetHistForPlot(pbpbFile_p, ppFile_p, hiMCFile_p, ppMCFile_p, "T", true, true);
 
   for(Int_t iter = 0; iter < 15; iter++){
     std::cout << "iter: " << iter << std::endl;
 
-    if(iter == 4) continue;
+    if(iter != 7) continue;
     //    if(iter < 4) continue;
     //    if(iter > 5) continue;
-    plotFastJetPTDTauPanel(genSUBE_p, "T", "genSUBETot", iter, genSUBE_p->isPbPb_, genSUBE_p->isPP_, isHIMC, isPPMC);
-    plotFastJetPTDTauPanel(genRaw_p, "T", "genRawTot", iter, genRaw_p->isPbPb_, genRaw_p->isPP_, isHIMC, isPPMC);
-    plotFastJetPTDTauPanel(genSK_p, "T", "genSKTot", iter, genSK_p->isPbPb_, genSK_p->isPP_, isHIMC, isPPMC);
+    //    plotFastJetPTDTauPanel(genSUBE_p, "T", "genSUBETot", iter, genSUBE_p->isPbPb_, genSUBE_p->isPP_, isHIMC, isPPMC);
+    //  plotFastJetPTDTauPanel(genRaw_p, "T", "genRawTot", iter, genRaw_p->isPbPb_, genRaw_p->isPP_, isHIMC, isPPMC);
+    //  plotFastJetPTDTauPanel(genSK_p, "T", "genSKTot", iter, genSK_p->isPbPb_, genSK_p->isPP_, isHIMC, isPPMC);
+    // plotFastJetPTDTauPanel(genChg_p, "T", "genChgTot", iter, genChg_p->isPbPb_, genChg_p->isPP_, isHIMC, isPPMC);
+    plotFastJetPTDTauPanel(genSKChg_p, "T", "genSKChgTot", iter, genSKChg_p->isPbPb_, genSKChg_p->isPP_, isHIMC, isPPMC);
   }
-  GetHistForPlot(pbpbFile_p, ppFile_p, hiMCFile_p, ppMCFile_p, "VsPF", true, true);
-
+    GetHistForPlot(pbpbFile_p, ppFile_p, hiMCFile_p, ppMCFile_p, "VsPF", true, true);
+    /*  
   for(Int_t iter = 0; iter < 15; iter++){
-    if(iter == 4 || iter == 7) continue;
+    if(iter == 7) continue;
 
     plotFastJetPTDTauPanel(pfSK_p, "VsPF", "pfSKTot", iter, pfSK_p->isPbPb_, pfSK_p->isPP_, isHIMC, isPPMC);
     plotFastJetPTDTauPanel(pfRaw_p, "VsPF", "pfRawTot", iter, pfRaw_p->isPbPb_, pfRaw_p->isPP_, isHIMC, isPPMC);
     plotFastJetPTDTauPanel(pfVs_p, "VsPF", "pfVsTot", iter, pfVs_p->isPbPb_, pfVs_p->isPP_, isHIMC, isPPMC);
-  }
 
+    plotFastJetPTDTauPanel(trkRaw_p, "VsPF", "trkRawTot", iter, trkRaw_p->isPbPb_, trkRaw_p->isPP_, isHIMC, isPPMC);
+
+  }
+    */
   //  GetHistForPlot(pbpbFile_p, ppFile_p, hiMCFile_p, ppMCFile_p, "VsPF");
   //  plotFastJetPTDTauPanel(pfRaw_p, "VsPF", "pfRawTot", isPbPb, isPP, isHIMC, isPPMC);
 
   delete genSUBE_p;
   delete genRaw_p;
   delete genSK_p;
+  delete genChg_p;
+  delete genSKChg_p;
   delete pfRaw_p;
   delete pfVs_p;
   delete pfSK_p;

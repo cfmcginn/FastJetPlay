@@ -609,7 +609,8 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
     }
     if(montecarlo){
       nGen_ = 0;
-      
+      nGen_TEMP_ = 0;
+
       for(Int_t genIter = 0; genIter < c->genparticle.mult; genIter++){
 	if(TMath::Abs(c->genparticle.eta[genIter]) > 2.4) continue;
 	
@@ -618,7 +619,14 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
 	genEta_[nGen_] = c->genparticle.eta[genIter];
 	genSube_[nGen_] = c->genparticle.sube[genIter];
 	genChg_[nGen_] = c->genparticle.chg[genIter];
-	
+
+	if(genChg_[nGen_] != 0){
+	  genPt_TEMP_[nGen_TEMP_] = c->genparticle.pt[genIter];
+	  genPhi_TEMP_[nGen_TEMP_] = c->genparticle.phi[genIter];
+	  genEta_TEMP_[nGen_TEMP_] = c->genparticle.eta[genIter];
+	  nGen_TEMP_++;
+	}
+
 	nGen_++;
 
 	if(nGen_ > maxEntrySim - 1){
@@ -634,8 +642,11 @@ int makeFastJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char
       rechitIniSKPtCut_ = getSKPtCut(nRechits_, rechitPt_, rechitPhi_, rechitEta_);
       pfIniSKPtCut_ = getSKPtCut(nPF_, pfPt_, pfPhi_, pfEta_);
     }
-    if(montecarlo) genIniSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
-    
+    if(montecarlo){
+      genIniSKPtCut_ = getSKPtCut(nGen_, genPt_, genPhi_, genEta_);
+      genIniSKChgPtCut_ = getSKPtCut(nGen_TEMP_, genPt_TEMP_, genPhi_TEMP_, genEta_TEMP_);
+    }    
+
     if(!isGen){
       rechitTreeIni_p->Fill();
       pfcandTreeIni_p->Fill();

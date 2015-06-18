@@ -55,14 +55,19 @@ Float_t trkSKPtCut_;
 
 JetSubstruct* trkRawJt_p;
 JetSubstruct* trkSKJt_p;
+JetSubstruct* trk3CutJt_p;
 
 //Gen TreeAna Variables
 
 Float_t genSKPtCut_;
+Float_t genSKChgPtCut_;
 
 JetSubstruct* genRawJt_p;
 JetSubstruct* genSKJt_p;
 JetSubstruct* genSUBEJt_p;
+JetSubstruct* genRawChgJt_p;
+JetSubstruct* genSKChgJt_p;
+JetSubstruct* genSUBEChgJt_p;
 
 //Jet TreeAna Variables
 
@@ -119,15 +124,20 @@ void SetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     
     SetJetSubstructBranches(trkTreeAna_p, trkRawJt_p, "trkRaw");
     SetJetSubstructBranches(trkTreeAna_p, trkSKJt_p, "trkSK");
+    SetJetSubstructBranches(trkTreeAna_p, trk3CutJt_p, "trk3Cut");
   }    
 
   //Gen TreeAna Branches
   if(montecarlo){
     genTreeAna_p->Branch("genSKPtCut", &genSKPtCut_, Form("genSKPtCut/F"));
+    genTreeAna_p->Branch("genSKChgPtCut", &genSKChgPtCut_, Form("genSKChgPtCut/F"));
 
     SetJetSubstructBranches(genTreeAna_p, genRawJt_p, "genRaw");
     SetJetSubstructBranches(genTreeAna_p, genSKJt_p, "genSK");
     SetJetSubstructBranches(genTreeAna_p, genSUBEJt_p, "genSUBE");
+    SetJetSubstructBranches(genTreeAna_p, genRawChgJt_p, "genRawChg");
+    SetJetSubstructBranches(genTreeAna_p, genSKChgJt_p, "genSKChg");
+    SetJetSubstructBranches(genTreeAna_p, genSUBEChgJt_p, "genSUBEChg");
   }
 
   //Jet TreeAna Branches
@@ -197,15 +207,20 @@ void GetAnaBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
 
     GetJetSubstructBranches(trkTreeAna_p, trkRawJt_p, "trkRaw");
     GetJetSubstructBranches(trkTreeAna_p, trkSKJt_p, "trkSK");
+    GetJetSubstructBranches(trkTreeAna_p, trk3CutJt_p, "trk3Cut");
   }
   //Gen TreeAna Branches
 
   if(montecarlo){
     genTreeAna_p->SetBranchAddress("genSKPtCut", &genSKPtCut_);
+    genTreeAna_p->SetBranchAddress("genSKChgPtCut", &genSKChgPtCut_);
 
     GetJetSubstructBranches(genTreeAna_p, genRawJt_p, "genRaw");
     GetJetSubstructBranches(genTreeAna_p, genSKJt_p, "genSK");
     GetJetSubstructBranches(genTreeAna_p, genSUBEJt_p, "genSUBE");
+    GetJetSubstructBranches(genTreeAna_p, genRawChgJt_p, "genRawChg");
+    GetJetSubstructBranches(genTreeAna_p, genSKChgJt_p, "genSKChg");
+    GetJetSubstructBranches(genTreeAna_p, genSUBEChgJt_p, "genSUBEChg");
 
     std::cout << "Added Branches" << std::endl;
   }
@@ -308,6 +323,7 @@ void InitJtVar()
   pfSKPtCut_ = 0.010;
   trkSKPtCut_ = 0.010;
   genSKPtCut_ = 0.010;
+  genSKChgPtCut_ = 0.010;
 
   return;
 }
@@ -325,10 +341,14 @@ void InitJtSubstruct()
 
   trkRawJt_p = new JetSubstruct();
   trkSKJt_p = new JetSubstruct();
+  trk3CutJt_p = new JetSubstruct();
 
   genRawJt_p = new JetSubstruct();
   genSKJt_p = new JetSubstruct();
   genSUBEJt_p = new JetSubstruct();
+  genRawChgJt_p = new JetSubstruct();
+  genSKChgJt_p = new JetSubstruct();
+  genSUBEChgJt_p = new JetSubstruct();
 
   return;
 }
@@ -345,10 +365,14 @@ void CleanupJtSubstruct()
 
   delete trkRawJt_p;
   delete trkSKJt_p;
+  delete trk3CutJt_p;
 
   delete genRawJt_p;
   delete genSKJt_p;
   delete genSUBEJt_p;
+  delete genRawChgJt_p;
+  delete genSKChgJt_p;
+  delete genSUBEChgJt_p;
 
   rechitRawJt_p = 0;
   rechitVsJt_p = 0;
@@ -360,10 +384,14 @@ void CleanupJtSubstruct()
 
   trkRawJt_p = 0;
   trkSKJt_p = 0;
+  trk3CutJt_p = 0;
 
   genRawJt_p = 0;
   genSKJt_p = 0;
   genSUBEJt_p = 0;
+  genRawChgJt_p = 0;
+  genSKChgJt_p = 0;
+  genSUBEChgJt_p = 0;
 
   return;
 }

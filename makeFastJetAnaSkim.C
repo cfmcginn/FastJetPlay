@@ -102,7 +102,7 @@ void getJtSubstrct(fastjet::PseudoJet* inJt, JetSubstruct* outJet_p, std::vector
 }
 
 
-void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], Bool_t isChg, JetSubstruct* outJet_p, Float_t ptCut, Int_t inID[], Bool_t IDBool = false)
+void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], Bool_t isChg, JetSubstruct* outJet_p, Float_t ptCut, Int_t inID[], Bool_t IDBool, Bool_t chgJet)
 {
   Int_t nAlgVect = 0;
   std::vector<fastjet::PseudoJet>* algVect_p = new std::vector<fastjet::PseudoJet>;
@@ -110,6 +110,8 @@ void getJt(Int_t nMax, Float_t pt[], Float_t phi[], Float_t eta[], Int_t chg[], 
 
   for(Int_t iter = 0; iter < nMax; iter++){
     if(IDBool && inID[iter] != 0) continue;
+
+    if(chgJet && chg[iter] == 0) continue;
 
     if(pt[iter] > ptCut){
        tempTL.SetPtEtaPhiM(pt[iter], eta[iter], phi[iter], 0);
@@ -300,21 +302,24 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
     InitJtVar();
 
     if(!isGen){
-      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, dummyArr, false, rechitRawJt_p, 0.010, dummyArr);
-      if(hi) getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, dummyArr, false, rechitVsJt_p, 0.010, dummyArr); 
+      getJt(nRechits_, rechitPt_, rechitPhi_, rechitEta_, dummyArr, false, rechitRawJt_p, 0.010, dummyArr, false, false);
+      if(hi) getJt(nRechits_, rechitVsPt_, rechitPhi_, rechitEta_, dummyArr, false, rechitVsJt_p, 0.010, dummyArr, false, false); 
  
-      getJt(nPF_, pfPt_, pfPhi_, pfEta_, dummyArr, false, pfRawJt_p, 0.010, dummyArr);
-      if(hi) getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, dummyArr, false, pfVsJt_p, 0.010, dummyArr);
-      getJt(nPF_, pfPt_, pfPhi_, pfEta_, dummyArr, false, pfSKJt_p, pfIniSKPtCut_, dummyArr);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, dummyArr, false, pfRawJt_p, 0.010, dummyArr, false, false);
+      if(hi) getJt(nPF_, pfVsPt_, pfPhi_, pfEta_, dummyArr, false, pfVsJt_p, 0.010, dummyArr, false, false);
+      getJt(nPF_, pfPt_, pfPhi_, pfEta_, dummyArr, false, pfSKJt_p, pfIniSKPtCut_, dummyArr, false, false);
 
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkRawJt_p, 0.010, dummyArr);
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkSKJt_p, trkIniSKPtCut_, dummyArr);
-      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trk3CutJt_p, 3.0, dummyArr);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkRawJt_p, 0.010, dummyArr, false, false);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trkSKJt_p, trkIniSKPtCut_, dummyArr, false, false);
+      getJt(nTrk_, trkPt_, trkPhi_, trkEta_, trkChg_, true, trk3CutJt_p, 3.0, dummyArr, false, false);
     }
     if(montecarlo){
-      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genRawJt_p, 0.010, dummyArr);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSKJt_p, genIniSKPtCut_, dummyArr);
-      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSUBEJt_p, 0.010, genSube_, true);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genRawJt_p, 0.010, dummyArr, false, false);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSKJt_p, genIniSKPtCut_, dummyArr, false, false);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSUBEJt_p, 0.010, genSube_, true, false);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genRawChgJt_p, 0.010, dummyArr, false, true);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSKChgJt_p, genIniSKChgPtCut_, dummyArr, false, true);
+      getJt(nGen_, genPt_, genPhi_, genEta_, genChg_, true, genSUBEChgJt_p, 0.010, genSube_, true, true);
     }
 
     run_ = runIni_;
@@ -363,6 +368,7 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
     pfSKPtCut_ = pfIniSKPtCut_;
     trkSKPtCut_ = trkIniSKPtCut_;
     genSKPtCut_ = genIniSKPtCut_;
+    genSKChgPtCut_ = genIniSKChgPtCut_;
 
 
     for(Int_t algIter = 0; algIter < 5; algIter++){
@@ -411,6 +417,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
       getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genSUBEJt_p, montecarlo);
       getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genSKJt_p, montecarlo);
       getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genRawJt_p, montecarlo);
+      getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genRawChgJt_p, montecarlo);
+      getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genSKChgJt_p, montecarlo);
+      getJtMatch(AlgJtPt_[T], AlgJtPhi_[T], AlgJtEta_[T], AlgRefPartFlav_[T], genSUBEChgJt_p, montecarlo);
     }
 
     getSubJtScalePt(rechitRawJt_p);
@@ -428,6 +437,9 @@ int makeFastJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t
       getSubJtScalePt(genRawJt_p);
       getSubJtScalePt(genSKJt_p);
       getSubJtScalePt(genSUBEJt_p);
+      getSubJtScalePt(genRawChgJt_p);
+      getSubJtScalePt(genSKChgJt_p);
+      getSubJtScalePt(genSUBEChgJt_p);
     }
 
     if(!isGen){

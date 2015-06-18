@@ -99,11 +99,17 @@ Int_t trkChg_[maxTracks];
 
 Int_t nGen_;
 Float_t genIniSKPtCut_;
+Float_t genIniSKChgPtCut_;
 Float_t genPt_[maxEntrySim];
 Float_t genPhi_[maxEntrySim];
 Float_t genEta_[maxEntrySim];
 Int_t genSube_[maxEntrySim];
 Int_t genChg_[maxEntrySim];
+
+Int_t nGen_TEMP_;
+Float_t genPt_TEMP_[maxEntrySim];
+Float_t genPhi_TEMP_[maxEntrySim];
+Float_t genEta_TEMP_[maxEntrySim];
 
 //Jet TreeIni Variables
 
@@ -166,6 +172,7 @@ void SetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   if(montecarlo){
     genTreeIni_p->Branch("nGen", &nGen_, "nGen/I");
     genTreeIni_p->Branch("genIniSKPtCut", &genIniSKPtCut_, "genIniSKPtCut/F");
+    genTreeIni_p->Branch("genIniSKChgPtCut", &genIniSKChgPtCut_, "genIniSKChgPtCut/F");
     genTreeIni_p->Branch("genPt", genPt_, "genPt[nGen]/F");
     genTreeIni_p->Branch("genPhi", genPhi_, "genPhi[nGen]/F");
     genTreeIni_p->Branch("genEta", genEta_, "genEta[nGen]/F");
@@ -215,7 +222,10 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
 
   //Rechit TreeIni Branches
 
+  std::cout << "A" << std::endl;
+
   if(!isGen){
+    std::cout << "A1" << std::endl;
     rechitTreeIni_p->SetBranchAddress("nRechits", &nRechits_);
     rechitTreeIni_p->SetBranchAddress("rechitIniSKPtCut", &rechitIniSKPtCut_);
     rechitTreeIni_p->SetBranchAddress("rechitPt", rechitPt_);
@@ -225,6 +235,7 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     
     //PF TreeIni Branches
 
+    std::cout << "A2" << std::endl;
     pfcandTreeIni_p->SetBranchAddress("nPF", &nPF_);
     pfcandTreeIni_p->SetBranchAddress("pfIniSKPtCut", &pfIniSKPtCut_);
     pfcandTreeIni_p->SetBranchAddress("pfPt", pfPt_);
@@ -233,7 +244,7 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     pfcandTreeIni_p->SetBranchAddress("pfEta", pfEta_);
     
     //Track TreeIni Branches
-    
+    std::cout << "A3" << std::endl;
     trkTreeIni_p->SetBranchAddress("nTrk", &nTrk_);
     trkTreeIni_p->SetBranchAddress("trkIniSKPtCut", &trkIniSKPtCut_);
     trkTreeIni_p->SetBranchAddress("trkPt", trkPt_);
@@ -243,15 +254,20 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
   }
     //Gen TreeIni Branches
 
+  std::cout << "B" << std::endl;
+
   if(montecarlo){
     genTreeIni_p->SetBranchAddress("nGen", &nGen_);
     genTreeIni_p->SetBranchAddress("genIniSKPtCut", &genIniSKPtCut_);
+    genTreeIni_p->SetBranchAddress("genIniSKChgPtCut", &genIniSKChgPtCut_);
     genTreeIni_p->SetBranchAddress("genPt", genPt_);
     genTreeIni_p->SetBranchAddress("genPhi", genPhi_);
     genTreeIni_p->SetBranchAddress("genEta", genEta_);
     genTreeIni_p->SetBranchAddress("genSube", genSube_);
     genTreeIni_p->SetBranchAddress("genChg", genChg_);
   }    
+
+  std::cout << "C" << std::endl;
 
   //Jet TreeIni Branches
 
@@ -272,6 +288,8 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     jetTreeIni_p->SetBranchAddress("psinIni", &psinIni_);
   }  
 
+  std::cout << "D" << std::endl;
+
   jetTreeIni_p->SetBranchAddress("AlgIniJtPt", AlgIniJtPt_);
   jetTreeIni_p->SetBranchAddress("AlgIniJtPhi", AlgIniJtPhi_);
   jetTreeIni_p->SetBranchAddress("AlgIniJtEta", AlgIniJtEta_);
@@ -283,6 +301,8 @@ void GetIniBranches(sampleType sType = kHIDATA, Bool_t isGen = false)
     jetTreeIni_p->SetBranchAddress("AlgIniRefPhi", AlgIniRefPhi_);
     jetTreeIni_p->SetBranchAddress("AlgIniRefEta", AlgIniRefEta_);
   }
+
+  std::cout << "E" << std::endl;
 
   return;
 }

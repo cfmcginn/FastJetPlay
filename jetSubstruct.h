@@ -30,6 +30,10 @@ const Int_t nSubjet = 5;
 const Int_t nSDBeta = 5;
 const Int_t nChgBeta = 5;
 
+const Int_t maxNSub = nFFM;
+const Int_t subCol[maxNSub] = {1, kBlue, kRed, 1, kBlue, kRed, 1, kBlue, kRed, 1, kBlue, kRed, 1, kBlue};
+const Int_t subStyle[maxNSub] = {20, 20, 20, 21, 21, 21, 22, 22, 22, 24, 24, 24, 25, 25};
+
 const Int_t tauArr[nTau] = {1, 2, 3};
 const Double_t betaArr[nBeta] = {0.2, 0.5, 1.0, 1.5, 2.0, 3.0};
 const Double_t betaSDArr[nSDBeta] = {-0.5, -0.1, 0.0, 0.1, 0.5};
@@ -141,6 +145,10 @@ const Int_t nTH1Sub_[nTH1_] = {1, 1, 1, 1, nSDBeta, nSDBeta, 1, nChgBeta, 1, nSi
 const std::string th1Str_[nTH1_] = {"pt", "phi", "eta", "constN", "sdPt", "sdSymmZ", "ptd", "chg", "r2", "sigma", "ffmUnsub", "ffmSub", "ffmSubBetter", "subJetRat", "subJtDR"};
 const std::string xTit_[nTH1_] = {"p_{T}", "#phi", "#eta", "N_{Const}", "p_{T}; SD #beta=", "z_{symm}; #beta=", "p_{T}D", "Jet Charge; #kappa=", "R_{2}", "#sigma", "ffmUnsub; N=", "ffmSub; N=", "ffmSubBetter; N=", "p_{T} Ratio; Subjet=", "#DeltaR; Subjet="};
 
+const std::string xMeanTit_[nTH1_] = {"", "", "", "", "#beta", "#beta", "", "#kappa", "", "Sigma #", "N", "N", "N", "Subjet #", "Subjet #"};
+
+const std::string yMeanTit_[nTH1_] = {"", "", "", "", "<p_{T,sd}>", "<z_{symm}>", "", "<|Jet Charge|>", "", "<Sigma>", "<[(1+N)/2]^{4} M_{N,Unsub}>", "<[(1+N)/2]^{4} M_{N,Sub}>", "<[(1+N)/2]^{4} M_{N,SubBetter}>", "<p_{T,N}/p_{T}>", "<#DeltaR_{Jet,N_{th}Subjet}>"};
+
 class JetSubstructHist{
 public:
   JetSubstructHist(){};
@@ -168,6 +176,8 @@ public:
   TH1F* softPtHist_Mean_p[centHIMax][histJtMax];
   TH1F* softSymmZHist_Mean_p[centHIMax][histJtMax];
   
+  TH1F* chgHist_Mean_p[centHIMax][histJtMax];
+
   TH1F* ffmUnsubHist_Mean_p[centHIMax][histJtMax];
   TH1F* ffmSubHist_Mean_p[centHIMax][histJtMax];
   TH1F* ffmSubBetterHist_Mean_p[centHIMax][histJtMax];
@@ -259,7 +269,9 @@ void JetSubstructHist::SetActiveTH1(const Int_t histNum, const Int_t centNum, co
 
 void JetSubstructHist::SetActiveMeanTH1(const Int_t histNum, const Int_t centNum, const Int_t jtNum)
 {
-  if(histNum == 5) activeTH1_p = (TH1F*)(softSymmZHist_Mean_p[centNum][jtNum]);
+  if(histNum == 4) activeTH1_p = (TH1F*)(softPtHist_Mean_p[centNum][jtNum]);
+  else if(histNum == 5) activeTH1_p = (TH1F*)(softSymmZHist_Mean_p[centNum][jtNum]);
+  else if(histNum == 7) activeTH1_p = (TH1F*)(chgHist_Mean_p[centNum][jtNum]);
   else if(histNum == 10) activeTH1_p = (TH1F*)(ffmUnsubHist_Mean_p[centNum][jtNum]);
   else if(histNum == 11) activeTH1_p = (TH1F*)(ffmSubHist_Mean_p[centNum][jtNum]);
   else if(histNum == 12) activeTH1_p = (TH1F*)(ffmSubBetterHist_Mean_p[centNum][jtNum]);
@@ -297,7 +309,9 @@ TH1F JetSubstructHist::GetActiveMeanTH1(const Int_t histNum, const Int_t centNum
 {
   TH1F histRet_h;
 
-  if(histNum == 5) return *(softSymmZHist_Mean_p[centNum][jtNum]);
+  if(histNum == 4) return *(softPtHist_Mean_p[centNum][jtNum]);
+  else if(histNum == 5) return *(softSymmZHist_Mean_p[centNum][jtNum]);
+  else if(histNum == 7) return *(chgHist_Mean_p[centNum][jtNum]);
   else if(histNum == 10) return *(ffmUnsubHist_Mean_p[centNum][jtNum]);
   else if(histNum == 11) return *(ffmSubHist_Mean_p[centNum][jtNum]);
   else if(histNum == 12) return *(ffmSubBetterHist_Mean_p[centNum][jtNum]);
@@ -421,12 +435,16 @@ void InitJetSubstructHist(JetSubstructHist* inJtHist_p, sampleType sType, const 
       inJtHist_p->r2Hist_p[centIter][jtIter] = new TH1F(Form("%s_r2_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_r2_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nR2Bins, r2Low, r2Hi);
 
       for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
+	inJtHist_p->softPtHist_p[centIter][jtIter][sdIter] = new TH1F(Form("%s_softPtBeta%d_%s_%s_h", fillName.c_str(), sdIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_softPtBeta%d_%s_%s_h", fillName.c_str(), sdIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nPtBins, ptLow, ptHi);
+
 	inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter] = new TH1F(Form("%s_softSymmZBeta%d_%s_%s_h", fillName.c_str(), sdIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_softSymmZBeta%d_%s_%s_h", fillName.c_str(), sdIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nSDSymmZBins, sdSymmZLow, sdSymmZHi);
       }
 
       Int_t nBinZSymmMean;
       Float_t binZSymmMeanLow, binZSymmMeanHi;
       GetMeanBinning(nSDBeta, betaSDArr, nBinZSymmMean, binZSymmMeanLow, binZSymmMeanHi);
+      inJtHist_p->softPtHist_Mean_p[centIter][jtIter] = new TH1F(Form("%s_softPt_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_softPt_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nBinZSymmMean, binZSymmMeanLow, binZSymmMeanHi);
+
       inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter] = new TH1F(Form("%s_softSymmZ_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_softSymmZ_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nBinZSymmMean, binZSymmMeanLow, binZSymmMeanHi);
 
       inJtHist_p->ptdHist_p[centIter][jtIter] = new TH1F(Form("%s_PTD_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_PTD_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nPTDBins, ptdLow, ptdHi);  
@@ -434,6 +452,11 @@ void InitJetSubstructHist(JetSubstructHist* inJtHist_p, sampleType sType, const 
       for(Int_t chgIter = 0; chgIter < nChgBeta; chgIter++){
 	inJtHist_p->chgHist_p[centIter][jtIter][chgIter] = new TH1F(Form("%s_chgBeta%d_%s_%s_h", fillName.c_str(), chgIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_chgBeta%d_%s_%s_h", fillName.c_str(), chgIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nChgBins, chgLow, chgHi);
       }
+
+      Int_t nBinChgMean;
+      Float_t binChgMeanLow, binChgMeanHi;
+      GetMeanBinning(nChgBeta, betaChgArr, nBinChgMean, binChgMeanLow, binChgMeanHi);
+      inJtHist_p->chgHist_Mean_p[centIter][jtIter] = new TH1F(Form("%s_chg_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_chg_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nBinChgMean, binChgMeanLow, binChgMeanHi);
 
       for(Int_t sigIter = 0; sigIter < nSigma; sigIter++){
 	inJtHist_p->sigmaHist_p[centIter][jtIter][sigIter] = new TH1F(Form("%s_sigma%d_%s_%s_h", fillName.c_str(), sigIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), Form("%s_sigma%d_%s_%s_h", fillName.c_str(), sigIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()), nSigmaBins, sigmaLow, sigmaHi);
@@ -499,8 +522,12 @@ void GetJetSubstructHist(TFile* histFile_p, JetSubstructHist* inJtHist_p, sample
 
 
       for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
+	inJtHist_p->softPtHist_p[centIter][jtIter][sdIter] = (TH1F*)histFile_p->Get(Form("%s_softPtBeta%d_%s_%s_h", fillName.c_str(), sdIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
+
 	inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter] = (TH1F*)histFile_p->Get(Form("%s_softSymmZBeta%d_%s_%s_h", fillName.c_str(), sdIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
       }
+
+	inJtHist_p->softPtHist_Mean_p[centIter][jtIter] = (TH1F*)histFile_p->Get(Form("%s_softPt_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
 
 	inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter] = (TH1F*)histFile_p->Get(Form("%s_softSymmZ_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
 
@@ -511,6 +538,7 @@ void GetJetSubstructHist(TFile* histFile_p, JetSubstructHist* inJtHist_p, sample
 	  inJtHist_p->chgHist_p[centIter][jtIter][chgIter] = (TH1F*)histFile_p->Get(Form("%s_chgBeta%d_%s_%s_h", fillName.c_str(), chgIter, jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
 	}
       }
+      inJtHist_p->chgHist_Mean_p[centIter][jtIter] = (TH1F*)histFile_p->Get(Form("%s_chg_Mean_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
 
       inJtHist_p->r2Hist_p[centIter][jtIter] = (TH1F*)histFile_p->Get(Form("%s_r2_%s_%s_h", fillName.c_str(), jtStr[jtIter].c_str(), hiBinOrPPPA[centIter].c_str()));
 
@@ -580,6 +608,8 @@ void FillJetSubstructHist(JetSubstruct* inJt_p, JetSubstructHist* inJtHist_p, sa
     inJtHist_p->constNHist_p[centPos][jtIter]->Fill(inJt_p->jtConstN_[jtIter], weight);
 
     for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
+      inJtHist_p->softPtHist_p[centPos][jtIter][sdIter]->Fill(inJt_p->jtSoftPt_[jtIter][sdIter], weight);
+
       inJtHist_p->softSymmZHist_p[centPos][jtIter][sdIter]->Fill(inJt_p->jtSoftSymmZ_[jtIter][sdIter], weight);
     }
 
@@ -637,6 +667,8 @@ void ScaleJetSubstructHist(JetSubstructHist* num_p, JetSubstructHist* denom_p, s
       num_p->constNHist_p[centIter][jtIter]->Scale(1./denom_p->constNHist_p[centIter][jtIter]->Integral());
 
       for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
+	num_p->softPtHist_p[centIter][jtIter][sdIter]->Scale(1./denom_p->softPtHist_p[centIter][jtIter][sdIter]->Integral());
+
 	num_p->softSymmZHist_p[centIter][jtIter][sdIter]->Scale(1./denom_p->softSymmZHist_p[centIter][jtIter][sdIter]->Integral());
       }
 
@@ -699,21 +731,35 @@ void WriteJetSubstructHist(TFile* outFile_p, JetSubstructHist* inJtHist_p, sampl
       inJtHist_p->constNHist_p[centIter][jtIter]->Write("", TObject::kOverwrite);
       
       for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
+	inJtHist_p->softPtHist_p[centIter][jtIter][sdIter]->Write("", TObject::kOverwrite);
 	inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter]->Write("", TObject::kOverwrite);
 
 	Int_t bin = inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter]->FindBin(betaSDArr[sdIter]);
-	Float_t val = inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter]->GetMean();
-	Float_t err = inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter]->GetMeanError();
-	inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter]->SetBinContent(bin, val);
-	inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter]->SetBinError(bin, err);
+	Float_t valPt = inJtHist_p->softPtHist_p[centIter][jtIter][sdIter]->GetMean();
+	Float_t errPt = inJtHist_p->softPtHist_p[centIter][jtIter][sdIter]->GetMeanError();
+	Float_t valZ = inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter]->GetMean();
+	Float_t errZ = inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter]->GetMeanError();
+
+	inJtHist_p->softPtHist_Mean_p[centIter][jtIter]->SetBinContent(bin, valPt);
+	inJtHist_p->softPtHist_Mean_p[centIter][jtIter]->SetBinError(bin, errPt);
+	inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter]->SetBinContent(bin, valZ);
+	inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter]->SetBinError(bin, errZ);
       }
+      inJtHist_p->softPtHist_Mean_p[centIter][jtIter]->Write("", TObject::kOverwrite);
       inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter]->Write("", TObject::kOverwrite);
 
       inJtHist_p->ptdHist_p[centIter][jtIter]->Write("", TObject::kOverwrite);
 
       for(Int_t chgIter = 0; chgIter < nChgBeta; chgIter++){
 	inJtHist_p->chgHist_p[centIter][jtIter][chgIter]->Write("", TObject::kOverwrite);
+
+        Int_t bin = inJtHist_p->chgHist_Mean_p[centIter][jtIter]->FindBin(betaChgArr[chgIter]);
+        Float_t val = inJtHist_p->chgHist_p[centIter][jtIter][chgIter]->GetMean();
+        Float_t err = inJtHist_p->chgHist_p[centIter][jtIter][chgIter]->GetMeanError();
+        inJtHist_p->chgHist_Mean_p[centIter][jtIter]->SetBinContent(bin, val);
+        inJtHist_p->chgHist_Mean_p[centIter][jtIter]->SetBinError(bin, err);
       }
+      inJtHist_p->chgHist_Mean_p[centIter][jtIter]->Write("", TObject::kOverwrite);
 
       inJtHist_p->r2Hist_p[centIter][jtIter]->Write("", TObject::kOverwrite);
       
@@ -787,9 +833,15 @@ void CleanupJetSubstructHist(JetSubstructHist* inJtHist_p, sampleType sType)
       inJtHist_p->constNHist_p[centIter][jtIter] = 0;
 
       for(Int_t sdIter = 0; sdIter < nSDBeta; sdIter++){
+	delete inJtHist_p->softPtHist_p[centIter][jtIter][sdIter];
+	inJtHist_p->softPtHist_p[centIter][jtIter][sdIter] = 0;
+
 	delete inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter];
 	inJtHist_p->softSymmZHist_p[centIter][jtIter][sdIter] = 0;
       }
+      delete inJtHist_p->softPtHist_Mean_p[centIter][jtIter];
+      inJtHist_p->softPtHist_Mean_p[centIter][jtIter] = 0;
+
       delete inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter];
       inJtHist_p->softSymmZHist_Mean_p[centIter][jtIter] = 0;
 
@@ -800,6 +852,8 @@ void CleanupJetSubstructHist(JetSubstructHist* inJtHist_p, sampleType sType)
 	delete inJtHist_p->chgHist_p[centIter][jtIter][chgIter];
 	inJtHist_p->chgHist_p[centIter][jtIter][chgIter] = 0;
       }
+      delete inJtHist_p->chgHist_Mean_p[centIter][jtIter];
+      inJtHist_p->chgHist_Mean_p[centIter][jtIter] = 0;
 
       delete inJtHist_p->r2Hist_p[centIter][jtIter];
       inJtHist_p->r2Hist_p[centIter][jtIter] = 0;

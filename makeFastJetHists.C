@@ -56,6 +56,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     genRawJt_HistTot_p = new JetSubstructHist();
     genSKJt_HistTot_p = new JetSubstructHist();
     genSUBEJt_HistTot_p = new JetSubstructHist();
+    genChgJt_HistTot_p = new JetSubstructHist();
+    genSKChgJt_HistTot_p = new JetSubstructHist();
   }  
 
   if(isMC){
@@ -73,6 +75,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     genRawJt_HistQ_p = new JetSubstructHist();
     genSKJt_HistQ_p = new JetSubstructHist();
     genSUBEJt_HistQ_p = new JetSubstructHist();
+    genChgJt_HistQ_p = new JetSubstructHist();
+    genSKChgJt_HistQ_p = new JetSubstructHist();
     
     rechitRawJt_HistG_p = new JetSubstructHist();
     rechitVsJt_HistG_p = new JetSubstructHist();
@@ -88,6 +92,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
     genRawJt_HistG_p = new JetSubstructHist();
     genSKJt_HistG_p = new JetSubstructHist();
     genSUBEJt_HistG_p = new JetSubstructHist();
+    genChgJt_HistG_p = new JetSubstructHist();
+    genSKChgJt_HistG_p = new JetSubstructHist();
   }  
 
   BookHist(sType, algType[setNum]);
@@ -117,6 +123,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       FillJetSubstructHist(genRawJt_p, genRawJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
       FillJetSubstructHist(genSUBEJt_p, genSUBEJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
+      FillJetSubstructHist(genChgJt_p, genChgJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
+      FillJetSubstructHist(genSKChgJt_p, genSKChgJt_HistTot_p, sType, hiBin_, hatWeight, Tot);
     }
 
     if(isMC){
@@ -136,6 +144,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       FillJetSubstructHist(genRawJt_p, genRawJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
       FillJetSubstructHist(genSUBEJt_p, genSUBEJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
+      FillJetSubstructHist(genChgJt_p, genChgJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
+      FillJetSubstructHist(genSKChgJt_p, genSKChgJt_HistQ_p, sType, hiBin_, hatWeight, Qua);
 
       //gluons?
       FillJetSubstructHist(rechitRawJt_p, rechitRawJt_HistG_p, sType, hiBin_, hatWeight, Glu);
@@ -152,6 +162,8 @@ void makeJetSubStructHist(TTree* anaTree_p, const std::string outName, Int_t set
       FillJetSubstructHist(genRawJt_p, genRawJt_HistG_p, sType, hiBin_, hatWeight, Glu);
       FillJetSubstructHist(genSKJt_p, genSKJt_HistG_p, sType, hiBin_, hatWeight, Glu);
       FillJetSubstructHist(genSUBEJt_p, genSUBEJt_HistG_p, sType, hiBin_, hatWeight, Glu);
+      FillJetSubstructHist(genChgJt_p, genChgJt_HistG_p, sType, hiBin_, hatWeight, Glu);
+      FillJetSubstructHist(genSKChgJt_p, genSKChgJt_HistG_p, sType, hiBin_, hatWeight, Glu);
     }
   }
 
